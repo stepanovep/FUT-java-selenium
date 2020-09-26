@@ -18,8 +18,6 @@ public class FutBot {
     private TransferMarketPage transferMarketPage;
 
     public void test() {
-        transferMarketPage.navigateToPage();
-
         var filter = TransferMarketFilter.builder()
                 .withName("Firmino")
                 .withQuality(Quality.SPECIAL)

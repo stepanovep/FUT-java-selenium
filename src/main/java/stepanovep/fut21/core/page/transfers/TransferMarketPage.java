@@ -18,16 +18,17 @@ public class TransferMarketPage {
     @Autowired
     private TransferMarketFilterService filterService;
 
-    public void navigateToPage() {
-        driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
-        driver.clickElement(MainPageLocators.SEARCH_IN_TRANSFER_MARKET_FORM);
-        driver.sleep(300);
-    }
-
     public TransferSearchResult search(TransferMarketFilter filter) {
+        navigateToPage();
         driver.clickElement(TransferMarketLocators.RESET_FILTER_BUTTON);
         filterService.applyFilter(filter);
         driver.clickElement(TransferMarketLocators.SEARCH_BUTTON);
         return TransferSearchResult.from(driver);
+    }
+
+    private void navigateToPage() {
+        driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
+        driver.clickElement(MainPageLocators.SEARCH_IN_TRANSFER_MARKET_FORM);
+        driver.sleep(300);
     }
 }

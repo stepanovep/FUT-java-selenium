@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.0'
     id 'org.springframework.boot' version '2.3.3.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 }
@@ -14,17 +13,18 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.0.0-alpha-6'
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '4.0.0-alpha-6'
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '4.0.0-alpha-6'
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-api', version: '4.0.0-alpha-6'
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-remote-driver', version: '4.0.0-alpha-6'
+    compile 'org.seleniumhq.selenium:selenium-java:4.0.0-alpha-6'
+    compile 'org.seleniumhq.selenium:selenium-chrome-driver:4.0.0-alpha-6'
+    compile 'org.seleniumhq.selenium:selenium-support:4.0.0-alpha-6'
+    compile 'org.seleniumhq.selenium:selenium-api:4.0.0-alpha-6'
+    compile 'org.seleniumhq.selenium:selenium-remote-driver:4.0.0-alpha-6'
+
+    compile 'org.mongodb:mongodb-driver-sync:4.1.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
 }
 
 test {

@@ -28,12 +28,5 @@ public class FutSeleniumApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("EXECUTING : command line runner");
-        try {
-            futBot.test();
-        } catch (Exception exc) {
-            // ignore
-        } finally {
-//            futBot.shutdown();
-        }
     }
 }
