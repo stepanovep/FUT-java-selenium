@@ -10,11 +10,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut21.config.LoginSettings;
-import stepanovep.fut21.core.FutWebDriver;
+import stepanovep.fut21.core.driver.FutWebDriver;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
 
+/**
+ * Сервис для входа в FUT web-app
+ */
 @Service
 public class LoginService {
 
@@ -42,8 +45,11 @@ public class LoginService {
                     .click();
 
         } catch (TimeoutException exc) {
-            log.info("Login button disable. Waiting for FUT menu to load itself: ");
+            log.info("Login button disabled. Waiting for FUT menu to load itself.");
             // ignore
+
+            // TODO: use credentials if page redirects to ea.login.com
+
         } finally {
             WebElement coinsElement = new WebDriverWait(driver, Duration.ofSeconds(15))
                     .until(d -> d.findElement(By.cssSelector(COINS_ELEM_LOCATOR)));

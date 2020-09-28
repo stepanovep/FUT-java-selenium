@@ -1,6 +1,10 @@
-package stepanovep.fut21.core;
+package stepanovep.fut21.core.driver;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -16,7 +20,6 @@ import java.util.Random;
  * для удобного управления меню FUT Web-App
  */
 public class FutWebDriver extends ChromeDriver {
-
 
     private final Random rnd = new Random();
 

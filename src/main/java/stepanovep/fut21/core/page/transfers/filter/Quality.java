@@ -2,6 +2,9 @@ package stepanovep.fut21.core.page.transfers.filter;
 
 import stepanovep.fut21.utils.Enums;
 
+/**
+ * Тип качества карточки
+ */
 public enum Quality implements Enums.StringRepr {
     BRONZE("Bronze"),
     SILVER("Silver"),
