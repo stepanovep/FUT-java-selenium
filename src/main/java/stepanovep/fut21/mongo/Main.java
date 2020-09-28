@@ -8,6 +8,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
+import static com.mongodb.client.model.Filters.eq;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -21,21 +22,13 @@ public class Main {
                 .codecRegistry(pojoCodecRegistry)
                 .build());
 
-        MongoDatabase database = mongoClient.getDatabase("test");
-        MongoCollection<Person> collection = database.getCollection("people", Person.class);
-        Person ada = Person.builder()
-                .withName("Ada Byron")
-                .withAge(20)
-                .withAddress(Address.builder()
-                        .withStreet("St James Square")
-                        .withCity("London")
-                        .withZip("W1")
-                        .build())
-                .build();
+        MongoDatabase database = mongoClient.getDatabase("fut");
+        MongoCollection<AuctionTrade> collection = database.getCollection("auction", AuctionTrade.class);
+        AuctionTrade auctionTrade = AuctionTrade.of("AAA", 100500);
 
-        collection.insertOne(ada);
+        collection.insertOne(auctionTrade);
 
-        Person somebody = collection.find().first();
-        System.out.println(somebody);
+        AuctionTrade first = collection.find(eq("tradeId", "AAA")).first();
+        System.out.println(first);
     }
 }

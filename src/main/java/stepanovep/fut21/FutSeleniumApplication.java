@@ -7,11 +7,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
+import org.springframework.retry.annotation.EnableRetry;
 import stepanovep.fut21.bot.FutBot;
 import stepanovep.fut21.config.Configuration;
 
 @SpringBootApplication
 @Import(Configuration.class)
+@EnableRetry
 public class FutSeleniumApplication implements CommandLineRunner {
 
     @Autowired
@@ -28,5 +30,6 @@ public class FutSeleniumApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("EXECUTING : command line runner");
+        futBot.test();
     }
 }

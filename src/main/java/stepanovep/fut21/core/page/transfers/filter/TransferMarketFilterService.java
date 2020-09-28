@@ -5,7 +5,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import stepanovep.fut21.core.FutWebDriver;
+import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.utils.Enums;
 import stepanovep.fut21.utils.LocatorsUtils;
 

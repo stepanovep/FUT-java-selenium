@@ -1,21 +1,26 @@
-package stepanovep.fut21.core;
+package stepanovep.fut21.core.page.transfers;
 
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.FluentWait;
+import stepanovep.fut21.core.driver.FutWebDriver;
+import stepanovep.fut21.core.entity.FutItem;
 import stepanovep.fut21.core.locators.TransferMarketLocators;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * Результат поиска через Трансферный Рынок (ТР)
+ */
 public class TransferSearchResult {
 
-    private final List<WebElement> players;
+    private final List<FutItem> players;
 
-    private TransferSearchResult(List<WebElement> players) {
+    private TransferSearchResult(List<FutItem> players) {
         this.players = players;
     }
 
@@ -34,12 +39,16 @@ public class TransferSearchResult {
                     }
                 });
 
-        List<WebElement> elements = driver.findElements(TransferMarketLocators.SEARCH_RESULT_ITEMS);
-        return new TransferSearchResult(elements);
+        List<FutItem> items = driver.findElements(TransferMarketLocators.SEARCH_RESULT_ITEMS)
+                .stream()
+                .map(webElem -> new FutItem(webElem))
+                .collect(Collectors.toList());
+
+        return new TransferSearchResult(items);
     }
 
     @Nonnull
-    public List<WebElement> getPlayers() {
+    public List<FutItem> getPlayers() {
         return players == null ? Collections.emptyList() : players;
     }
 

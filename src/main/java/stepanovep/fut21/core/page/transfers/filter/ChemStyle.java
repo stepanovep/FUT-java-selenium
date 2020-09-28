@@ -2,6 +2,9 @@ package stepanovep.fut21.core.page.transfers.filter;
 
 import stepanovep.fut21.utils.Enums;
 
+/**
+ * Стиль сыгранности игрока
+ */
 public enum ChemStyle implements Enums.StringRepr {
     SHADOW("SHADOW"),
     HUNTER("HUNTER");

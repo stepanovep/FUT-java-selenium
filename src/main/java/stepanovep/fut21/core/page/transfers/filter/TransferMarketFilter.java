@@ -4,6 +4,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
+/**
+ * Контейнер с фильтрами для поиска карточек
+ */
 public class TransferMarketFilter {
 
     @Nullable
