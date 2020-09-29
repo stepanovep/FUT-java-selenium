@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import stepanovep.fut21.core.entity.FutActiveMenu;
 
 import java.time.Duration;
 import java.util.List;
@@ -22,6 +23,8 @@ import java.util.Random;
 public class FutWebDriver extends ChromeDriver {
 
     private final Random rnd = new Random();
+
+    public static FutActiveMenu activeMenu = FutActiveMenu.HOME;
 
     public FutWebDriver(ChromeOptions chromeOptions) {
         super(chromeOptions);
