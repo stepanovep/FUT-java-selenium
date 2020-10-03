@@ -49,6 +49,7 @@ public class Bidding {
             TransferSearchResult searchResult = transferMarket.search(filter);
 
             for (FutElement player: searchResult.getPlayers()) {
+                driver.sleep(1000, 3000);
                 player.focus();
                 FutElementExtendedData extendedData = extendedDataService.getFutElementExtendedData();
                 AuctionData auction = extendedData.getAuction();
@@ -59,7 +60,9 @@ public class Bidding {
                 if (needToBid(auction, targetPrice)) {
                     makeBid(extendedData, targetPrice);
                 }
-                driver.sleep(1000, 3000);
+
+                log.info("compare prices: {}", player.comparePrice());
+                driver.sleep(1000);
             }
         }
     }

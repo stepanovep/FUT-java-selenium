@@ -39,6 +39,27 @@ public class FutWebDriver extends ChromeDriver {
     }
 
     /**
+     * Получает список элементов по локатору с явным ожиданием
+     */
+    public List<WebElement> findElementsWithWait(By locator) {
+        return new FluentWait<WebDriver>(this)
+                .withTimeout(Duration.ofSeconds(5))
+                .ignoreAll(List.of(
+                        NoSuchElementException.class))
+                .until(driver -> {
+                    driver.findElement(locator);
+                    return driver.findElements(locator);
+                });
+    }
+
+    /**
+     * Проверить есть ли элемент на странице по заданному локатору
+     */
+    public boolean isElementPresent(By locator) {
+        return !this.findElements(locator).isEmpty();
+    }
+
+    /**
      * Находит и кликает элемент по заданному локатору
      *
      * @param locator локатор элемента для клика
