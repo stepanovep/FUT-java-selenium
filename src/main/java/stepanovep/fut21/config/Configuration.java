@@ -3,11 +3,14 @@ package stepanovep.fut21.config;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.context.annotation.Bean;
 import stepanovep.fut21.core.driver.FutWebDriver;
+import stepanovep.fut21.mongo.AuctionTrade;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -39,5 +42,11 @@ public class Configuration {
         return MongoClients.create(MongoClientSettings.builder()
                 .codecRegistry(pojoCodecRegistry)
                 .build());
+    }
+
+    @Bean
+    public MongoCollection<AuctionTrade> auctionTradeCollection() {
+        MongoDatabase database = mongoClient().getDatabase("fut");
+        return database.getCollection("auction", AuctionTrade.class);
     }
 }

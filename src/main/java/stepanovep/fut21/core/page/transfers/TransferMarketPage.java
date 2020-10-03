@@ -1,5 +1,7 @@
 package stepanovep.fut21.core.page.transfers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -15,25 +17,22 @@ import stepanovep.fut21.core.page.transfers.filter.TransferMarketFilterService;
 @Component
 public class TransferMarketPage {
 
+    private final static Logger log = LoggerFactory.getLogger(TransferMarketPage.class);
+
     @Autowired
     private FutWebDriver driver;
 
     @Autowired
     private TransferMarketFilterService filterService;
 
-    @Retryable(value = {RuntimeException.class}, maxAttempts = 10)
+//    @Retryable(value = {RuntimeException.class}, maxAttempts = 10)
     public TransferSearchResult search(TransferMarketFilter filter) {
-        retry();
         navigateToPage();
-        driver.clickElement(TransferMarketLocators.RESET_FILTER_BUTTON);
+        log.info("Searching: filter={}", filter);
+        filterService.resetAllFilters();
         filterService.applyFilter(filter);
         driver.clickElement(TransferMarketLocators.SEARCH_BUTTON);
         return TransferSearchResult.from(driver);
-    }
-
-    public void retry() {
-        System.out.println("------ Excpetion -----");
-        throw new RuntimeException("exception # ");
     }
 
     private void navigateToPage() {

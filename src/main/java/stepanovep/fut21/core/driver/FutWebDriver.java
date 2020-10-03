@@ -10,7 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import stepanovep.fut21.core.entity.FutActiveMenu;
+import stepanovep.fut21.core.page.FutActiveMenu;
 
 import java.time.Duration;
 import java.util.List;
@@ -24,7 +24,7 @@ public class FutWebDriver extends ChromeDriver {
 
     private final Random rnd = new Random();
 
-    public static FutActiveMenu activeMenu = FutActiveMenu.HOME;
+    public FutActiveMenu activeMenu = FutActiveMenu.HOME;
 
     public FutWebDriver(ChromeOptions chromeOptions) {
         super(chromeOptions);
@@ -44,6 +44,7 @@ public class FutWebDriver extends ChromeDriver {
      * @param locator локатор элемента для клика
      */
     public void clickElement(By locator) {
+        this.sleep(250, 350);
         new FluentWait<WebDriver>(this)
                 .withTimeout(Duration.ofSeconds(10))
                 .ignoreAll(List.of(
@@ -54,6 +55,7 @@ public class FutWebDriver extends ChromeDriver {
                     webElement.click();
                     return webElement;
                 });
+        this.sleep(100, 200);
     }
 
     /**
@@ -92,6 +94,5 @@ public class FutWebDriver extends ChromeDriver {
         int milliseconds = millisecondsFrom + rnd.nextInt(millisecondsTo-millisecondsFrom);
         sleep(milliseconds);
     }
-
 
 }

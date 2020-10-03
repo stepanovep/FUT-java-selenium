@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import stepanovep.fut21.core.driver.FutWebDriver;
+import stepanovep.fut21.core.locators.TransferMarketLocators;
 import stepanovep.fut21.utils.Enums;
 import stepanovep.fut21.utils.LocatorsUtils;
 
@@ -34,8 +35,13 @@ public class TransferMarketFilterService {
 
         filter.getBidMin().ifPresent(price -> setPriceFilter(MIN_BID_PRICE_FORM_INPUT, price));
         filter.getBidMax().ifPresent(price -> setPriceFilter(MAX_BID_PRICE_FORM_INPUT, price));
+        filter.getTargetPrice().ifPresent(targetPrice -> setPriceFilter(MAX_BID_PRICE_FORM_INPUT, targetPrice));
         filter.getBuyNowMin().ifPresent(price -> setPriceFilter(MIN_BIN_PRICE_FORM_INPUT, price));
         filter.getBuyNowMax().ifPresent(price -> setPriceFilter(MAX_BIN_PRICE_FORM_INPUT, price));
+    }
+
+    public void resetAllFilters() {
+        driver.clickElement(TransferMarketLocators.RESET_FILTER_BUTTON);
     }
 
     private void setNameFilter(String name) {
@@ -44,17 +50,18 @@ public class TransferMarketFilterService {
 
         nameInput.sendKeys(Keys.ENTER);
         driver.findElementWithWait(PLAYERS_DROPDOWN_GET_FIRST).click();
+        driver.sleep(300);
     }
 
     private void setDropDownFilter(By dropDownMenuLocator, Enums.StringRepr filter) {
         driver.clickElement(dropDownMenuLocator);
         driver.clickElement(LocatorsUtils.byText(filter.getCode()));
-        driver.sleep(250);
+        driver.sleep(400);
     }
 
     private void setPriceFilter(By priceInputLocator, Integer price) {
         WebElement priceInput = driver.findElement(priceInputLocator);
         driver.sendKeys(priceInput, String.valueOf(price));
-        driver.sleep(250);
+        driver.sleep(400);
     }
 }

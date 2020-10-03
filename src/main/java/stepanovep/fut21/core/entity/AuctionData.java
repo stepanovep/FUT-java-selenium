@@ -7,27 +7,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.annotation.Nonnull;
 
 /**
- * Расширенные данные о состоянии ставки
+ * Данные о состоянии ставки
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AuctionExtendedData {
+public class AuctionData {
 
     private final String tradeId;
-    private final String startingBid;
-    private final String currentBid;
-    private final String buyNowPrice;
-    private final String bidState;
-    private final String tradeState;
+    private final Integer startingBid;
+    private final Integer currentBid;
+    private final Integer buyNowPrice;
+    private final BidState bidState;
+    private final TradeState tradeState;
     private final Integer expires;
 
     @JsonCreator
-    private AuctionExtendedData(@Nonnull @JsonProperty("tradeId") String tradeId,
-                                @Nonnull @JsonProperty("startingBid") String startingBid,
-                                @Nonnull @JsonProperty("currentBid") String currentBid,
-                                @Nonnull @JsonProperty("buyNowPrice") String buyNowPrice,
-                                @Nonnull @JsonProperty("bidState") String bidState,
-                                @Nonnull @JsonProperty("tradeState") String tradeState,
-                                @Nonnull @JsonProperty("expires") Integer expires) {
+    private AuctionData(@Nonnull @JsonProperty("tradeId") String tradeId,
+                        @Nonnull @JsonProperty("startingBid") Integer startingBid,
+                        @Nonnull @JsonProperty("currentBid") Integer currentBid,
+                        @Nonnull @JsonProperty("buyNowPrice") Integer buyNowPrice,
+                        @Nonnull @JsonProperty("bidState") BidState bidState,
+                        @Nonnull @JsonProperty("tradeState") TradeState tradeState,
+                        @Nonnull @JsonProperty("expires") Integer expires) {
         this.tradeId = tradeId;
         this.startingBid = startingBid;
         this.currentBid = currentBid;
@@ -41,23 +41,23 @@ public class AuctionExtendedData {
         return tradeId;
     }
 
-    public String getStartingBid() {
+    public Integer getStartingBid() {
         return startingBid;
     }
 
-    public String getCurrentBid() {
+    public Integer getCurrentBid() {
         return currentBid;
     }
 
-    public String getBuyNowPrice() {
+    public Integer getBuyNowPrice() {
         return buyNowPrice;
     }
 
-    public String getBidState() {
+    public BidState getBidState() {
         return bidState;
     }
 
-    public String getTradeState() {
+    public TradeState getTradeState() {
         return tradeState;
     }
 
@@ -87,11 +87,11 @@ public class AuctionExtendedData {
      */
     public static final class Builder {
         private String tradeId;
-        private String startingBid;
-        private String currentBid;
-        private String buyNowPrice;
-        private String bidState;
-        private String tradeState;
+        private Integer startingBid;
+        private Integer currentBid;
+        private Integer buyNowPrice;
+        private BidState bidState;
+        private TradeState tradeState;
         private Integer expires;
 
         private Builder() {
@@ -102,27 +102,27 @@ public class AuctionExtendedData {
             return this;
         }
 
-        public Builder withStartingBid(String startingBid) {
+        public Builder withStartingBid(Integer startingBid) {
             this.startingBid = startingBid;
             return this;
         }
 
-        public Builder withCurrentBid(String currentBid) {
+        public Builder withCurrentBid(Integer currentBid) {
             this.currentBid = currentBid;
             return this;
         }
 
-        public Builder withBuyNowPrice(String buyNowPrice) {
+        public Builder withBuyNowPrice(Integer buyNowPrice) {
             this.buyNowPrice = buyNowPrice;
             return this;
         }
 
-        public Builder withBidState(String bidState) {
+        public Builder withBidState(BidState bidState) {
             this.bidState = bidState;
             return this;
         }
 
-        public Builder withTradeState(String tradeState) {
+        public Builder withTradeState(TradeState tradeState) {
             this.tradeState = tradeState;
             return this;
         }
@@ -132,8 +132,8 @@ public class AuctionExtendedData {
             return this;
         }
 
-        public AuctionExtendedData build() {
-            return new AuctionExtendedData(tradeId, startingBid, currentBid, buyNowPrice, bidState, tradeState, expires);
+        public AuctionData build() {
+            return new AuctionData(tradeId, startingBid, currentBid, buyNowPrice, bidState, tradeState, expires);
         }
     }
 }

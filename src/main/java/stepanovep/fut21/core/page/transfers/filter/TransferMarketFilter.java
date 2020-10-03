@@ -26,12 +26,16 @@ public class TransferMarketFilter {
     @Nullable
     private final Integer buyNowMax;
 
+    @Nullable
+    private final Integer targetPrice;
+
     private TransferMarketFilter(@Nullable String name,
                                  @Nullable Quality quality,
                                  @Nullable Position position,
                                  @Nullable ChemStyle chemStyle,
                                  @Nullable Integer bidMin, @Nullable Integer bidMax,
-                                 @Nullable Integer buyNowMin, @Nullable Integer buyNowMax) {
+                                 @Nullable Integer buyNowMin, @Nullable Integer buyNowMax,
+                                 @Nullable Integer targetPrice) {
         this.name = name;
         this.quality = quality;
         this.position = position;
@@ -40,6 +44,7 @@ public class TransferMarketFilter {
         this.bidMax = bidMax;
         this.buyNowMin = buyNowMin;
         this.buyNowMax = buyNowMax;
+        this.targetPrice = targetPrice;
     }
 
     @Nonnull
@@ -79,7 +84,12 @@ public class TransferMarketFilter {
 
     @Nonnull
     public Optional<Integer> getBuyNowMax() {
-        return Optional.of(buyNowMax);
+        return Optional.ofNullable(buyNowMax);
+    }
+
+    @Nonnull
+    public Optional<Integer> getTargetPrice() {
+        return Optional.ofNullable(targetPrice);
     }
 
     @Override
@@ -93,6 +103,7 @@ public class TransferMarketFilter {
                 ", bidMax=" + bidMax +
                 ", buyNowMin=" + buyNowMin +
                 ", buyNowMax=" + buyNowMax +
+                ", targetPrice=" + targetPrice +
                 '}';
     }
 
@@ -109,6 +120,7 @@ public class TransferMarketFilter {
         private Integer bidMax;
         private Integer buyNowMin;
         private Integer buyNowMax;
+        private Integer targetPrice;
 
         private Builder() {
         }
@@ -153,8 +165,16 @@ public class TransferMarketFilter {
             return this;
         }
 
+        public Builder withTargetPrice(Integer targetPrice) {
+            this.targetPrice = targetPrice;
+            return this;
+        }
+
         public TransferMarketFilter build() {
-            return new TransferMarketFilter(name, quality, position, chemStyle, bidMin, bidMax, buyNowMin, buyNowMax);
+            return new TransferMarketFilter(
+                    name, quality, position, chemStyle,
+                    bidMin, bidMax, buyNowMin, buyNowMax,
+                    targetPrice);
         }
     }
 }

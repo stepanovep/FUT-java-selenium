@@ -1,4 +1,4 @@
-package stepanovep.fut21.core.entity;
+package stepanovep.fut21.core.page;
 
 /**
  * Текущый активный элемент меню

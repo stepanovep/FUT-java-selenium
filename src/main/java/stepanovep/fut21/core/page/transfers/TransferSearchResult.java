@@ -4,7 +4,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import stepanovep.fut21.core.driver.FutWebDriver;
-import stepanovep.fut21.core.entity.FutItem;
+import stepanovep.fut21.core.entity.FutElement;
 import stepanovep.fut21.core.locators.TransferMarketLocators;
 
 import javax.annotation.Nonnull;
@@ -18,15 +18,15 @@ import java.util.stream.Collectors;
  */
 public class TransferSearchResult {
 
-    private final List<FutItem> players;
+    private final List<FutElement> players;
 
-    private TransferSearchResult(List<FutItem> players) {
+    private TransferSearchResult(List<FutElement> players) {
         this.players = players;
     }
 
     public static TransferSearchResult from(FutWebDriver driver) {
         new FluentWait<WebDriver>(driver)
-                .withTimeout(Duration.ofSeconds(2))
+                .withTimeout(Duration.ofSeconds(5))
                 .pollingEvery(Duration.ofMillis(100))
                 .ignoring(NoSuchElementException.class)
                 .until(webDriver -> {
@@ -39,16 +39,16 @@ public class TransferSearchResult {
                     }
                 });
 
-        List<FutItem> items = driver.findElements(TransferMarketLocators.SEARCH_RESULT_ITEMS)
+        List<FutElement> items = driver.findElements(TransferMarketLocators.SEARCH_RESULT_ITEMS)
                 .stream()
-                .map(webElem -> new FutItem(webElem))
+                .map(webElem -> new FutElement(driver, webElem))
                 .collect(Collectors.toList());
 
         return new TransferSearchResult(items);
     }
 
     @Nonnull
-    public List<FutItem> getPlayers() {
+    public List<FutElement> getPlayers() {
         return players == null ? Collections.emptyList() : players;
     }
 

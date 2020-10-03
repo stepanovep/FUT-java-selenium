@@ -9,4 +9,7 @@ public final class MainPageLocators {
 
     public static By GO_TO_TRANSFERS = By.cssSelector("button.icon-transfer");
     public static By SEARCH_IN_TRANSFER_MARKET_FORM = By.cssSelector(".ut-tile-transfer-market");
+
+    public static final String LOGIN_BUTTON_LOCATOR = "div.ut-login-content > .btn-standard";
+
 }

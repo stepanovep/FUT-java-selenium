@@ -1,18 +1,21 @@
 package stepanovep.fut21.core.entity;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import stepanovep.fut21.core.driver.FutWebDriver;
 
 import java.util.List;
 
 /**
  * FUT item element: player, consumable, coaches, etc.
- * TODO 30 september
  */
-public class FutItem {
+public class FutElement {
 
+    private final FutWebDriver driver;
     private final WebElement webElement;
 
-    public FutItem(WebElement webElement) {
+    public FutElement(FutWebDriver driver, WebElement webElement) {
+        this.driver = driver;
         this.webElement = webElement;
     }
 
@@ -40,12 +43,12 @@ public class FutItem {
 
     }
 
-    public List<FutItem> comparePrice() {
+    public List<FutElement> comparePrice() {
         return List.of();
     }
 
-    public void unwatch() {
-
+    public void toggleWatch() {
+        driver.clickElement(By.cssSelector("button.watch"));
     }
 
     public void discard() {

@@ -15,6 +15,9 @@ import stepanovep.fut21.core.driver.FutWebDriver;
 import javax.annotation.PostConstruct;
 import java.time.Duration;
 
+import static stepanovep.fut21.core.locators.LoginLocators.COINS_ELEM_LOCATOR;
+import static stepanovep.fut21.core.locators.MainPageLocators.LOGIN_BUTTON_LOCATOR;
+
 /**
  * Сервис для входа в FUT web-app
  */
@@ -24,9 +27,6 @@ public class LoginService {
     private static final Logger log = LoggerFactory.getLogger(LoginService.class);
 
     private static final String FUT_WEB_URL = "https://www.easports.com/fifa/ultimate-team/web-app/";
-
-    private static final String COINS_ELEM_LOCATOR = ".view-navbar-currency > .view-navbar-currency-coins";
-    private static final String LOGIN_BUTTON_LOCATOR = "div.ut-login-content > .btn-standard";
 
     @Autowired
     private FutWebDriver driver;
@@ -40,7 +40,7 @@ public class LoginService {
         driver.get(FUT_WEB_URL);
 
         try {
-            new WebDriverWait(driver, Duration.ofSeconds(10))
+            new WebDriverWait(driver, Duration.ofSeconds(15))
                     .until(ExpectedConditions.elementToBeClickable(By.cssSelector(LOGIN_BUTTON_LOCATOR)))
                     .click();
 
@@ -51,9 +51,10 @@ public class LoginService {
             // TODO: use credentials if page redirects to ea.login.com
 
         } finally {
-            WebElement coinsElement = new WebDriverWait(driver, Duration.ofSeconds(15))
+            WebElement coinsElement = new WebDriverWait(driver, Duration.ofSeconds(30))
                     .until(d -> d.findElement(By.cssSelector(COINS_ELEM_LOCATOR)));
             log.info("Logged in successfully: coins={}", coinsElement.getText());
+            driver.sleep(2000);
         }
     }
 }

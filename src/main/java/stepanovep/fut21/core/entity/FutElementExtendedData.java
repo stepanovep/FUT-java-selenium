@@ -6,20 +6,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * Расширенные данные элемента (карточки игрока)
+ * Расширенные данные элемента (карточки)
  *
  * Речь идет о данных, которых нет в DOM.
  * Например: resourceId, transferId, bidState, auction.expires (in seconds)
  * Получить их можно путем исполнения js скрипта
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PlayerTradeExtendedData {
+public class FutElementExtendedData {
 
     /**
      * Уникальный идентификатор карточки "resource_id" в базе FUT
@@ -27,16 +28,16 @@ public class PlayerTradeExtendedData {
     private final String playerId;
     private final String name;
     private final Integer rating;
-    private final AuctionExtendedData auction;
+    private final AuctionData auction;
 
     @JsonCreator
-    private PlayerTradeExtendedData(@Nonnull @JsonProperty("resourceId") String resourceId,
-                                    @Nonnull @JsonProperty("name") String name,
-                                    @Nonnull@JsonProperty("rating") Integer rating,
-                                    @Nonnull @JsonProperty("auction") AuctionExtendedData auction) {
+    private FutElementExtendedData(@Nonnull @JsonProperty("resourceId") String resourceId,
+                                   @Nonnull @JsonProperty("name") String name,
+                                   @Nullable @JsonProperty("rating") Integer rating,
+                                   @Nonnull @JsonProperty("auction") AuctionData auction) {
         this.playerId = requireNonNull(resourceId, "resourceId");
         this.name = requireNonNull(name, "name");
-        this.rating = requireNonNull(rating, "rating");
+        this.rating = rating;
         this.auction = requireNonNull(auction, "auction");
     }
 
@@ -50,13 +51,13 @@ public class PlayerTradeExtendedData {
         return name;
     }
 
-    @Nonnull
+    @Nullable
     public Integer getRating() {
         return rating;
     }
 
     @Nonnull
-    public AuctionExtendedData getAuction() {
+    public AuctionData getAuction() {
         return auction;
     }
 
@@ -74,7 +75,7 @@ public class PlayerTradeExtendedData {
         ObjectMapper objectMapper = new ObjectMapper();
 
         File file = new File("ext-data.json");
-        PlayerTradeExtendedData playerTradeExtendedData = objectMapper.readValue(file, PlayerTradeExtendedData.class);
-        System.out.println(playerTradeExtendedData);
+        FutElementExtendedData futElementExtendedData = objectMapper.readValue(file, FutElementExtendedData.class);
+        System.out.println(futElementExtendedData);
     }
 }
