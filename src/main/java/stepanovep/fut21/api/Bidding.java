@@ -49,8 +49,8 @@ public class Bidding {
             TransferSearchResult searchResult = transferMarket.search(filter);
 
             for (FutElement player: searchResult.getPlayers()) {
-                driver.sleep(1000, 3000);
                 player.focus();
+                driver.sleep(1500, 3000);
                 FutElementExtendedData extendedData = extendedDataService.getFutElementExtendedData();
                 AuctionData auction = extendedData.getAuction();
                 if (auction.getExpires() > MAX_TIME) {
@@ -60,11 +60,9 @@ public class Bidding {
                 if (needToBid(auction, targetPrice)) {
                     makeBid(extendedData, targetPrice);
                 }
-
-                log.info("compare prices: {}", player.comparePrice());
-                driver.sleep(1000);
             }
         }
+        driver.sleep(2000, 3000);
     }
 
     private boolean needToBid(AuctionData auctionData, Integer targetPrice) {

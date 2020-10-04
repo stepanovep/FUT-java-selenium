@@ -7,6 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -15,6 +16,7 @@ import stepanovep.fut21.core.page.FutActiveMenu;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Веб драйвер с расширенными возможностями
@@ -65,7 +67,7 @@ public class FutWebDriver extends ChromeDriver {
      * @param locator локатор элемента для клика
      */
     public void clickElement(By locator) {
-        this.sleep(250, 350);
+        this.sleep(150, 250);
         new FluentWait<WebDriver>(this)
                 .withTimeout(Duration.ofSeconds(10))
                 .ignoreAll(List.of(
@@ -73,10 +75,18 @@ public class FutWebDriver extends ChromeDriver {
                         ElementClickInterceptedException.class))
                 .until(driver ->  {
                     WebElement webElement = driver.findElement(locator);
-                    webElement.click();
+                    int elementSize = Math.min(webElement.getRect().width, webElement.getRect().height);
+                    new Actions(driver)
+                            .moveToElement(webElement)
+                            .moveByOffset(randomOffset(elementSize), randomOffset(elementSize))
+                            .click().perform();
                     return webElement;
                 });
         this.sleep(100, 200);
+    }
+
+    private static int randomOffset(int size) {
+        return ThreadLocalRandom.current().nextInt(-size/2, size/2);
     }
 
     /**

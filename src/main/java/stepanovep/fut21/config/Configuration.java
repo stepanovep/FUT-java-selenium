@@ -29,7 +29,7 @@ public class Configuration {
         return chromeOptions;
     }
 
-    @Bean(name = "driver", destroyMethod = "quit")
+    @Bean(name = "driver")
     public FutWebDriver futWebDriver(ChromeOptions chromeOptions) {
         return new FutWebDriver(chromeOptions);
     }

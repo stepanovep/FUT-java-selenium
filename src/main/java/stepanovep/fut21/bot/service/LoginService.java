@@ -46,7 +46,6 @@ public class LoginService {
 
         } catch (TimeoutException exc) {
             log.info("Login button disabled. Waiting for FUT menu to load itself.");
-            // ignore
 
             // TODO: use credentials if page redirects to ea.login.com
 

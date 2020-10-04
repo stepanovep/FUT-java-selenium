@@ -38,7 +38,7 @@ public class FutBot {
     public void start() {
         var filter1 = TransferMarketFilter.builder()
                 .withName("Shaqiri")
-                .withTargetPrice(1200)
+                .withTargetPrice(900)
                 .build();
 
         var filter2 = TransferMarketFilter.builder()
