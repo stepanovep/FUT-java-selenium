@@ -37,18 +37,18 @@ public class FutBot {
 
     public void start() {
         var filter1 = TransferMarketFilter.builder()
-                .withName("Shaqiri")
-                .withTargetPrice(900)
+                .withName("Kovacic")
+                .withTargetPrice(6700)
                 .build();
 
         var filter2 = TransferMarketFilter.builder()
-                .withName("Djene")
-                .withTargetPrice(3200)
+                .withName("Lindelof")
+                .withTargetPrice(4300)
                 .build();
 
         var filter3 = TransferMarketFilter.builder()
-                .withName("Witsel")
-                .withTargetPrice(7000)
+                .withName("Renato Sanchez")
+                .withTargetPrice(3100)
                 .build();
 
         bidding.massBid(List.of(

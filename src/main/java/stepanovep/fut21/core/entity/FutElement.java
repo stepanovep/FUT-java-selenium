@@ -31,8 +31,19 @@ public class FutElement {
         webElement.click();
     }
 
-    public void bid() {
-
+    public BidResult makeBid() {
+        if (!isSelected()) {
+            focus();
+        }
+        if (!driver.clickElement(FutElementLocators.BID_BUTTON)) {
+            return BidResult.BID_BUTTON_DISABLED;
+        }
+        driver.sleep(200, 300);
+        if (isBid()) {
+            return BidResult.SUCCESS;
+        } else {
+            return BidResult.BID_CHANGED_ERROR;
+        }
     }
 
     public void buyNow() {
@@ -47,7 +58,7 @@ public class FutElement {
 
     }
 
-    public void listToTransferMarket() {
+    public void listToTransferMarket(Integer startPrice, Integer buyNowPrice) {
 
     }
 
@@ -75,6 +86,18 @@ public class FutElement {
 
     public void discard() {
 
+    }
+
+    public boolean isSelected() {
+        return webElement.getAttribute("class").contains("selected");
+    }
+
+    public boolean isBid() {
+        return webElement.getAttribute("class").contains("highest-bid");
+    }
+
+    public boolean isOutbid() {
+        return webElement.getAttribute("class").contains("outbid");
     }
 
 }

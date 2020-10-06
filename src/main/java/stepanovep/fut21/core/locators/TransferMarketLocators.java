@@ -11,9 +11,6 @@ public final class TransferMarketLocators {
     public static By SEARCH_BUTTON = By.cssSelector(".button-container > .btn-standard.call-to-action");
     public static By RESET_FILTER_BUTTON = By.cssSelector(".button-container > .btn-standard");
 
-    public static By BID_BUTTON = By.cssSelector(".bidButton");
-    public static By BUY_NOW_BUTTON = By.cssSelector(".buyButton");
-
     public static By SEARCH_PLAYER_NAME_INPUT = By.cssSelector("input.ut-text-input-control");
     public static By PLAYERS_DROPDOWN_GET_FIRST = By.cssSelector("button > .btn-text");
 

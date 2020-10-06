@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.entity.AuctionData;
+import stepanovep.fut21.core.entity.BidResult;
 import stepanovep.fut21.core.entity.BidState;
 import stepanovep.fut21.core.entity.ExtendedDataService;
 import stepanovep.fut21.core.entity.FutElement;
 import stepanovep.fut21.core.entity.FutElementExtendedData;
-import stepanovep.fut21.core.locators.TransferMarketLocators;
 import stepanovep.fut21.core.page.transfers.TransferMarketPage;
 import stepanovep.fut21.core.page.transfers.TransferSearchResult;
 import stepanovep.fut21.core.page.transfers.TransferTargetsPage;
@@ -58,10 +58,13 @@ public class Bidding {
                     break;
                 }
                 if (needToBid(auction, targetPrice)) {
-                    makeBid(extendedData, targetPrice);
+                    makeBid(player, extendedData, targetPrice);
                 }
             }
+
+            transferTargets.checkBids();
         }
+
         driver.sleep(2000, 3000);
     }
 
@@ -75,18 +78,16 @@ public class Bidding {
         return true;
     }
 
-    private void makeBid(FutElementExtendedData extendedData, Integer targetPrice) {
-        driver.clickElement(TransferMarketLocators.BID_BUTTON);
-        driver.sleep(500, 1000);
-        FutElementExtendedData updatedData = extendedDataService.getFutElementExtendedData();
-        if (updatedData.getAuction().getBidState() == BidState.HIGHEST) {
+    private void makeBid(FutElement player, FutElementExtendedData extendedData, Integer targetPrice) {
+        BidResult bidResult = player.makeBid();
+        if (bidResult == BidResult.SUCCESS) {
             log.info("Player bidded: name={}, rating={}, bidPrice={}",
                     extendedData.getName(), extendedData.getRating(), FutPriceUtils.getNextBid(extendedData.getAuction()));
             auctions.insertOne(AuctionTrade.of(extendedData.getAuction().getTradeId(), targetPrice));
 
         } else {
-            log.warn("Couldn't bid player: name={}, rating={}, bidPrice={}",
-                    extendedData.getName(), extendedData.getRating(), FutPriceUtils.getNextBid(extendedData.getAuction()));
+            log.warn("Couldn't bid player: name={}, rating={}, bidPrice={}, bidResult={}",
+                    extendedData.getName(), extendedData.getRating(), FutPriceUtils.getNextBid(extendedData.getAuction()), bidResult);
         }
     }
 }

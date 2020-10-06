@@ -1,0 +1,16 @@
+package stepanovep.fut21.core.locators;
+
+import org.openqa.selenium.By;
+
+public final class TransferTargetsLocators {
+
+    private TransferTargetsLocators() {
+    }
+
+    public static By ACTIVE_BIDS_SECTION = By.cssSelector(".ut-content section:nth-child(1)");
+    public static By WATCHED_BIDS_SECTION = By.cssSelector(".ut-content section:nth-child(2)");
+    public static By WON_BIDS_SECTION = By.cssSelector(".ut-content section:nth-child(3)");
+    public static By EXPIRED_BIDS_SECTION = By.cssSelector(".ut-content section:nth-child(4)");
+    public static By SECTION_ELEMENTS = By.cssSelector(".itemList > li");
+
+}

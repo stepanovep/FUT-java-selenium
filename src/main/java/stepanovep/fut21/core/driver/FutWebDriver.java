@@ -7,13 +7,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import stepanovep.fut21.core.page.FutActiveMenu;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -44,14 +44,18 @@ public class FutWebDriver extends ChromeDriver {
      * Получает список элементов по локатору с явным ожиданием
      */
     public List<WebElement> findElementsWithWait(By locator) {
-        return new FluentWait<WebDriver>(this)
-                .withTimeout(Duration.ofSeconds(5))
-                .ignoreAll(List.of(
-                        NoSuchElementException.class))
-                .until(driver -> {
-                    driver.findElement(locator);
-                    return driver.findElements(locator);
-                });
+        try {
+            return new FluentWait<WebDriver>(this)
+                    .withTimeout(Duration.ofSeconds(5))
+                    .ignoreAll(List.of(
+                            NoSuchElementException.class))
+                    .until(driver -> {
+                        driver.findElement(locator);
+                        return driver.findElements(locator);
+                    });
+        } catch (Exception exc) {
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -66,27 +70,18 @@ public class FutWebDriver extends ChromeDriver {
      *
      * @param locator локатор элемента для клика
      */
-    public void clickElement(By locator) {
+    public boolean clickElement(By locator) {
         this.sleep(150, 250);
-        new FluentWait<WebDriver>(this)
+        return new FluentWait<WebDriver>(this)
                 .withTimeout(Duration.ofSeconds(10))
                 .ignoreAll(List.of(
                         NoSuchElementException.class,
                         ElementClickInterceptedException.class))
                 .until(driver ->  {
                     WebElement webElement = driver.findElement(locator);
-                    int elementSize = Math.min(webElement.getRect().width, webElement.getRect().height);
-                    new Actions(driver)
-                            .moveToElement(webElement)
-                            .moveByOffset(randomOffset(elementSize), randomOffset(elementSize))
-                            .click().perform();
-                    return webElement;
+                    webElement.click();
+                    return true;
                 });
-        this.sleep(100, 200);
-    }
-
-    private static int randomOffset(int size) {
-        return ThreadLocalRandom.current().nextInt(-size/2, size/2);
     }
 
     /**
