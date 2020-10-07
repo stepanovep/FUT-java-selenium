@@ -22,8 +22,12 @@ dependencies {
 
     compile 'org.mongodb:mongodb-driver-sync:4.1.0'
 
+    compile 'org.jsoup:jsoup:1.13.1'
+
     compile 'org.springframework.retry:spring-retry:1.2.5.RELEASE'
     compile 'org.springframework:spring-aspects:5.2.8.RELEASE'
+
+    compile 'net.gcardone.junidecode:junidecode:0.4.1'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

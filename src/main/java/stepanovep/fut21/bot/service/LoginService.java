@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import stepanovep.fut21.config.LoginSettings;
 import stepanovep.fut21.core.driver.FutWebDriver;
 
-import javax.annotation.PostConstruct;
 import java.time.Duration;
 
 import static stepanovep.fut21.core.locators.LoginLocators.COINS_ELEM_LOCATOR;
@@ -34,7 +33,6 @@ public class LoginService {
     @Autowired
     private LoginSettings credentialsProperties;
 
-    @PostConstruct
     public void login() {
         log.info("Login to FUT");
         driver.get(FUT_WEB_URL);

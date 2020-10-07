@@ -3,12 +3,9 @@ package stepanovep.fut21.core.entity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
@@ -71,11 +68,4 @@ public class FutElementExtendedData {
                 '}';
     }
 
-    public static void main(String[] args) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        File file = new File("ext-data.json");
-        FutElementExtendedData futElementExtendedData = objectMapper.readValue(file, FutElementExtendedData.class);
-        System.out.println(futElementExtendedData);
-    }
 }

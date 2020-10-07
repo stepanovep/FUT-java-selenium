@@ -11,6 +11,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.context.annotation.Bean;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.mongo.AuctionTrade;
+import stepanovep.fut21.mongo.Player;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -48,5 +49,11 @@ public class Configuration {
     public MongoCollection<AuctionTrade> auctionTradeCollection() {
         MongoDatabase database = mongoClient().getDatabase("fut");
         return database.getCollection("auction", AuctionTrade.class);
+    }
+
+    @Bean
+    public MongoCollection<Player> playersCollection() {
+        MongoDatabase database = mongoClient().getDatabase("fut");
+        return database.getCollection("players", Player.class);
     }
 }
