@@ -44,19 +44,20 @@ public class Bidding {
     @Autowired
     private PlayerService playerService;
 
-    private final static Integer MAX_TIME = 15 * 60;
+    private final static Integer MAX_TIME = 20 * 60;
 
     public void massBid() {
         log.info("Mass bidding");
         List<TransferMarketFilter> filters = getPlayersFilters();
-
         for (TransferMarketFilter filter: filters) {
+            transferTargets.checkBids();
+
             Integer targetPrice = filter.getTargetPrice().orElseThrow(() -> new IllegalStateException("targetPrice is mandatory here"));
             TransferSearchResult searchResult = transferMarket.search(filter);
 
             for (FutElement player: searchResult.getPlayers()) {
                 player.focus();
-                driver.sleep(1500, 2500);
+                driver.sleep(1000, 2000);
                 FutElementExtendedData extendedData = extendedDataService.getFutElementExtendedData();
                 AuctionData auction = extendedData.getAuction();
                 if (auction.getExpires() > MAX_TIME) {
@@ -68,14 +69,19 @@ public class Bidding {
                 }
             }
 
+            driver.sleep(2000);
+        }
+
+        for (int i = 0; i < 15; i++) {
             transferTargets.checkBids();
+            driver.sleep(10000, 15000);
         }
 
         driver.sleep(2000, 3000);
     }
 
     private List<TransferMarketFilter> getPlayersFilters() {
-        List<Player> players = playerService.getRandomPlayers(5, 5000);
+        List<Player> players = playerService.getRandomPlayers(25, 2500, 9000);
         return players.stream()
                 .map(player -> {
                     int price = player.getPcPrice();
@@ -101,10 +107,11 @@ public class Bidding {
 
     private void makeBid(FutElement player, FutElementExtendedData extendedData, Integer targetPrice) {
         BidResult bidResult = player.makeBid();
-        if (bidResult == BidResult.SUCCESS) {
-            log.info("Player bidded: name={}, rating={}, bidPrice={}",
-                    extendedData.getName(), extendedData.getRating(), FutPriceUtils.getNextBid(extendedData.getAuction()));
+        if (bidResult == BidResult.SUCCESS || bidResult == BidResult.OUTBID) {
             auctionService.insert(extendedData.getAuction().getTradeId(), targetPrice);
+            log.info("Player bid: name={}, rating={}, bidPrice={}, tradeId={}",
+                    extendedData.getName(), extendedData.getRating(), FutPriceUtils.getNextBid(extendedData.getAuction()),
+                    extendedData.getAuction().getTradeId());
 
         } else {
             log.warn("Couldn't bid player: name={}, rating={}, bidPrice={}, bidResult={}",

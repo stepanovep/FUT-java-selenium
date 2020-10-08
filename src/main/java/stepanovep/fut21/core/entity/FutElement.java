@@ -7,7 +7,6 @@ import stepanovep.fut21.core.locators.FutElementLocators;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_BUTTON;
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENTS;
@@ -32,18 +31,31 @@ public class FutElement {
     }
 
     public BidResult makeBid() {
-        if (!isSelected()) {
-            focus();
+        focus();
+        driver.sleep(500);
+        if (!driver.findElement(FutElementLocators.BID_BUTTON).isEnabled()) {
+            return BidResult.BID_BUTTON_INACTIVE;
         }
-        if (!driver.clickElement(FutElementLocators.BID_BUTTON)) {
-            return BidResult.BID_BUTTON_DISABLED;
+        driver.clickElement(FutElementLocators.BID_BUTTON);
+        for (int tries = 0; tries < 3; tries++) {
+            driver.sleep(400, 750);
+            if (isBid()) {
+                return BidResult.SUCCESS;
+            }
+            if (isOutbid()) {
+                return BidResult.OUTBID;
+            }
+            List<WebElement> errorPopups = driver.findElements(By.cssSelector("#NotificationLayer .negative"));
+            if (errorPopups.size() > 0) {
+                String errorText = errorPopups.get(0).findElement(By.cssSelector("p")).getText();
+                if (errorText.contains("Bid status changed")) {
+                    return BidResult.BID_CHANGED_ERROR;
+                }
+                return BidResult.TOO_MANY_ACTIONS_ERROR;
+            }
         }
-        driver.sleep(200, 300);
-        if (isBid()) {
-            return BidResult.SUCCESS;
-        } else {
-            return BidResult.BID_CHANGED_ERROR;
-        }
+
+        return BidResult.IGNORED;
     }
 
     public void buyNow() {

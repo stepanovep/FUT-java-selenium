@@ -16,7 +16,6 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Веб драйвер с расширенными возможностями
@@ -70,10 +69,10 @@ public class FutWebDriver extends ChromeDriver {
      *
      * @param locator локатор элемента для клика
      */
-    public boolean clickElement(By locator) {
+    public void clickElement(By locator) {
         this.sleep(150, 250);
-        return new FluentWait<WebDriver>(this)
-                .withTimeout(Duration.ofSeconds(10))
+        new FluentWait<WebDriver>(this)
+                .withTimeout(Duration.ofSeconds(5))
                 .ignoreAll(List.of(
                         NoSuchElementException.class,
                         ElementClickInterceptedException.class))

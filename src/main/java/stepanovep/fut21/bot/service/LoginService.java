@@ -51,7 +51,7 @@ public class LoginService {
             WebElement coinsElement = new WebDriverWait(driver, Duration.ofSeconds(30))
                     .until(d -> d.findElement(By.cssSelector(COINS_ELEM_LOCATOR)));
             log.info("Logged in successfully: coins={}", coinsElement.getText());
-            driver.sleep(2000);
+            driver.sleep(5000);
         }
     }
 }

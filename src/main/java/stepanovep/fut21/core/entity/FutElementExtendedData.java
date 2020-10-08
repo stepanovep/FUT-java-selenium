@@ -13,7 +13,7 @@ import static java.util.Objects.requireNonNull;
  * Расширенные данные элемента (карточки)
  *
  * Речь идет о данных, которых нет в DOM.
- * Например: resourceId, transferId, bidState, auction.expires (in seconds)
+ * Например: resourceId, tradeId, bidState, auction.expires (in seconds)
  * Получить их можно путем исполнения js скрипта
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

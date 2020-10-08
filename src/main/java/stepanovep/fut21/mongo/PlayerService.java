@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.gte;
 import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
@@ -30,9 +32,9 @@ public class PlayerService {
         return Optional.ofNullable(playersCollection.find(eq("futbinId", futbinId)).first());
     }
 
-    public List<Player> getRandomPlayers(int count, int maxPrice) {
+    public List<Player> getRandomPlayers(int count, int minPrice, int maxPrice) {
         List<Player> players = new ArrayList<>();
-        playersCollection.find(lte("pcPrice", maxPrice))
+        playersCollection.find(and(gte("pcPrice", minPrice), lte("pcPrice", maxPrice)))
                 .forEach(players::add);
 
         Collections.shuffle(players);
@@ -51,6 +53,6 @@ public class PlayerService {
             return;
         }
 
-        playersCollection.updateOne(eq("futbinId", futbinId), combine(set("price", price), set("priceUpdatedDt", LocalDateTime.now())));
+        playersCollection.updateOne(eq("futbinId", futbinId), combine(set("pcPrice", price), set("priceUpdatedDt", LocalDateTime.now())));
     }
 }

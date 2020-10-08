@@ -50,18 +50,18 @@ public class TransferMarketFilterService {
 
         nameInput.sendKeys(Keys.ENTER);
         driver.findElementWithWait(PLAYERS_DROPDOWN_GET_FIRST).click();
-        driver.sleep(300);
+        driver.sleep(500, 1000);
     }
 
     private void setDropDownFilter(By dropDownMenuLocator, Enums.StringRepr filter) {
         driver.clickElement(dropDownMenuLocator);
         driver.clickElement(LocatorsUtils.byText(filter.getCode()));
-        driver.sleep(400);
+        driver.sleep(500, 1000);
     }
 
     private void setPriceFilter(By priceInputLocator, Integer price) {
         WebElement priceInput = driver.findElement(priceInputLocator);
         driver.sendKeys(priceInput, String.valueOf(price));
-        driver.sleep(400);
+        driver.sleep(500, 1000);
     }
 }

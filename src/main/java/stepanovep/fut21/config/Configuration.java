@@ -48,7 +48,7 @@ public class Configuration {
     @Bean
     public MongoCollection<AuctionTrade> auctionTradeCollection() {
         MongoDatabase database = mongoClient().getDatabase("fut");
-        return database.getCollection("auction", AuctionTrade.class);
+        return database.getCollection("auctions", AuctionTrade.class);
     }
 
     @Bean

@@ -6,7 +6,9 @@ package stepanovep.fut21.core.entity;
 public enum BidResult {
 
     SUCCESS,
-    BID_BUTTON_DISABLED,
+    OUTBID,
+    IGNORED,
+    BID_BUTTON_INACTIVE,
     BID_CHANGED_ERROR,
     TOO_MANY_ACTIONS_ERROR,
 

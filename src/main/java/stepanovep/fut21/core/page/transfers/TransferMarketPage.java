@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.locators.MainPageLocators;
 import stepanovep.fut21.core.locators.TransferMarketLocators;
+import stepanovep.fut21.core.page.FutActiveMenu;
 import stepanovep.fut21.core.page.transfers.filter.TransferMarketFilter;
 import stepanovep.fut21.core.page.transfers.filter.TransferMarketFilterService;
 
@@ -34,8 +35,11 @@ public class TransferMarketPage {
     }
 
     private void navigateToPage() {
-        driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
-        driver.clickElement(MainPageLocators.SEARCH_IN_TRANSFER_MARKET_FORM);
+        if (driver.activeMenu != FutActiveMenu.TRANSFER_MARKET) {
+            driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
+            driver.clickElement(MainPageLocators.SEARCH_IN_TRANSFER_MARKET_FORM);
+        }
+        driver.activeMenu = FutActiveMenu.TRANSFER_MARKET;
         driver.sleep(300);
     }
 }
