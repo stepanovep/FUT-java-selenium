@@ -44,31 +44,15 @@ public class Bidding {
     @Autowired
     private PlayerService playerService;
 
-    private final static Integer MAX_TIME = 20 * 60;
+    private static final int MAX_COUNT_BIDS = 5;
+    private static final int MAX_TIME = 20 * 60;
 
     public void massBid() {
         log.info("Mass bidding");
         List<TransferMarketFilter> filters = getPlayersFilters();
         for (TransferMarketFilter filter: filters) {
             transferTargets.checkBids();
-
-            Integer targetPrice = filter.getTargetPrice().orElseThrow(() -> new IllegalStateException("targetPrice is mandatory here"));
-            TransferSearchResult searchResult = transferMarket.search(filter);
-
-            for (FutElement player: searchResult.getPlayers()) {
-                player.focus();
-                driver.sleep(1000, 2000);
-                FutElementExtendedData extendedData = extendedDataService.getFutElementExtendedData();
-                AuctionData auction = extendedData.getAuction();
-                if (auction.getExpires() > MAX_TIME) {
-                    log.info("Skipping this and next items due to the time left filter");
-                    break;
-                }
-                if (needToBid(auction, targetPrice)) {
-                    makeBid(player, extendedData, targetPrice);
-                }
-            }
-
+            massBidPlayer(filter);
             driver.sleep(2000);
         }
 
@@ -78,6 +62,26 @@ public class Bidding {
         }
 
         driver.sleep(2000, 3000);
+    }
+
+    private void massBidPlayer(TransferMarketFilter filter) {
+        int bidsCount = 0;
+        Integer targetPrice = filter.getTargetPrice().orElseThrow(() -> new IllegalStateException("targetPrice is mandatory here"));
+        TransferSearchResult searchResult = transferMarket.search(filter);
+        for (FutElement player: searchResult.getPlayers()) {
+            player.focus();
+            driver.sleep(1000, 2000);
+            FutElementExtendedData extendedData = extendedDataService.getFutElementExtendedData();
+            AuctionData auction = extendedData.getAuction();
+            if (auction.getExpires() > MAX_TIME || bidsCount >= MAX_COUNT_BIDS) {
+                log.info("Skipping this and next items due to the time left filter");
+                break;
+            }
+            if (needToBid(auction, targetPrice)) {
+                makeBid(player, extendedData, targetPrice);
+                bidsCount++;
+            }
+        }
     }
 
     private List<TransferMarketFilter> getPlayersFilters() {
