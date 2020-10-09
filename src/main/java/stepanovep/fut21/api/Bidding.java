@@ -91,9 +91,10 @@ public class Bidding {
                     int price = player.getPcPrice();
                     int tax = (int) (price * 0.05);
                     int targetProfit = Math.max(tax, 500);
+                    int targetPrice = FutPriceUtils.roundToValidFutPrice(price - tax - targetProfit);
                     return TransferMarketFilter.builder()
                             .withName(player.getName())
-                            .withTargetPrice(price - tax - targetProfit)
+                            .withTargetPrice(targetPrice)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -103,7 +104,7 @@ public class Bidding {
         if (auctionData.getBidState() == BidState.HIGHEST) {
             return false;
         }
-        if (FutPriceUtils.getNextBid(auctionData) > targetPrice) {
+        if (FutPriceUtils.getNextBid(auctionData.getStartingBid(),auctionData.getCurrentBid()) > targetPrice) {
             return false;
         }
         return true;
@@ -111,15 +112,17 @@ public class Bidding {
 
     private void makeBid(FutElement player, FutElementExtendedData extendedData, Integer targetPrice) {
         BidResult bidResult = player.makeBid();
+        AuctionData auction = extendedData.getAuction();
+        Integer nextBid = FutPriceUtils.getNextBid(auction.getStartingBid(), auction.getCurrentBid());
+
         if (bidResult == BidResult.SUCCESS || bidResult == BidResult.OUTBID) {
-            auctionService.insert(extendedData.getAuction().getTradeId(), targetPrice);
+            auctionService.insert(auction.getTradeId(), targetPrice);
             log.info("Player bid: name={}, rating={}, bidPrice={}, tradeId={}",
-                    extendedData.getName(), extendedData.getRating(), FutPriceUtils.getNextBid(extendedData.getAuction()),
-                    extendedData.getAuction().getTradeId());
+                    extendedData.getName(), extendedData.getRating(), nextBid, auction.getTradeId());
 
         } else {
             log.warn("Couldn't bid player: name={}, rating={}, bidPrice={}, bidResult={}",
-                    extendedData.getName(), extendedData.getRating(), FutPriceUtils.getNextBid(extendedData.getAuction()), bidResult);
+                    extendedData.getName(), extendedData.getRating(), nextBid, bidResult);
         }
         driver.sleep(1000, 2000);
     }

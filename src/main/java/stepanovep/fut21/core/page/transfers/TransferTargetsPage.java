@@ -10,6 +10,7 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import stepanovep.fut21.core.driver.FutWebDriver;
+import stepanovep.fut21.core.entity.AuctionData;
 import stepanovep.fut21.core.entity.BidResult;
 import stepanovep.fut21.core.entity.ExtendedDataService;
 import stepanovep.fut21.core.entity.FutElement;
@@ -54,17 +55,18 @@ public class TransferTargetsPage {
                 driver.sleep(1000, 2000);
                 player.focus();
                 FutElementExtendedData extendedData = extendedDataService.getFutElementExtendedData();
-                if (extendedData.getAuction().getExpires() > MAX_EXPIRATION_TIME_TO_CHECK) {
+                AuctionData auction = extendedData.getAuction();
+                if (auction.getExpires() > MAX_EXPIRATION_TIME_TO_CHECK) {
                     log.info("Expiration time is too far - check bids later");
                     break;
                 }
-                String tradeId = extendedData.getAuction().getTradeId();
+                String tradeId = auction.getTradeId();
 
                 log.info("Player is outbid: name={}, tradeId={}", extendedData.getName(), tradeId);
                 Optional<AuctionTrade> auctionTrade = auctionService.get(tradeId);
                 if (auctionTrade.isPresent()) {
                     Integer targetPrice = auctionTrade.get().getTargetPrice();
-                    Integer nextBid = FutPriceUtils.getNextBid(extendedData.getAuction());
+                    Integer nextBid = FutPriceUtils.getNextBid(auction.getStartingBid(), auction.getCurrentBid());
                     if (nextBid <= targetPrice) {
                         rebid(player);
 
