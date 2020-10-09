@@ -47,7 +47,7 @@ public class FutbinService {
                 }
             }
 
-            driver.sleep(2500);
+            driver.sleep(1500);
         }
 
         log.info("Futbin players prices updated");
@@ -68,7 +68,8 @@ public class FutbinService {
     }
 
     private void updatePlayerPrice(Element playerDiv, String futbinId) {
-        Integer pcPrice = Integer.valueOf(playerDiv.attr("data-price-pc"));
+        Element pricesBlock = playerDiv.selectFirst(".prices");
+        Integer pcPrice = Integer.valueOf(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
         playerService.updatePriceByFutbinId(futbinId, pcPrice);
     }
 

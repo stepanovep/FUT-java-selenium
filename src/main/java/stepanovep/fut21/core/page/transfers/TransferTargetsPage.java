@@ -45,6 +45,7 @@ public class TransferTargetsPage {
     @Retryable(include = {StaleElementReferenceException.class}, backoff = @Backoff(delay = 3000))
     public void checkBids() {
         navigateToPage();
+        driver.sleep(2000);
         List<FutElement> activeBids = getActiveBids();
         log.info("Checking bids: activeBids count = {}", activeBids.size());
 
@@ -63,11 +64,12 @@ public class TransferTargetsPage {
                 Optional<AuctionTrade> auctionTrade = auctionService.get(tradeId);
                 if (auctionTrade.isPresent()) {
                     Integer targetPrice = auctionTrade.get().getTargetPrice();
-                    if (FutPriceUtils.getNextBid(extendedData.getAuction()) <= targetPrice) {
+                    Integer nextBid = FutPriceUtils.getNextBid(extendedData.getAuction());
+                    if (nextBid <= targetPrice) {
                         rebid(player);
 
                     } else {
-                        log.info("Player bid is too high: name={}", extendedData.getName());
+                        log.info("Player bid is too high: name={}, nextBid={}, targetPrice={}", extendedData.getName(), nextBid, targetPrice);
                         unwatchItem(player);
                     }
                 }
@@ -75,7 +77,7 @@ public class TransferTargetsPage {
         }
 
         removeOneExpiredItem(10);
-        driver.sleep(2000, 4000);
+        driver.sleep(2000, 3000);
     }
 
     @Recover
@@ -108,6 +110,7 @@ public class TransferTargetsPage {
             removeOneExpiredItem();
             checkBids();
         }
+        log.info("Player has been rebid");
         driver.sleep(400, 600);
     }
 
