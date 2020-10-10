@@ -1,10 +1,14 @@
 package stepanovep.fut21.core.entity;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.FluentWait;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.locators.FutElementLocators;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +18,14 @@ import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_EL
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_NEXT_BUTTON;
 
 /**
- * FUT item element: player, consumable, coaches, etc.
+ * FUT player element
  */
-public class FutElement {
+public class FutPlayerElement {
 
     private final FutWebDriver driver;
     private final WebElement webElement;
 
-    public FutElement(FutWebDriver driver, WebElement webElement) {
+    public FutPlayerElement(FutWebDriver driver, WebElement webElement) {
         this.driver = driver;
         this.webElement = webElement;
     }
@@ -71,7 +75,22 @@ public class FutElement {
     }
 
     public void listToTransferMarket(Integer startPrice, Integer buyNowPrice) {
+        driver.clickElement(FutElementLocators.LIST_TO_TRANSFER_MARKET_OPEN_MENU);
+        new FluentWait<WebDriver>(driver)
+                .withTimeout(Duration.ofSeconds(5))
+                .ignoring(NoSuchElementException.class)
+                .until(webdriver -> {
+                    WebElement startPriceInput = driver.findElement(FutElementLocators.LIST_TO_TRANSFER_MARKET_START_PRICE);
+                    WebElement buyNowPriceInput = driver.findElement(FutElementLocators.LIST_TO_TRANSFER_MARKET_BIN_PRICE);
 
+                    driver.sendKeys(startPriceInput, String.valueOf(startPrice));
+                    driver.sendKeys(buyNowPriceInput, String.valueOf(buyNowPrice));
+
+                    return true;
+                });
+
+        driver.clickElement(FutElementLocators.LIST_TO_TRANSFER_MARKET_SUBMIT_BUTTON);
+        driver.sleep(1000, 2000);
     }
 
     public List<Integer> comparePrice() {
@@ -110,6 +129,15 @@ public class FutElement {
 
     public boolean isOutbid() {
         return webElement.getAttribute("class").contains("outbid");
+    }
+
+    public boolean isWon() {
+        return webElement.getAttribute("class").contains("won");
+    }
+
+    public int getBoughtPrice() {
+        WebElement boughtPriceElement = driver.findElement(FutElementLocators.BOUGHT_PRICE);
+        return Integer.parseInt(boughtPriceElement.getText().replace(",", ""));
     }
 
 }

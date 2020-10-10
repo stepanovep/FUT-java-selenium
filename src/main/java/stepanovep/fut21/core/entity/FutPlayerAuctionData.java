@@ -17,30 +17,30 @@ import static java.util.Objects.requireNonNull;
  * Получить их можно путем исполнения js скрипта
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FutElementExtendedData {
+public class FutPlayerAuctionData {
 
     /**
      * Уникальный идентификатор карточки "resource_id" в базе FUT
      */
-    private final String playerId;
+    private final String resourceId;
     private final String name;
     private final Integer rating;
     private final AuctionData auction;
 
     @JsonCreator
-    private FutElementExtendedData(@Nonnull @JsonProperty("resourceId") String resourceId,
-                                   @Nonnull @JsonProperty("name") String name,
-                                   @Nullable @JsonProperty("rating") Integer rating,
-                                   @Nonnull @JsonProperty("auction") AuctionData auction) {
-        this.playerId = requireNonNull(resourceId, "resourceId");
+    private FutPlayerAuctionData(@Nonnull @JsonProperty("resourceId") String resourceId,
+                                 @Nonnull @JsonProperty("name") String name,
+                                 @Nullable @JsonProperty("rating") Integer rating,
+                                 @Nonnull @JsonProperty("auction") AuctionData auction) {
+        this.resourceId = requireNonNull(resourceId, "resourceId");
         this.name = requireNonNull(name, "name");
         this.rating = rating;
         this.auction = requireNonNull(auction, "auction");
     }
 
     @Nonnull
-    public String getPlayerId() {
-        return playerId;
+    public String getResourceId() {
+        return resourceId;
     }
 
     @Nonnull
@@ -61,7 +61,7 @@ public class FutElementExtendedData {
     @Override
     public String toString() {
         return "PlayerTradeExtendedData{" +
-                "playerId='" + playerId + '\'' +
+                "playerId='" + resourceId + '\'' +
                 ", name='" + name + '\'' +
                 ", rating=" + rating +
                 ", auction=" + auction +

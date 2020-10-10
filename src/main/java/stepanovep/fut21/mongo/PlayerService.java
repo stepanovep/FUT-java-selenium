@@ -32,6 +32,10 @@ public class PlayerService {
         return Optional.ofNullable(playersCollection.find(eq("futbinId", futbinId)).first());
     }
 
+    public Optional<Player> getByResourceId(String resourceId) {
+        return Optional.ofNullable(playersCollection.find(eq("resourceId", resourceId)).first());
+    }
+
     public List<Player> getRandomPlayers(int count, int minPrice, int maxPrice) {
         List<Player> players = new ArrayList<>();
         playersCollection.find(and(gte("pcPrice", minPrice), lte("pcPrice", maxPrice)))

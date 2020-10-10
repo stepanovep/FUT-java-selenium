@@ -91,8 +91,8 @@ public class FutWebDriver extends ChromeDriver {
      */
     public void sendKeys(WebElement element, String keys) {
         sleep(400);
-        element.click();
         element.clear();
+        element.click();
         sleep(200);
         for (char c: keys.toCharArray()) {
             element.sendKeys(String.valueOf(c));

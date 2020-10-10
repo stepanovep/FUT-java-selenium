@@ -4,7 +4,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import stepanovep.fut21.core.driver.FutWebDriver;
-import stepanovep.fut21.core.entity.FutElement;
+import stepanovep.fut21.core.entity.FutPlayerElement;
 import stepanovep.fut21.core.locators.TransferMarketLocators;
 
 import javax.annotation.Nonnull;
@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
  */
 public class TransferSearchResult {
 
-    private final List<FutElement> players;
+    private final List<FutPlayerElement> players;
 
-    private TransferSearchResult(List<FutElement> players) {
+    private TransferSearchResult(List<FutPlayerElement> players) {
         this.players = players;
     }
 
@@ -39,16 +39,16 @@ public class TransferSearchResult {
                     }
                 });
 
-        List<FutElement> items = driver.findElements(TransferMarketLocators.SEARCH_RESULT_ITEMS)
+        List<FutPlayerElement> items = driver.findElements(TransferMarketLocators.SEARCH_RESULT_ITEMS)
                 .stream()
-                .map(webElem -> new FutElement(driver, webElem))
+                .map(webElem -> new FutPlayerElement(driver, webElem))
                 .collect(Collectors.toList());
 
         return new TransferSearchResult(items);
     }
 
     @Nonnull
-    public List<FutElement> getPlayers() {
+    public List<FutPlayerElement> getPlayers() {
         return players == null ? Collections.emptyList() : players;
     }
 

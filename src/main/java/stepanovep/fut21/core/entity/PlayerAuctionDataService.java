@@ -9,18 +9,18 @@ import stepanovep.fut21.utils.JsExecuteUtilsKt;
 import java.io.IOException;
 
 @Component
-public class ExtendedDataService {
+public class PlayerAuctionDataService {
 
     @Autowired
     private FutWebDriver driver;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public FutElementExtendedData getFutElementExtendedData() {
+    public FutPlayerAuctionData getFutPlayerAuctionData() {
         Object executeResult = driver.executeScript(JsExecuteUtilsKt.getFutExtendedDataScript());
         try {
             String json = objectMapper.writeValueAsString(executeResult);
-            return objectMapper.readValue(json, FutElementExtendedData.class);
+            return objectMapper.readValue(json, FutPlayerAuctionData.class);
 
         } catch (IOException exc) {
             throw new RuntimeException(exc);

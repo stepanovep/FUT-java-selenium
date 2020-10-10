@@ -12,14 +12,16 @@ import org.springframework.stereotype.Component;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.entity.AuctionData;
 import stepanovep.fut21.core.entity.BidResult;
-import stepanovep.fut21.core.entity.ExtendedDataService;
-import stepanovep.fut21.core.entity.FutElement;
-import stepanovep.fut21.core.entity.FutElementExtendedData;
+import stepanovep.fut21.core.entity.PlayerAuctionDataService;
+import stepanovep.fut21.core.entity.FutPlayerElement;
+import stepanovep.fut21.core.entity.FutPlayerAuctionData;
 import stepanovep.fut21.core.locators.MainPageLocators;
 import stepanovep.fut21.core.locators.TransferTargetsLocators;
 import stepanovep.fut21.core.page.FutActiveMenu;
 import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.AuctionTrade;
+import stepanovep.fut21.mongo.Player;
+import stepanovep.fut21.mongo.PlayerService;
 import stepanovep.fut21.utils.FutPriceUtils;
 
 import java.util.List;
@@ -39,22 +41,34 @@ public class TransferTargetsPage {
     @Autowired
     private FutWebDriver driver;
     @Autowired
-    private ExtendedDataService extendedDataService;
+    private PlayerAuctionDataService playerAuctionDataService;
     @Autowired
     private AuctionService auctionService;
+    @Autowired
+    private PlayerService playerService;
+
+    private void navigateToPage() {
+        if (driver.activeMenu != FutActiveMenu.TRANSFER_TARGETS) {
+            driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
+            driver.clickElement(MainPageLocators.GO_TO_TRANSFER_TARGETS);
+        }
+        driver.activeMenu = FutActiveMenu.TRANSFER_TARGETS;
+        driver.sleep(500);
+    }
 
     @Retryable(include = {StaleElementReferenceException.class}, backoff = @Backoff(delay = 3000))
     public void checkBids() {
         navigateToPage();
+        listWonItemsToTransferMarket();
         driver.sleep(2000);
-        List<FutElement> activeBids = getActiveBids();
+        List<FutPlayerElement> activeBids = getActiveBids();
         log.info("Checking bids: activeBids count = {}", activeBids.size());
 
-        for (FutElement player: activeBids) {
+        for (FutPlayerElement player: activeBids) {
             if (player.isOutbid()) {
                 driver.sleep(1000, 2000);
                 player.focus();
-                FutElementExtendedData extendedData = extendedDataService.getFutElementExtendedData();
+                FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
                 AuctionData auction = extendedData.getAuction();
                 if (auction.getExpires() > MAX_EXPIRATION_TIME_TO_CHECK) {
                     log.info("Expiration time is too far - check bids later");
@@ -78,7 +92,8 @@ public class TransferTargetsPage {
             }
         }
 
-        removeOneExpiredItem(10);
+        removeOneExpiredItem(20);
+        listWonItemsToTransferMarket();
         driver.sleep(2000, 3000);
     }
 
@@ -87,25 +102,42 @@ public class TransferTargetsPage {
         log.error("Checking bids failed consecutive times");
     }
 
-    private void navigateToPage() {
-        if (driver.activeMenu != FutActiveMenu.TRANSFER_TARGETS) {
-            driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
-            driver.clickElement(MainPageLocators.GO_TO_TRANSFER_TARGETS);
+    public void listWonItemsToTransferMarket() {
+        WebElement wonItemsSection = driver.findElementWithWait(TransferTargetsLocators.WON_BIDS_SECTION);
+        List<WebElement> wonItems = wonItemsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
+
+        while (!wonItems.isEmpty()) {
+            FutPlayerElement playerElement = new FutPlayerElement(driver, wonItems.get(0));
+            playerElement.focus();
+            FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
+            String resourceId = extendedData.getResourceId();
+            Optional<Player> playerOpt = playerService.getByResourceId(resourceId);
+            if (playerOpt.isPresent()) {
+                int boughtPrice = playerElement.getBoughtPrice();
+                int marketPrice = playerOpt.get().getPcPrice();
+                log.info("Player bid won! name={}, boughtPrice={}, marketPrice={}",
+                        extendedData.getName(), boughtPrice, marketPrice);
+                playerElement.listToTransferMarket(marketPrice - 200, marketPrice + 200);
+
+            } else {
+                playerElement.sendToTransferMarket();
+            }
+
+            wonItems = wonItemsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
+            driver.sleep(1000, 2000);
         }
-        driver.activeMenu = FutActiveMenu.TRANSFER_TARGETS;
-        driver.sleep(500);
     }
 
-    private List<FutElement> getActiveBids() {
+    private List<FutPlayerElement> getActiveBids() {
         WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.ACTIVE_BIDS_SECTION);
         List<WebElement> targets = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
 
         return targets.stream()
-                .map(target -> new FutElement(driver, target))
+                .map(target -> new FutPlayerElement(driver, target))
                 .collect(Collectors.toList());
     }
 
-    private void rebid(FutElement player) {
+    private void rebid(FutPlayerElement player) {
         driver.sleep(400, 600);
         BidResult bidResult = player.makeBid();
         if (bidResult != BidResult.SUCCESS) {
@@ -116,7 +148,7 @@ public class TransferTargetsPage {
         driver.sleep(400, 600);
     }
 
-    private void unwatchItem(FutElement player) {
+    private void unwatchItem(FutPlayerElement player) {
         WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.EXPIRED_BIDS_SECTION);
         List<WebElement> expiredItems = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         if (expiredItems.size() > 0) {
@@ -133,7 +165,7 @@ public class TransferTargetsPage {
         WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.EXPIRED_BIDS_SECTION);
         List<WebElement> expiredItems = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         if (expiredItems.size() > lowerBound) {
-            FutElement expiredItem = new FutElement(driver, expiredItems.get(0));
+            FutPlayerElement expiredItem = new FutPlayerElement(driver, expiredItems.get(0));
             expiredItem.focus();
             expiredItem.toggleWatch();
         }

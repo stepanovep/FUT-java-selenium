@@ -2,7 +2,7 @@ package stepanovep.fut21.bot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import stepanovep.fut21.api.Bidding;
+import stepanovep.fut21.api.MassBidder;
 import stepanovep.fut21.bot.service.LoginService;
 import stepanovep.fut21.core.driver.FutWebDriver;
 
@@ -16,7 +16,7 @@ public class FutBot {
     private LoginService loginService;
 
     @Autowired
-    private Bidding bidding;
+    private MassBidder massBidder;
 
     /**
      * Войти в FUT web-app
@@ -33,7 +33,7 @@ public class FutBot {
     }
 
     public void start() {
-        bidding.massBid();
+        massBidder.massBid();
     }
 
     public void shutdown() {

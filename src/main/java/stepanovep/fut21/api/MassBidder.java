@@ -8,9 +8,9 @@ import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.entity.AuctionData;
 import stepanovep.fut21.core.entity.BidResult;
 import stepanovep.fut21.core.entity.BidState;
-import stepanovep.fut21.core.entity.ExtendedDataService;
-import stepanovep.fut21.core.entity.FutElement;
-import stepanovep.fut21.core.entity.FutElementExtendedData;
+import stepanovep.fut21.core.entity.PlayerAuctionDataService;
+import stepanovep.fut21.core.entity.FutPlayerElement;
+import stepanovep.fut21.core.entity.FutPlayerAuctionData;
 import stepanovep.fut21.core.page.transfers.TransferMarketPage;
 import stepanovep.fut21.core.page.transfers.TransferSearchResult;
 import stepanovep.fut21.core.page.transfers.TransferTargetsPage;
@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
  * Биддер
  */
 @Component
-public class Bidding {
+public class MassBidder {
 
-    private static final Logger log = LoggerFactory.getLogger(Bidding.class);
+    private static final Logger log = LoggerFactory.getLogger(MassBidder.class);
 
     @Autowired
     private FutWebDriver driver;
@@ -38,13 +38,13 @@ public class Bidding {
     @Autowired
     private TransferTargetsPage transferTargets;
     @Autowired
-    private ExtendedDataService extendedDataService;
+    private PlayerAuctionDataService playerAuctionDataService;
     @Autowired
     private AuctionService auctionService;
     @Autowired
     private PlayerService playerService;
 
-    private static final int MAX_COUNT_BIDS = 5;
+    private static final int MAX_COUNT_BIDS = 7;
     private static final int MAX_TIME = 20 * 60;
 
     public void massBid() {
@@ -68,10 +68,10 @@ public class Bidding {
         int bidsCount = 0;
         Integer targetPrice = filter.getTargetPrice().orElseThrow(() -> new IllegalStateException("targetPrice is mandatory here"));
         TransferSearchResult searchResult = transferMarket.search(filter);
-        for (FutElement player: searchResult.getPlayers()) {
+        for (FutPlayerElement player: searchResult.getPlayers()) {
             player.focus();
             driver.sleep(1000, 2000);
-            FutElementExtendedData extendedData = extendedDataService.getFutElementExtendedData();
+            FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
             AuctionData auction = extendedData.getAuction();
             if (auction.getExpires() > MAX_TIME || bidsCount >= MAX_COUNT_BIDS) {
                 log.info("Skipping this and next items due to the time left filter");
@@ -110,7 +110,7 @@ public class Bidding {
         return true;
     }
 
-    private void makeBid(FutElement player, FutElementExtendedData extendedData, Integer targetPrice) {
+    private void makeBid(FutPlayerElement player, FutPlayerAuctionData extendedData, Integer targetPrice) {
         BidResult bidResult = player.makeBid();
         AuctionData auction = extendedData.getAuction();
         Integer nextBid = FutPriceUtils.getNextBid(auction.getStartingBid(), auction.getCurrentBid());
