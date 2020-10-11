@@ -6,6 +6,8 @@ import stepanovep.fut21.api.MassBidder;
 import stepanovep.fut21.bot.service.LoginService;
 import stepanovep.fut21.core.driver.FutWebDriver;
 
+import java.io.File;
+
 @Service
 public class FutBot {
 
@@ -38,5 +40,9 @@ public class FutBot {
 
     public void shutdown() {
         driver.quit();
+    }
+
+    public File screenshot() {
+        return driver.screenshot();
     }
 }

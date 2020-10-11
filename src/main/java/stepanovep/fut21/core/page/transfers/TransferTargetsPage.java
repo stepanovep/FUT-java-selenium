@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.entity.AuctionData;
 import stepanovep.fut21.core.entity.BidResult;
-import stepanovep.fut21.core.entity.PlayerAuctionDataService;
-import stepanovep.fut21.core.entity.FutPlayerElement;
 import stepanovep.fut21.core.entity.FutPlayerAuctionData;
+import stepanovep.fut21.core.entity.FutPlayerElement;
+import stepanovep.fut21.core.entity.PlayerAuctionDataService;
 import stepanovep.fut21.core.locators.MainPageLocators;
 import stepanovep.fut21.core.locators.TransferTargetsLocators;
 import stepanovep.fut21.core.page.FutActiveMenu;
@@ -22,6 +22,7 @@ import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.AuctionTrade;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.mongo.PlayerService;
+import stepanovep.fut21.telegrambot.TelegramBot;
 import stepanovep.fut21.utils.FutPriceUtils;
 
 import java.util.List;
@@ -46,6 +47,8 @@ public class TransferTargetsPage {
     private AuctionService auctionService;
     @Autowired
     private PlayerService playerService;
+    @Autowired
+    private TelegramBot telegramBot;
 
     private void navigateToPage() {
         if (driver.activeMenu != FutActiveMenu.TRANSFER_TARGETS) {
@@ -117,6 +120,7 @@ public class TransferTargetsPage {
                 int marketPrice = playerOpt.get().getPcPrice();
                 log.info("Player bid won! name={}, boughtPrice={}, marketPrice={}",
                         extendedData.getName(), boughtPrice, marketPrice);
+                telegramBot.notifyAboutBoughtPlayer(driver.screenshot()); //TODO делать скриншот элемента, а не всей страницы
                 playerElement.listToTransferMarket(marketPrice - 200, marketPrice + 200);
 
             } else {

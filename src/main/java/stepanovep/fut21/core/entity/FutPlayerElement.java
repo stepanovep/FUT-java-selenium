@@ -2,12 +2,14 @@ package stepanovep.fut21.core.entity;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.FluentWait;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.locators.FutElementLocators;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,10 @@ public class FutPlayerElement {
     public FutPlayerElement(FutWebDriver driver, WebElement webElement) {
         this.driver = driver;
         this.webElement = webElement;
+    }
+
+    public File screenshot() {
+        return webElement.getScreenshotAs(OutputType.FILE);
     }
 
     public void focus() {

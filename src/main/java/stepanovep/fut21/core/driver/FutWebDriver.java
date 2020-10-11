@@ -3,6 +3,7 @@ package stepanovep.fut21.core.driver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -12,6 +13,7 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import stepanovep.fut21.core.page.FutActiveMenu;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
@@ -118,6 +120,13 @@ public class FutWebDriver extends ChromeDriver {
     public void sleep(int millisecondsFrom, int millisecondsTo) {
         int milliseconds = millisecondsFrom + rnd.nextInt(millisecondsTo-millisecondsFrom);
         sleep(milliseconds);
+    }
+
+    /**
+     * Возвращает скриншот текущей страницы в виде файла
+     */
+    public File screenshot() {
+        return this.getScreenshotAs(OutputType.FILE);
     }
 
 }

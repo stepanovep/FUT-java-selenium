@@ -1,4 +1,4 @@
-package stepanovep.fut21.config;
+package stepanovep.fut21.appconfig;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -9,14 +9,21 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambots.ApiContextInitializer;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.mongo.AuctionTrade;
 import stepanovep.fut21.mongo.Player;
+import stepanovep.fut21.telegrambot.TelegramBot;
+import stepanovep.fut21.telegrambot.TelegramBotProperties;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-public class Configuration {
+@Configuration
+public class AppConfiguration {
 
     @Bean
     public ChromeOptions chromeOptions() {
@@ -55,5 +62,15 @@ public class Configuration {
     public MongoCollection<Player> playersCollection() {
         MongoDatabase database = mongoClient().getDatabase("fut");
         return database.getCollection("players", Player.class);
+    }
+
+    @Bean
+    public TelegramBot telegramBot(TelegramBotProperties properties) throws TelegramApiRequestException {
+        ApiContextInitializer.init();
+        TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+        TelegramBot telegramBot = new TelegramBot(properties);
+        telegramBotsApi.registerBot(telegramBot);
+
+        return telegramBot;
     }
 }

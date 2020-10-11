@@ -85,7 +85,7 @@ public class MassBidder {
     }
 
     private List<TransferMarketFilter> getPlayersFilters() {
-        List<Player> players = playerService.getRandomPlayers(25, 2500, 13000);
+        List<Player> players = playerService.getRandomPlayers(20, 2500, 13000);
         return players.stream()
                 .map(player -> {
                     int price = player.getPcPrice();

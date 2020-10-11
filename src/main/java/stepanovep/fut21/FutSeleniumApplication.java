@@ -8,12 +8,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
+import stepanovep.fut21.appconfig.AppConfiguration;
 import stepanovep.fut21.bot.FutBot;
-import stepanovep.fut21.config.Configuration;
 import stepanovep.fut21.futbin.FutbinService;
+import stepanovep.fut21.telegrambot.TelegramBot;
 
 @SpringBootApplication
-@Import(Configuration.class)
+@Import(AppConfiguration.class)
 @EnableRetry
 public class FutSeleniumApplication implements CommandLineRunner {
 
@@ -22,6 +23,9 @@ public class FutSeleniumApplication implements CommandLineRunner {
 
     @Autowired
     private FutbinService futbinService;
+
+    @Autowired
+    private TelegramBot telegramBot;
 
     private static final Logger log = LoggerFactory.getLogger(FutSeleniumApplication.class);
 
@@ -38,8 +42,10 @@ public class FutSeleniumApplication implements CommandLineRunner {
             futbinService.updatePrices();
             futBot.login();
             futBot.start();
+            telegramBot.notifyAboutSuccessFinish(futBot.screenshot());
 
         } catch (Exception exc) {
+            telegramBot.notifyAboutException(futBot.screenshot());
             log.error("Error: ", exc);
         }
     }

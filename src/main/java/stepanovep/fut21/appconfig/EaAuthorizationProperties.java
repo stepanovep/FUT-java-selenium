@@ -1,11 +1,11 @@
-package stepanovep.fut21.config;
+package stepanovep.fut21.appconfig;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "credentials")
-public class LoginSettings {
+public class EaAuthorizationProperties {
 
     private String login;
     private String password;

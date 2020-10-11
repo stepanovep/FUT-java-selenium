@@ -29,6 +29,10 @@ dependencies {
 
     compile 'net.gcardone.junidecode:junidecode:0.4.1'
 
+    compile 'org.telegram:telegrambots:4.7'
+
+    compile 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
