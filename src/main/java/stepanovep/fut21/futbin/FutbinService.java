@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class FutbinService {
@@ -31,6 +33,8 @@ public class FutbinService {
 
     private static final Duration MIN_TIME_BETWEEN_REQUESTS = Duration.ofMinutes(15);
 
+    private final ExecutorService futbinExecutor = Executors.newSingleThreadExecutor();
+
     private static final List<String> FUTBIN_TRADE_SQUADS_URLS = List.of(
             "https://www.futbin.com/21/squad/658385",
             "https://www.futbin.com/21/squad/655419",
@@ -38,28 +42,30 @@ public class FutbinService {
     );
 
     public void updatePrices() {
-        if (updatedRecently()) {
-            log.info("Players prices have been updated recently - no need to spam futbin");
-            return;
-        }
-
-        for (String futbinSquadUrl : FUTBIN_TRADE_SQUADS_URLS) {
-            log.info("Updating players prices from futbin squad: url={}", futbinSquadUrl);
-
-            Elements playersDivs = getPlayersDivs(futbinSquadUrl);
-            for (Element playerDiv : playersDivs) {
-                String futbinId = playerDiv.attr("data-player-id");
-                if (playerService.getByFutbinId(futbinId).isPresent()) {
-                    updatePlayerPrice(playerDiv, futbinId);
-                } else {
-                    insertNewPlayer(playerDiv, futbinId);
-                }
+        futbinExecutor.execute(() -> {
+            if (updatedRecently()) {
+                log.info("Players prices have been updated recently - no need to spam futbin");
+                return;
             }
 
-            driver.sleep(1500);
-        }
+            for (String futbinSquadUrl : FUTBIN_TRADE_SQUADS_URLS) {
+                log.info("Updating players prices from futbin squad: url={}", futbinSquadUrl);
 
-        log.info("Futbin players prices updated");
+                Elements playersDivs = getPlayersDivs(futbinSquadUrl);
+                for (Element playerDiv : playersDivs) {
+                    String futbinId = playerDiv.attr("data-player-id");
+                    if (playerService.getByFutbinId(futbinId).isPresent()) {
+                        updatePlayerPrice(playerDiv, futbinId);
+                    } else {
+                        insertNewPlayer(playerDiv, futbinId);
+                    }
+                }
+
+                driver.sleep(1500);
+            }
+
+            log.info("Futbin players prices updated");
+        });
     }
 
     private boolean updatedRecently() {
