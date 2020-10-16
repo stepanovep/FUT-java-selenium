@@ -11,12 +11,17 @@ import org.springframework.retry.annotation.EnableRetry;
 import stepanovep.fut21.appconfig.AppConfiguration;
 import stepanovep.fut21.bot.FutBot;
 import stepanovep.fut21.futbin.FutbinService;
-import stepanovep.fut21.telegrambot.TelegramBot;
+import stepanovep.fut21.telegrambot.TelegramBotNotifier;
+
+import java.util.concurrent.ExecutorService;
 
 @SpringBootApplication
 @Import(AppConfiguration.class)
 @EnableRetry
 public class FutSeleniumApplication implements CommandLineRunner {
+
+    @Autowired
+    private ExecutorService futbotExecutor;
 
     @Autowired
     private FutBot futBot;
@@ -25,7 +30,7 @@ public class FutSeleniumApplication implements CommandLineRunner {
     private FutbinService futbinService;
 
     @Autowired
-    private TelegramBot telegramBot;
+    private TelegramBotNotifier telegramBot;
 
     private static final Logger log = LoggerFactory.getLogger(FutSeleniumApplication.class);
 
@@ -38,15 +43,17 @@ public class FutSeleniumApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("EXECUTING : command line runner");
-        try {
-            futbinService.updatePrices();
-            futBot.login();
-            futBot.start();
-            telegramBot.notifyAboutSuccessFinish(futBot.screenshot());
-
-        } catch (Exception exc) {
-            telegramBot.notifyAboutException(futBot.screenshot());
-            log.error("Error: ", exc);
-        }
+//        futbotExecutor.execute(() -> {
+//            try {
+//                futbinService.updatePrices();
+//                futBot.login();
+//                futBot.massBid();
+//                telegramBot.notifyAboutSuccessFinish(futBot.screenshot());
+//
+//            } catch (Exception exc) {
+//                telegramBot.notifyAboutException(futBot.screenshot());
+//                log.error("Error: ", exc);
+//            }
+//        });
     }
 }

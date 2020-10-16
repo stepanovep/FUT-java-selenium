@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.mongo.PlayerService;
 
@@ -18,7 +17,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Service
 public class FutbinService {
@@ -26,14 +24,12 @@ public class FutbinService {
     private static final Logger log = LoggerFactory.getLogger(FutbinService.class);
 
     @Autowired
-    private FutWebDriver driver;
-
-    @Autowired
     private PlayerService playerService;
 
-    private static final Duration MIN_TIME_BETWEEN_REQUESTS = Duration.ofMinutes(15);
+    @Autowired
+    private ExecutorService futbinExecutor;
 
-    private final ExecutorService futbinExecutor = Executors.newSingleThreadExecutor();
+    private static final Duration MIN_TIME_BETWEEN_REQUESTS = Duration.ofMinutes(20);
 
     private static final List<String> FUTBIN_TRADE_SQUADS_URLS = List.of(
             "https://www.futbin.com/21/squad/658385",
@@ -54,6 +50,7 @@ public class FutbinService {
                 Elements playersDivs = getPlayersDivs(futbinSquadUrl);
                 for (Element playerDiv : playersDivs) {
                     String futbinId = playerDiv.attr("data-player-id");
+
                     if (playerService.getByFutbinId(futbinId).isPresent()) {
                         updatePlayerPrice(playerDiv, futbinId);
                     } else {
@@ -61,9 +58,8 @@ public class FutbinService {
                     }
                 }
 
-                driver.sleep(1500);
+                sleep();
             }
-
             log.info("Futbin players prices updated");
         });
     }
@@ -89,7 +85,7 @@ public class FutbinService {
 
     private void updatePlayerPrice(Element playerDiv, String futbinId) {
         Element pricesBlock = playerDiv.selectFirst(".prices");
-        Integer pcPrice = Integer.valueOf(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
+        int pcPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
         playerService.updatePriceByFutbinId(futbinId, pcPrice);
     }
 
@@ -97,7 +93,8 @@ public class FutbinService {
         Player player = new Player();
         String resourceId = playerDiv.attr("data-base-id");
         String name = Junidecode.unidecode(playerDiv.attr("data-player-commom"));
-        int pcPrice = Integer.parseInt(playerDiv.attr("data-price-pc"));
+        Element pricesBlock = playerDiv.selectFirst(".prices");
+        int pcPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
         int rating = Integer.parseInt(playerDiv.attr("data-rating"));
         int nationId = Integer.parseInt(playerDiv.attr("data-player-nation"));
         int leagueId = Integer.parseInt(playerDiv.attr("data-player-league"));
@@ -108,5 +105,13 @@ public class FutbinService {
         player.setPcPrice(pcPrice == 0 ? null : pcPrice);
         player.setRating(rating);
         playerService.insert(player);
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

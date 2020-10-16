@@ -8,16 +8,16 @@ import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.entity.AuctionData;
 import stepanovep.fut21.core.entity.BidResult;
 import stepanovep.fut21.core.entity.BidState;
-import stepanovep.fut21.core.entity.PlayerAuctionDataService;
-import stepanovep.fut21.core.entity.FutPlayerElement;
 import stepanovep.fut21.core.entity.FutPlayerAuctionData;
+import stepanovep.fut21.core.entity.FutPlayerElement;
+import stepanovep.fut21.core.entity.PlayerAuctionDataService;
 import stepanovep.fut21.core.page.transfers.TransferMarketPage;
 import stepanovep.fut21.core.page.transfers.TransferSearchResult;
-import stepanovep.fut21.core.page.transfers.TransferTargetsPage;
 import stepanovep.fut21.core.page.transfers.filter.TransferMarketFilter;
 import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.mongo.PlayerService;
+import stepanovep.fut21.telegrambot.TelegramBotNotifier;
 import stepanovep.fut21.utils.FutPriceUtils;
 
 import java.util.List;
@@ -36,32 +36,53 @@ public class MassBidder {
     @Autowired
     private TransferMarketPage transferMarket;
     @Autowired
-    private TransferTargetsPage transferTargets;
+    private BidChecker bidChecker;
     @Autowired
     private PlayerAuctionDataService playerAuctionDataService;
     @Autowired
     private AuctionService auctionService;
     @Autowired
     private PlayerService playerService;
+    @Autowired
+    private TelegramBotNotifier telegramBotNotifier;
 
     private static final int MAX_COUNT_BIDS = 7;
     private static final int MAX_TIME = 20 * 60;
 
     public void massBid() {
-        log.info("Mass bidding");
-        List<TransferMarketFilter> filters = getPlayersFilters();
-        for (TransferMarketFilter filter: filters) {
-            transferTargets.checkBids();
-            massBidPlayer(filter);
-            driver.sleep(2000);
+        driver.wakeup();
+        try {
+            log.info("Mass bidding");
+            List<TransferMarketFilter> filters = getPlayersFilters();
+            for (TransferMarketFilter filter : filters) {
+                if (driver.isInterrupted()) {
+                    System.out.println("Thread interrupted - aborting mass bidding");
+                    return;
+                }
+                bidChecker.checkBids();
+                massBidPlayer(filter);
+                driver.sleep(2000);
+            }
+
+            for (int i = 0; i < 15; i++) {
+                if (driver.isInterrupted()) {
+                    System.out.println("Thread interrupted - aborting mass bidding");
+                    return;
+                }
+                bidChecker.checkBids();
+                driver.sleep(10000, 15000);
+            }
+
+            driver.sleep(2000, 3000);
+
+        } catch (Exception exc) {
+            log.error("Mass bid failed: ", exc);
+            telegramBotNotifier.notifyAboutException(driver.screenshot());
+            return;
         }
 
-        for (int i = 0; i < 15; i++) {
-            transferTargets.checkBids();
-            driver.sleep(10000, 15000);
-        }
-
-        driver.sleep(2000, 3000);
+        log.info("Mass bidding successfully finished");
+        telegramBotNotifier.sendMessage("Mass bidding successfully finished");
     }
 
     private void massBidPlayer(TransferMarketFilter filter) {

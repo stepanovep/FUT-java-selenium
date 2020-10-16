@@ -1,0 +1,39 @@
+package stepanovep.fut21.telegrambot;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TelegramBotCommandHandler {
+
+    @Autowired
+    private TelegramFutBotService telegramFutBotService;
+
+    public void handleCommand(String command) { //todo заменить на enum TelegramBotCommand
+        switch (command) {
+            case "/stop":
+                telegramFutBotService.stop();
+                break;
+
+            case "/login":
+                telegramFutBotService.login();
+                break;
+
+            case "/relistAll":
+                telegramFutBotService.relistAll();
+                break;
+
+            case "/screenshot":
+                telegramFutBotService.screenshot();
+                break;
+
+            case "/massbid":
+                telegramFutBotService.massBid();
+                break;
+
+            case "/checkbids":
+                telegramFutBotService.checkBids();
+                break;
+        }
+    }
+}

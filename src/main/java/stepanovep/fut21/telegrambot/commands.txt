@@ -1,0 +1,6 @@
+login - login to EA web app
+stop - stop current running task
+relistall - relist all items in transfer market
+massbid - start mass bidding players
+checkbids - check bids
+screenshot - send a screenshot of current state

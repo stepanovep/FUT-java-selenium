@@ -17,7 +17,11 @@ import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.mongo.AuctionTrade;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.telegrambot.TelegramBot;
+import stepanovep.fut21.telegrambot.TelegramBotCommandHandler;
 import stepanovep.fut21.telegrambot.TelegramBotProperties;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -65,12 +69,23 @@ public class AppConfiguration {
     }
 
     @Bean
-    public TelegramBot telegramBot(TelegramBotProperties properties) throws TelegramApiRequestException {
+    public TelegramBot telegramBot(TelegramBotProperties properties,
+                                   TelegramBotCommandHandler commandHandler) throws TelegramApiRequestException {
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-        TelegramBot telegramBot = new TelegramBot(properties);
+        TelegramBot telegramBot = new TelegramBot(properties, commandHandler);
         telegramBotsApi.registerBot(telegramBot);
 
         return telegramBot;
+    }
+
+    @Bean
+    public ExecutorService futbotExecutor() {
+        return Executors.newSingleThreadExecutor();
+    }
+
+    @Bean
+    public ExecutorService futbinExecutor() {
+        return Executors.newSingleThreadExecutor();
     }
 }

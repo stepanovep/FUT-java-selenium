@@ -29,6 +29,8 @@ public class FutWebDriver extends ChromeDriver {
 
     public FutActiveMenu activeMenu = FutActiveMenu.HOME;
 
+    private boolean interrupted = false;
+
     public FutWebDriver(ChromeOptions chromeOptions) {
         super(chromeOptions);
     }
@@ -103,6 +105,14 @@ public class FutWebDriver extends ChromeDriver {
         sleep(400);
     }
 
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    public void wakeup() {
+        this.interrupted = false;
+    }
+
     /**
      * Ставит поток на паузу для имитации естественной пользователькой задержки
      */
@@ -110,7 +120,8 @@ public class FutWebDriver extends ChromeDriver {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException exc) {
-            // ignore
+            System.out.println("Interrupted");
+            interrupted = true;
         }
     }
 
