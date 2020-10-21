@@ -6,6 +6,7 @@ import stepanovep.fut21.api.BidChecker;
 import stepanovep.fut21.api.MassBidder;
 import stepanovep.fut21.bot.service.LoginService;
 import stepanovep.fut21.core.driver.FutWebDriver;
+import stepanovep.fut21.core.page.FutActiveMenu;
 import stepanovep.fut21.futbin.FutbinService;
 
 import java.io.File;
@@ -57,10 +58,12 @@ public class FutBot {
     }
 
     public void massBid() {
+        driver.activeMenu = FutActiveMenu.HOME;
         currentTask = futbotExecutor.submit(() -> massBidder.massBid());
     }
 
     public void checkBids() {
+        driver.activeMenu = FutActiveMenu.HOME;
         currentTask = futbotExecutor.submit(() -> bidChecker.checkBids(15));
     }
 
