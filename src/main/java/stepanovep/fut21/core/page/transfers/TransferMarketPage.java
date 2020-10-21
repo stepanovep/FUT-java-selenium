@@ -37,7 +37,7 @@ public class TransferMarketPage {
     private void navigateToPage() {
         if (driver.activeMenu != FutActiveMenu.TRANSFER_MARKET) {
             driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
-            driver.clickElement(MainPageLocators.SEARCH_IN_TRANSFER_MARKET_FORM);
+            driver.clickElement(MainPageLocators.GO_TO_TRANSFER_MARKET);
         }
         driver.activeMenu = FutActiveMenu.TRANSFER_MARKET;
         driver.sleep(300);

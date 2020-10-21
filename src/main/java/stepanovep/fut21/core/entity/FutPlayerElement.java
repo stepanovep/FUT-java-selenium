@@ -37,7 +37,7 @@ public class FutPlayerElement {
     }
 
     public void focus() {
-        webElement.click();
+        driver.clickElement(webElement);
     }
 
     public BidResult makeBid() {

@@ -5,5 +5,6 @@ public final class LoginLocators {
     private LoginLocators() {
     }
 
-    public static final String COINS_ELEM_LOCATOR = ".view-navbar-currency > .view-navbar-currency-coins";
+    public static final String LOGIN_BUTTON_LOCATOR = "div.ut-login-content > .btn-standard";
+
 }

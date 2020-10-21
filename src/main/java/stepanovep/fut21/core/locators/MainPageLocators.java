@@ -9,8 +9,11 @@ public final class MainPageLocators {
 
     public static By GO_TO_TRANSFERS = By.cssSelector("button.icon-transfer");
     public static By GO_TO_TRANSFER_TARGETS = By.cssSelector(".ut-tile-transfer-targets");
-    public static By SEARCH_IN_TRANSFER_MARKET_FORM = By.cssSelector(".ut-tile-transfer-market");
+    public static By GO_TO_TRANSFER_MARKET = By.cssSelector(".ut-tile-transfer-market");
+    public static By GO_TO_TRANSFER_LIST = By.cssSelector(".ut-tile-transfer-list");
 
-    public static final String LOGIN_BUTTON_LOCATOR = "div.ut-login-content > .btn-standard";
+    public static final By COINS_ELEM_LOCATOR = By.cssSelector(".view-navbar-currency > .view-navbar-currency-coins");
+
+    public static final By DIALOG_SUBMIT_BUTTON = By.cssSelector(".dialog-body button");
 
 }

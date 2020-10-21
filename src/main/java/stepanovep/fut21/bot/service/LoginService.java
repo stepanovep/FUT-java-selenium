@@ -14,8 +14,9 @@ import stepanovep.fut21.core.driver.FutWebDriver;
 
 import java.time.Duration;
 
-import static stepanovep.fut21.core.locators.LoginLocators.COINS_ELEM_LOCATOR;
-import static stepanovep.fut21.core.locators.MainPageLocators.LOGIN_BUTTON_LOCATOR;
+import static stepanovep.fut21.core.locators.LoginLocators.LOGIN_BUTTON_LOCATOR;
+import static stepanovep.fut21.core.locators.MainPageLocators.COINS_ELEM_LOCATOR;
+
 
 /**
  * Сервис для входа в FUT web-app
@@ -49,7 +50,7 @@ public class LoginService {
 
         } finally {
             WebElement coinsElement = new WebDriverWait(driver, Duration.ofSeconds(30))
-                    .until(d -> d.findElement(By.cssSelector(COINS_ELEM_LOCATOR)));
+                    .until(d -> d.findElement(COINS_ELEM_LOCATOR));
             log.info("Logged in successfully: coins={}", coinsElement.getText());
             driver.sleep(5000);
         }

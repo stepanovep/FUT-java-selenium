@@ -18,6 +18,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Веб драйвер с расширенными возможностями
@@ -85,6 +87,44 @@ public class FutWebDriver extends ChromeDriver {
                     webElement.click();
                     return true;
                 });
+    }
+
+    public void clickElement(WebElement webElement) {
+        this.sleep(150, 250);
+        new FluentWait<WebDriver>(this)
+                .withTimeout(Duration.ofSeconds(5))
+                .ignoreAll(List.of(
+                        NoSuchElementException.class,
+                        ElementClickInterceptedException.class))
+                .until(driver ->  {
+                    webElement.click();
+                    return true;
+                });
+    }
+
+    /**
+     * Нажимает кнопку "ОК" в окошке диалога
+     */
+    public void submitDialogMessage() {
+        this.sleep(50, 100);
+        List<WebElement> binaryDialogs = this.findElements(By.cssSelector(".Dialog.ui-dialog-type-message"));
+        List<WebElement> unaryDialogs = this.findElements(By.cssSelector(".Dialog.ui-dialog-type-alert"));
+        List<WebElement> dialogs = Stream.concat(binaryDialogs.stream(), unaryDialogs.stream()).collect(Collectors.toList());
+        if (dialogs.isEmpty()) {
+            return;
+        }
+        // ожидается максимум один диалог, используются List'ы, чтобы не было ElementNotFoundException
+        WebElement dialog = dialogs.get(0);
+        List<WebElement> dialogButtons = dialog.findElements(By.cssSelector("button"));
+        for (WebElement button: dialogButtons) {
+            String buttonText = button.getText().toLowerCase();
+            if (buttonText.equals("ok") || buttonText.equals("yes")) {
+                button.click();
+                return;
+            }
+        }
+
+        throw new IllegalStateException("Submit button hasn't been clicked");
     }
 
     /**

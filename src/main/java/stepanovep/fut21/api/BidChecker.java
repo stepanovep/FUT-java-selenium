@@ -63,6 +63,10 @@ public class BidChecker {
 
     @Retryable(include = {StaleElementReferenceException.class}, backoff = @Backoff(delay = 3000))
     public void checkBids() {
+        if (driver.isInterrupted()) {
+            System.out.println("Thread is interrupted - aborting bid checker");
+            return;
+        }
         transferTargetsPage.navigateToPage();
         listWonItemsToTransferMarket();
         driver.sleep(2000);
@@ -70,10 +74,6 @@ public class BidChecker {
         log.info("Checking bids: activeBids count = {}", activeBids.size());
 
         for (FutPlayerElement player: activeBids) {
-            if (driver.isInterrupted()) {
-                System.out.println("Thread is interrupted - aborting bid checker");
-                return;
-            }
             if (player.isOutbid()) {
                 driver.sleep(1000, 2000);
                 player.focus();

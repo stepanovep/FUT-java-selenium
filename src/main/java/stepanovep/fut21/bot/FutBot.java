@@ -7,6 +7,7 @@ import stepanovep.fut21.api.MassBidder;
 import stepanovep.fut21.bot.service.LoginService;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.page.FutActiveMenu;
+import stepanovep.fut21.core.page.transfers.TransferListPage;
 import stepanovep.fut21.futbin.FutbinService;
 
 import java.io.File;
@@ -30,6 +31,9 @@ public class FutBot {
 
     @Autowired
     private BidChecker bidChecker;
+
+    @Autowired
+    private TransferListPage transferListPage;
 
     @Autowired
     private FutbinService futbinService;
@@ -68,7 +72,8 @@ public class FutBot {
     }
 
     public void relistAll() {
-        // todo relistAll
+        driver.activeMenu = FutActiveMenu.HOME;
+        currentTask = futbotExecutor.submit(() -> transferListPage.relistAll());
     }
 
     public void shutdown() {

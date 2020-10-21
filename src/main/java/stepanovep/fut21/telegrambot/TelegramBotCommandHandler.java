@@ -19,7 +19,7 @@ public class TelegramBotCommandHandler {
                 telegramFutBotService.login();
                 break;
 
-            case "/relistAll":
+            case "/relistall":
                 telegramFutBotService.relistAll();
                 break;
 

@@ -65,7 +65,11 @@ public class FutbinService {
     }
 
     private boolean updatedRecently() {
-        Player player = playerService.getRandomPlayers(1, 200, 100_000).get(0);
+        List<Player> players = playerService.getRandomPlayers(1, 200, 100_000);
+        if (players.isEmpty()) {
+            return false;
+        }
+        Player player = players.get(0);
         return player.getPriceUpdatedDt().plus(MIN_TIME_BETWEEN_REQUESTS).compareTo(LocalDateTime.now()) > 0;
     }
 
