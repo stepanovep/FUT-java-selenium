@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import static java.util.Objects.requireNonNull;
 
-public class AuctionTrade {
+public class ActiveAuction {
     /**
      * Уникальный идентификатор объекта, находящийся на ТР
      */
@@ -18,16 +18,16 @@ public class AuctionTrade {
      * Пустой публичный контсруктор.
      * Необходим для кодека mongoDb
      */
-    public AuctionTrade() {
+    public ActiveAuction() {
     }
 
-    private AuctionTrade(@Nonnull String tradeId, @Nonnull Integer targetPrice) {
+    private ActiveAuction(@Nonnull String tradeId, @Nonnull Integer targetPrice) {
         this.tradeId = requireNonNull(tradeId, "tradeId");
         this.targetPrice = requireNonNull(targetPrice, "targetPrice");
     }
 
-    public static AuctionTrade of(@Nonnull String tradeId, @Nonnull Integer targetPrice) {
-        return new AuctionTrade(tradeId, targetPrice);
+    public static ActiveAuction of(@Nonnull String tradeId, @Nonnull Integer targetPrice) {
+        return new ActiveAuction(tradeId, targetPrice);
     }
 
     public String getTradeId() {

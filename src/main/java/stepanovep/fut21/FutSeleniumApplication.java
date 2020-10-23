@@ -11,6 +11,8 @@ import org.springframework.retry.annotation.EnableRetry;
 import stepanovep.fut21.appconfig.AppConfiguration;
 import stepanovep.fut21.bot.FutBot;
 import stepanovep.fut21.futbin.FutbinService;
+import stepanovep.fut21.mongo.AuctionService;
+import stepanovep.fut21.mongo.WonAuction;
 import stepanovep.fut21.telegrambot.TelegramBotNotifier;
 
 import java.util.concurrent.ExecutorService;
@@ -32,6 +34,9 @@ public class FutSeleniumApplication implements CommandLineRunner {
     @Autowired
     private TelegramBotNotifier telegramBot;
 
+    @Autowired
+    private AuctionService auctionService;
+
     private static final Logger log = LoggerFactory.getLogger(FutSeleniumApplication.class);
 
     public static void main(String[] args) {
@@ -43,6 +48,8 @@ public class FutSeleniumApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("EXECUTING : command line runner");
+//        auctionService.insertWonAuction(WonAuction.builder().withPlayerName("Mane").withTradeId("1").withBoughtPrice(100500).build());
+//        auctionService.insertWonAuction(WonAuction.builder().withPlayerName("Salah").withTradeId("1").withBoughtPrice(100500).build());
 //        futbotExecutor.execute(() -> {
 //            try {
 //                futbinService.updatePrices();

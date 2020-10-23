@@ -1,10 +1,14 @@
 package stepanovep.fut21.appconfig;
 
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
+import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -14,7 +18,8 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import stepanovep.fut21.core.driver.FutWebDriver;
-import stepanovep.fut21.mongo.AuctionTrade;
+import stepanovep.fut21.mongo.ActiveAuction;
+import stepanovep.fut21.mongo.WonAuction;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.telegrambot.TelegramBot;
 import stepanovep.fut21.telegrambot.TelegramBotCommandHandler;
@@ -57,15 +62,28 @@ public class AppConfiguration {
     }
 
     @Bean
-    public MongoCollection<AuctionTrade> auctionTradeCollection() {
+    public MongoCollection<Player> playersCollection() {
         MongoDatabase database = mongoClient().getDatabase("fut");
-        return database.getCollection("auctions", AuctionTrade.class);
+        MongoCollection<Player> players = database.getCollection("players", Player.class);
+        players.createIndex(Indexes.ascending("resourceId"), new IndexOptions().unique(true));
+        players.createIndex(Indexes.ascending("futbinId"), new IndexOptions().unique(true));
+        return players;
     }
 
     @Bean
-    public MongoCollection<Player> playersCollection() {
+    public MongoCollection<ActiveAuction> activeAuctionsCollection() {
         MongoDatabase database = mongoClient().getDatabase("fut");
-        return database.getCollection("players", Player.class);
+        MongoCollection<ActiveAuction> activeAuctions = database.getCollection("activeAuctions", ActiveAuction.class);
+        activeAuctions.createIndex(Indexes.ascending("tradeId"), new IndexOptions().unique(true));
+        return activeAuctions;
+    }
+
+    @Bean
+    public MongoCollection<WonAuction> wonAuctionsCollection() {
+        MongoDatabase database = mongoClient().getDatabase("fut");
+        MongoCollection<WonAuction> auctionsHistory = database.getCollection("wonAuctions", WonAuction.class);
+        auctionsHistory.createIndex(Indexes.ascending("tradeId"), new IndexOptions().unique(true));
+        return auctionsHistory;
     }
 
     @Bean

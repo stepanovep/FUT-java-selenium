@@ -14,6 +14,7 @@ import stepanovep.fut21.core.entity.PlayerAuctionDataService;
 import stepanovep.fut21.core.page.transfers.TransferMarketPage;
 import stepanovep.fut21.core.page.transfers.TransferSearchResult;
 import stepanovep.fut21.core.page.transfers.filter.TransferMarketFilter;
+import stepanovep.fut21.mongo.ActiveAuction;
 import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.mongo.PlayerService;
@@ -137,7 +138,7 @@ public class MassBidder {
         Integer nextBid = FutPriceUtils.getNextBid(auction.getStartingBid(), auction.getCurrentBid());
 
         if (bidResult == BidResult.SUCCESS || bidResult == BidResult.OUTBID) {
-            auctionService.insert(auction.getTradeId(), targetPrice);
+            auctionService.insertActiveAuction(ActiveAuction.of(auction.getTradeId(), targetPrice));
             log.info("Player bid: name={}, rating={}, bidPrice={}, tradeId={}",
                     extendedData.getName(), extendedData.getRating(), nextBid, auction.getTradeId());
 

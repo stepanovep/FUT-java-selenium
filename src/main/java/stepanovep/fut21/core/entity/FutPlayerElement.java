@@ -77,7 +77,8 @@ public class FutPlayerElement {
     }
 
     public void sendToTransferMarket() {
-
+        driver.sleep(500);
+        driver.clickElement(FutElementLocators.SEND_TO_TRANSFER_MARKET_BUTTON);
     }
 
     public void listToTransferMarket(Integer startPrice, Integer buyNowPrice) {

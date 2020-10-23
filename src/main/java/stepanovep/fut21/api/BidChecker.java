@@ -16,9 +16,10 @@ import stepanovep.fut21.core.entity.FutPlayerElement;
 import stepanovep.fut21.core.entity.PlayerAuctionDataService;
 import stepanovep.fut21.core.page.transfers.TransferTargetsPage;
 import stepanovep.fut21.mongo.AuctionService;
-import stepanovep.fut21.mongo.AuctionTrade;
+import stepanovep.fut21.mongo.ActiveAuction;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.mongo.PlayerService;
+import stepanovep.fut21.mongo.WonAuction;
 import stepanovep.fut21.telegrambot.TelegramBotNotifier;
 import stepanovep.fut21.utils.FutPriceUtils;
 
@@ -52,7 +53,7 @@ public class BidChecker {
                 checkBids();
             }
         } catch (Exception exc) {
-            log.error("Bid checker failed");
+            log.error("Bid checker failed", exc);
             telegramBotNotifier.notifyAboutException(driver.screenshot());
             return;
         }
@@ -104,32 +105,43 @@ public class BidChecker {
             FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
             String resourceId = extendedData.getResourceId();
             Optional<Player> playerOpt = playerService.getByResourceId(resourceId);
+
+            int bidPrice = playerElement.getBoughtPrice();
             if (playerOpt.isPresent()) {
-                int bidPrice = playerElement.getBoughtPrice();
-                int marketPrice = playerOpt.get().getPcPrice();
+                Player player = playerOpt.get();
+                int marketPrice = player.getPcPrice();
                 String message = String.format("Player bid won! %s: bidPrice=%d, marketPrice=%d", extendedData.getName(), bidPrice, marketPrice);
                 log.info(message);
                 telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message); //TODO делать скриншот элемента, а не всей страницы
                 playerElement.listToTransferMarket(marketPrice - 200, marketPrice + 200);
+                auctionService.insertWonAuction(WonAuction.builder()
+                        .withTradeId(extendedData.getAuction().getTradeId())
+                        .withPlayerName(extendedData.getName())
+                        .withPlayerRating(extendedData.getRating())
+                        .withBoughtPrice(bidPrice)
+                        .build());
 
             } else {
+                String message = String.format("Player bid won, but resourceId is unknown: %s, bidPrice=%d", extendedData.getName(), bidPrice);
+                log.info(message);
+                telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
                 playerElement.sendToTransferMarket();
             }
 
-            wonItems = transferTargetsPage.getWonItems();
             driver.sleep(1000, 2000);
+            wonItems = transferTargetsPage.getWonItems();
         }
     }
 
     private void handleOutbidPlayer(FutPlayerElement player, FutPlayerAuctionData extendedData) {
-        AuctionData auction = extendedData.getAuction();
-        String tradeId = auction.getTradeId();
+        AuctionData auctionData = extendedData.getAuction();
+        String tradeId = auctionData.getTradeId();
 
         log.info("Player is outbid: name={}, tradeId={}", extendedData.getName(), tradeId);
-        Optional<AuctionTrade> auctionTrade = auctionService.get(tradeId);
-        if (auctionTrade.isPresent()) {
-            Integer targetPrice = auctionTrade.get().getTargetPrice();
-            Integer nextBid = FutPriceUtils.getNextBid(auction.getStartingBid(), auction.getCurrentBid());
+        Optional<ActiveAuction> activeAuction = auctionService.getActiveAuction(tradeId);
+        if (activeAuction.isPresent()) {
+            Integer targetPrice = activeAuction.get().getTargetPrice();
+            Integer nextBid = FutPriceUtils.getNextBid(auctionData.getStartingBid(), auctionData.getCurrentBid());
             if (nextBid <= targetPrice) {
                 rebid(player);
 

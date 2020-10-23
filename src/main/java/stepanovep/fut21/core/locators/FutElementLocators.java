@@ -15,6 +15,8 @@ public class FutElementLocators {
     public static By LIST_TO_TRANSFER_MARKET_BIN_PRICE = By.cssSelector(".panelActions.open > div:nth-child(3) > .ut-numeric-input-spinner-control > input");
     public static By LIST_TO_TRANSFER_MARKET_SUBMIT_BUTTON = By.cssSelector(".panelActions.open > button");
 
+    public static By SEND_TO_TRANSFER_MARKET_BUTTON = LocatorsUtils.byText("Send to Transfer List");
+
     public static By BID_BUTTON = By.cssSelector(".bidButton");
     public static By BUY_NOW_BUTTON = By.cssSelector(".buyButton");
 

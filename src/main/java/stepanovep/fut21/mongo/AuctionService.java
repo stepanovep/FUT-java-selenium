@@ -14,16 +14,24 @@ import static java.util.Objects.requireNonNull;
 public class AuctionService {
 
     @Autowired
-    private MongoCollection<AuctionTrade> auctions;
+    private MongoCollection<ActiveAuction> activeAuctions;
 
-    public void insert(@Nonnull String tradeId, @Nonnull Integer targetPrice) {
-        requireNonNull(tradeId, "tradeId");
-        requireNonNull(targetPrice, "targetPrice");
-        auctions.insertOne(AuctionTrade.of(tradeId, targetPrice));
+    @Autowired
+    private MongoCollection<WonAuction> wonAuctions;
+
+    public void insertActiveAuction(@Nonnull ActiveAuction activeAuction) {
+        requireNonNull(activeAuction, "activeAuction");
+        activeAuctions.insertOne(activeAuction);
     }
 
-    public Optional<AuctionTrade> get(@Nonnull String tradeId) {
-        requireNonNull(tradeId, "tradeId");
-        return Optional.ofNullable(auctions.find(eq("tradeId", tradeId)).first());
+    public void insertWonAuction(@Nonnull WonAuction wonAuction) {
+        requireNonNull(wonAuction, "wonAuction");
+        wonAuctions.insertOne(wonAuction);
     }
+
+    public Optional<ActiveAuction> getActiveAuction(@Nonnull String tradeId) {
+        requireNonNull(tradeId, "tradeId");
+        return Optional.ofNullable(activeAuctions.find(eq("tradeId", tradeId)).first());
+    }
+
 }
