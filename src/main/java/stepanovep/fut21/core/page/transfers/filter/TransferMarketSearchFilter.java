@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * Контейнер с фильтрами для поиска карточек
  */
-public class TransferMarketFilter {
+public class TransferMarketSearchFilter {
 
     @Nullable
     private final String name;
@@ -29,13 +29,13 @@ public class TransferMarketFilter {
     @Nullable
     private final Integer targetPrice;
 
-    private TransferMarketFilter(@Nullable String name,
-                                 @Nullable Quality quality,
-                                 @Nullable Position position,
-                                 @Nullable ChemStyle chemStyle,
-                                 @Nullable Integer bidMin, @Nullable Integer bidMax,
-                                 @Nullable Integer buyNowMin, @Nullable Integer buyNowMax,
-                                 @Nullable Integer targetPrice) {
+    private TransferMarketSearchFilter(@Nullable String name,
+                                       @Nullable Quality quality,
+                                       @Nullable Position position,
+                                       @Nullable ChemStyle chemStyle,
+                                       @Nullable Integer bidMin, @Nullable Integer bidMax,
+                                       @Nullable Integer buyNowMin, @Nullable Integer buyNowMax,
+                                       @Nullable Integer targetPrice) {
         this.name = name;
         this.quality = quality;
         this.position = position;
@@ -170,8 +170,8 @@ public class TransferMarketFilter {
             return this;
         }
 
-        public TransferMarketFilter build() {
-            return new TransferMarketFilter(
+        public TransferMarketSearchFilter build() {
+            return new TransferMarketSearchFilter(
                     name, quality, position, chemStyle,
                     bidMin, bidMax, buyNowMin, buyNowMax,
                     targetPrice);

@@ -65,7 +65,7 @@ public class FutbinService {
     }
 
     private boolean updatedRecently() {
-        List<Player> players = playerService.getRandomPlayers(1, 200, 100_000);
+        List<Player> players = playerService.getPlayersForMassBid(1, 200, 100_000);
         if (players.isEmpty()) {
             return false;
         }

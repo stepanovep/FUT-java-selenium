@@ -8,7 +8,7 @@ import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.locators.MainPageLocators;
 import stepanovep.fut21.core.locators.TransferMarketLocators;
 import stepanovep.fut21.core.page.FutActiveMenu;
-import stepanovep.fut21.core.page.transfers.filter.TransferMarketFilter;
+import stepanovep.fut21.core.page.transfers.filter.TransferMarketSearchFilter;
 import stepanovep.fut21.core.page.transfers.filter.TransferMarketFilterService;
 
 /**
@@ -25,7 +25,7 @@ public class TransferMarketPage {
     @Autowired
     private TransferMarketFilterService filterService;
 
-    public TransferSearchResult search(TransferMarketFilter filter) {
+    public TransferSearchResult search(TransferMarketSearchFilter filter) {
         navigateToPage();
         log.info("Searching: filter={}", filter);
         filterService.resetAllFilters();

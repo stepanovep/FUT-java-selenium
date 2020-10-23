@@ -14,9 +14,9 @@ public class Player {
     private Integer xboxPrice;
     private Integer psPrice;
     private LocalDateTime priceUpdatedDt;
+    private LocalDateTime bidDt;
 
     public Player() {
-
     }
 
     public String getResourceId() {
@@ -99,6 +99,14 @@ public class Player {
         this.nation = nation;
     }
 
+    public LocalDateTime getBidDt() {
+        return bidDt;
+    }
+
+    public void setBidDt(LocalDateTime bidDt) {
+        this.bidDt = bidDt;
+    }
+
     @Override
     public String toString() {
         return "Player{" +
@@ -108,8 +116,11 @@ public class Player {
                 ", rating=" + rating +
                 ", league='" + league + '\'' +
                 ", nation='" + nation + '\'' +
-                ", price=" + pcPrice +
+                ", pcPrice=" + pcPrice +
+                ", xboxPrice=" + xboxPrice +
+                ", psPrice=" + psPrice +
                 ", priceUpdatedDt=" + priceUpdatedDt +
+                ", bidDt=" + bidDt +
                 '}';
     }
 

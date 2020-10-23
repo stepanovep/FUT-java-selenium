@@ -36,10 +36,17 @@ public class PlayerService {
         return Optional.ofNullable(playersCollection.find(eq("resourceId", resourceId)).first());
     }
 
-    public List<Player> getRandomPlayers(int count, int minPrice, int maxPrice) {
+    public List<Player> getPlayersForMassBid(int count, int minPrice, int maxPrice) {
         List<Player> players = new ArrayList<>();
         playersCollection.find(and(gte("pcPrice", minPrice), lte("pcPrice", maxPrice)))
                 .forEach(players::add);
+
+        LocalDateTime now = LocalDateTime.now();
+        players.sort((p1, p2) -> {
+            LocalDateTime bidTime1 = p1.getBidDt() == null ? now : p1.getBidDt();
+            LocalDateTime bidTime2 = p2.getBidDt() == null ? now : p2.getBidDt();
+            return bidTime1.compareTo(bidTime2);
+        });
 
         Collections.shuffle(players);
         return players.stream().limit(count).collect(Collectors.toList());
@@ -58,5 +65,9 @@ public class PlayerService {
         }
 
         playersCollection.updateOne(eq("futbinId", futbinId), combine(set("pcPrice", price), set("priceUpdatedDt", LocalDateTime.now())));
+    }
+
+    public void updateBidTime(Player player) {
+        playersCollection.updateOne(eq("resourceId", player.getResourceId()), set("bidDt", LocalDateTime.now()));
     }
 }

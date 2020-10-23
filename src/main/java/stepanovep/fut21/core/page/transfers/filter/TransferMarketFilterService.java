@@ -26,7 +26,7 @@ public class TransferMarketFilterService {
     @Autowired
     private FutWebDriver driver;
 
-    public void applyFilter(TransferMarketFilter filter) {
+    public void applyFilter(TransferMarketSearchFilter filter) {
         filter.getName().ifPresent(this::setNameFilter);
 
         filter.getQuality().ifPresent(quality -> setDropDownFilter(SEARCH_QUALITY_LIST, quality));

@@ -1,6 +1,8 @@
 package stepanovep.fut21.api;
 
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +98,7 @@ public class BidChecker {
         log.error("Checking bids failed consecutive times");
     }
 
+    @Retryable(include = {StaleElementReferenceException.class, TimeoutException.class}, backoff = @Backoff(delay = 3000))
     public void listWonItemsToTransferMarket() {
         List<FutPlayerElement> wonItems = transferTargetsPage.getWonItems();
 

@@ -13,7 +13,7 @@ import stepanovep.fut21.core.entity.FutPlayerElement;
 import stepanovep.fut21.core.entity.PlayerAuctionDataService;
 import stepanovep.fut21.core.page.transfers.TransferMarketPage;
 import stepanovep.fut21.core.page.transfers.TransferSearchResult;
-import stepanovep.fut21.core.page.transfers.filter.TransferMarketFilter;
+import stepanovep.fut21.core.page.transfers.filter.TransferMarketSearchFilter;
 import stepanovep.fut21.mongo.ActiveAuction;
 import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.Player;
@@ -22,7 +22,6 @@ import stepanovep.fut21.telegrambot.TelegramBotNotifier;
 import stepanovep.fut21.utils.FutPriceUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Биддер
@@ -47,21 +46,21 @@ public class MassBidder {
     @Autowired
     private TelegramBotNotifier telegramBotNotifier;
 
-    private static final int MAX_COUNT_BIDS = 7;
+    private static final int MAX_COUNT_BIDS = 5;
     private static final int MAX_TIME = 20 * 60;
 
     public void massBid() {
         driver.wakeup();
         try {
             log.info("Mass bidding");
-            List<TransferMarketFilter> filters = getPlayersFilters();
-            for (TransferMarketFilter filter : filters) {
+            List<Player> players = playerService.getPlayersForMassBid(40, 2000, 15000);
+            for (Player player: players) {
                 if (driver.isInterrupted()) {
                     System.out.println("Thread interrupted - aborting mass bidding");
                     return;
                 }
                 bidChecker.checkBids();
-                massBidPlayer(filter);
+                massBidPlayer(player);
                 driver.sleep(2000);
             }
 
@@ -86,12 +85,14 @@ public class MassBidder {
         telegramBotNotifier.sendMessage("Mass bidding successfully finished");
     }
 
-    private void massBidPlayer(TransferMarketFilter filter) {
+    private void massBidPlayer(Player player) {
         int bidsCount = 0;
+        TransferMarketSearchFilter filter = mapToSearchFilter(player);
         Integer targetPrice = filter.getTargetPrice().orElseThrow(() -> new IllegalStateException("targetPrice is mandatory here"));
         TransferSearchResult searchResult = transferMarket.search(filter);
-        for (FutPlayerElement player: searchResult.getPlayers()) {
-            player.focus();
+
+        for (FutPlayerElement playerElement: searchResult.getPlayers()) {
+            playerElement.focus();
             driver.sleep(1000, 2000);
             FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
             AuctionData auction = extendedData.getAuction();
@@ -100,26 +101,23 @@ public class MassBidder {
                 break;
             }
             if (needToBid(auction, targetPrice)) {
-                makeBid(player, extendedData, targetPrice);
+//                makeBid(playerElement, extendedData, targetPrice);
                 bidsCount++;
             }
         }
+
+        playerService.updateBidTime(player);
     }
 
-    private List<TransferMarketFilter> getPlayersFilters() {
-        List<Player> players = playerService.getRandomPlayers(20, 2500, 13000);
-        return players.stream()
-                .map(player -> {
-                    int price = player.getPcPrice();
-                    int tax = (int) (price * 0.05);
-                    int targetProfit = Math.max(tax, 500);
-                    int targetPrice = FutPriceUtils.roundToValidFutPrice(price - tax - targetProfit);
-                    return TransferMarketFilter.builder()
-                            .withName(player.getName())
-                            .withTargetPrice(targetPrice)
-                            .build();
-                })
-                .collect(Collectors.toList());
+    private TransferMarketSearchFilter mapToSearchFilter(Player player) {
+            int price = player.getPcPrice();
+            int tax = (int) (price * 0.05);
+            int targetProfit = Math.max(tax, 500);
+            int targetPrice = FutPriceUtils.roundToValidFutPrice(price - tax - targetProfit);
+            return TransferMarketSearchFilter.builder()
+                    .withName(player.getName())
+                    .withTargetPrice(targetPrice)
+                    .build();
     }
 
     private boolean needToBid(AuctionData auctionData, Integer targetPrice) {
