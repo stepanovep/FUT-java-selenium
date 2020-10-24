@@ -1,6 +1,5 @@
 package stepanovep.fut21.api;
 
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
@@ -17,8 +16,8 @@ import stepanovep.fut21.core.entity.FutPlayerAuctionData;
 import stepanovep.fut21.core.entity.FutPlayerElement;
 import stepanovep.fut21.core.entity.PlayerAuctionDataService;
 import stepanovep.fut21.core.page.transfers.TransferTargetsPage;
-import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.ActiveAuction;
+import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.mongo.PlayerService;
 import stepanovep.fut21.mongo.WonAuction;
@@ -116,12 +115,14 @@ public class BidChecker {
                 String message = String.format("Player bid won! %s: bidPrice=%d, marketPrice=%d", extendedData.getName(), bidPrice, marketPrice);
                 log.info(message);
                 telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message); //TODO делать скриншот элемента, а не всей страницы
-                playerElement.listToTransferMarket(marketPrice - 200, marketPrice + 200);
+                int buyNowPrice = Math.max(marketPrice + 200, (int) (bidPrice * 1.1));
+                playerElement.listToTransferMarket(marketPrice - 200, buyNowPrice);
                 auctionService.insertWonAuction(WonAuction.builder()
                         .withTradeId(extendedData.getAuction().getTradeId())
                         .withPlayerName(extendedData.getName())
                         .withPlayerRating(extendedData.getRating())
                         .withBoughtPrice(bidPrice)
+                        .withPotentialProfit((int) (buyNowPrice*0.95 - bidPrice))
                         .build());
 
             } else {

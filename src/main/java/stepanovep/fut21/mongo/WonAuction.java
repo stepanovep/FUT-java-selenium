@@ -8,6 +8,7 @@ public class WonAuction {
     private String playerName;
     private Integer playerRating;
     private Integer boughtPrice;
+    private Integer potentialProfit;
 
     /**
      * Пустой публичный контсруктор.
@@ -19,11 +20,13 @@ public class WonAuction {
     private WonAuction(@Nonnull String tradeId,
                        @Nonnull String playerName,
                        @Nonnull Integer playerRating,
-                       @Nonnull Integer boughtPrice) {
+                       @Nonnull Integer boughtPrice,
+                       @Nonnull Integer potentialProfit) {
         this.tradeId = tradeId;
         this.playerName = playerName;
         this.playerRating = playerRating;
         this.boughtPrice = boughtPrice;
+        this.potentialProfit = potentialProfit;
     }
 
     public String getTradeId() {
@@ -42,6 +45,10 @@ public class WonAuction {
         return boughtPrice;
     }
 
+    public Integer getPotentialProfit() {
+        return potentialProfit;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -51,6 +58,7 @@ public class WonAuction {
         private String playerName;
         private Integer playerRating;
         private Integer boughtPrice;
+        private Integer potentialProfit;
 
         private Builder() {
         }
@@ -75,8 +83,13 @@ public class WonAuction {
             return this;
         }
 
+        public Builder withPotentialProfit(Integer potentialProfit) {
+            this.potentialProfit = potentialProfit;
+            return this;
+        }
+
         public WonAuction build() {
-            return new WonAuction(tradeId, playerName, playerRating, boughtPrice);
+            return new WonAuction(tradeId, playerName, playerRating, boughtPrice, potentialProfit);
         }
     }
 }
