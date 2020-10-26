@@ -47,7 +47,7 @@ public class MassBidder {
     private TelegramBotNotifier telegramBotNotifier;
 
     private static final int MAX_COUNT_BIDS = 5;
-    private static final int MAX_TIME = 20 * 60;
+    private static final int MAX_BID_EXPIRATION_TIME_LEFT_IN_SECONDS = 20 * 60;
 
     public void massBid() {
         driver.wakeup();
@@ -90,13 +90,19 @@ public class MassBidder {
         TransferMarketSearchFilter filter = mapToSearchFilter(player);
         Integer targetPrice = filter.getTargetPrice().orElseThrow(() -> new IllegalStateException("targetPrice is mandatory here"));
         TransferSearchResult searchResult = transferMarket.search(filter);
+        if (targetPrice > getAdjustedTargetPrice(searchResult)) {
+            targetPrice = getAdjustedTargetPrice(searchResult);
+            int newActualPrice = Math.max((int) (targetPrice * 1.15), (int) (targetPrice * 1.1) + 500);
+            playerService.updatePriceByFutbinId(player.getFutbinId(), FutPriceUtils.roundToValidFutPrice(newActualPrice));
+            log.info("Futbin price is outdated, changing targetPrice based on firstPage minimum bin price: new targetPrice={}", targetPrice);
+        }
 
         for (FutPlayerElement playerElement: searchResult.getPlayers()) {
             playerElement.focus();
             driver.sleep(1000, 2000);
             FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
             AuctionData auction = extendedData.getAuction();
-            if (auction.getExpires() > MAX_TIME || bidsCount >= MAX_COUNT_BIDS) {
+            if (auction.getExpires() > MAX_BID_EXPIRATION_TIME_LEFT_IN_SECONDS || bidsCount >= MAX_COUNT_BIDS) {
                 log.info("Skipping this and next items due to the time left filter");
                 break;
             }
@@ -109,15 +115,27 @@ public class MassBidder {
         playerService.updateBidTime(player);
     }
 
+    private int getAdjustedTargetPrice(TransferSearchResult searchResult) {
+        return searchResult.getPlayers()
+                .stream()
+                .map(FutPlayerElement::getBuyNowPrice)
+                .min(Integer::compareTo)
+                .map(this::calculateTargetPrice)
+                .orElse(0);
+    }
+
     private TransferMarketSearchFilter mapToSearchFilter(Player player) {
-            int price = player.getPcPrice();
-            int tax = (int) (price * 0.05);
-            int targetProfit = Math.max(tax, 500);
-            int targetPrice = FutPriceUtils.roundToValidFutPrice(price - tax - targetProfit);
+            int targetPrice = calculateTargetPrice(player.getPcPrice());
             return TransferMarketSearchFilter.builder()
                     .withName(player.getName())
                     .withTargetPrice(targetPrice)
                     .build();
+    }
+
+    private int calculateTargetPrice(int price) {
+        int tax = (int) (price * 0.05);
+        int targetProfit = Math.max(tax, 500);
+        return FutPriceUtils.roundToValidFutPrice(price - tax - targetProfit);
     }
 
     private boolean needToBid(AuctionData auctionData, Integer targetPrice) {

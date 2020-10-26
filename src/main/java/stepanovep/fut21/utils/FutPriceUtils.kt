@@ -3,7 +3,6 @@ package stepanovep.fut21.utils
 class FutPriceUtils {
 
     companion object {
-
         @JvmStatic
         fun getNextBid(startingBid: Int, currentBid: Int): Int {
             if (currentBid != 0) {
@@ -12,6 +11,12 @@ class FutPriceUtils {
             }
 
             return startingBid
+        }
+
+        @JvmStatic
+        fun getNextBid(currentBid: Int): Int {
+            val inc = getIncrement(currentBid)
+            return currentBid + inc
         }
 
         @JvmStatic

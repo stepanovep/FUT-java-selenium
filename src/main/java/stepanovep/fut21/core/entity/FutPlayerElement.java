@@ -1,13 +1,18 @@
 package stepanovep.fut21.core.entity;
 
+import net.gcardone.junidecode.Junidecode;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.locators.FutElementLocators;
+import stepanovep.fut21.utils.FutPriceUtils;
 
 import java.io.File;
 import java.time.Duration;
@@ -24,12 +29,18 @@ import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_NE
  */
 public class FutPlayerElement {
 
+    private static final Logger log = LoggerFactory.getLogger(FutPlayerElement.class);
+
     private final FutWebDriver driver;
     private final WebElement webElement;
+    private final WebElement entityContainer;
+    private final WebElement auctionContainer;
 
     public FutPlayerElement(FutWebDriver driver, WebElement webElement) {
         this.driver = driver;
         this.webElement = webElement;
+        this.entityContainer = ((RemoteWebElement) webElement).findElementByCssSelector(".entityContainer");
+        this.auctionContainer = ((RemoteWebElement) webElement).findElementByCssSelector(".auction");
     }
 
     public File screenshot() {
@@ -142,9 +153,57 @@ public class FutPlayerElement {
         return webElement.getAttribute("class").contains("won");
     }
 
+    public String getName() {
+        return Junidecode.unidecode(entityContainer.findElement(By.cssSelector(".name")).getText());
+    }
+
+    public int getNextBid() {
+        WebElement startPriceDiv = auctionContainer.findElements(By.cssSelector(".auctionValue")).get(0);
+        if (!startPriceDiv.findElement(By.cssSelector(".label")).getText().contains("START PRICE")) {
+            log.error("Start price element is incorrect: auctionContainer={}", auctionContainer.getText());
+            throw new IllegalStateException("Start price element is incorrect");
+        }
+
+        WebElement currentBidDiv = auctionContainer.findElements(By.cssSelector(".auctionValue")).get(1);
+        if (!currentBidDiv.findElement(By.cssSelector(".label")).getText().contains("BID")) {
+            log.error("Start price element is incorrect: auctionContainer={}", auctionContainer.getText());
+            throw new IllegalStateException("Bid price element is incorrect");
+        }
+
+        String startPriceStr = startPriceDiv.findElement(By.cssSelector(".value")).getText();
+        String currentBidStr = currentBidDiv.findElement(By.cssSelector(".value")).getText();
+        if (currentBidStr.equals("---")) {
+            return Integer.parseInt(startPriceStr.replace(",", ""));
+        }
+
+        return FutPriceUtils.getNextBid(Integer.parseInt(currentBidStr.replace(",", "")));
+    }
+
+    public int getBuyNowPrice() {
+        WebElement buyNowElement = auctionContainer.findElements(By.cssSelector(".auctionValue")).get(2);
+        if (!buyNowElement.findElement(By.cssSelector(".label")).getText().contains("BUY NOW")) {
+            log.error("Buy bow price element is incorrect: auctionContainer={}", auctionContainer.getText());
+            throw new IllegalStateException("Bid price element is incorrect");
+        }
+
+        return Integer.parseInt(buyNowElement.findElement(By.cssSelector(".value")).getText().replace(",", ""));
+    }
+
+    public int getRating() {
+        return Integer.parseInt(entityContainer.findElement(By.cssSelector(".rating")).getText());
+    }
+
+    public String getPosition() {
+        return entityContainer.findElement(By.cssSelector(".position")).getText();
+    }
+
     public int getBoughtPrice() {
         WebElement boughtPriceElement = driver.findElement(FutElementLocators.BOUGHT_PRICE);
         return Integer.parseInt(boughtPriceElement.getText().replace(",", ""));
     }
 
+    public String getPlayerAsString() {
+        return String.join("#", getName(), String.valueOf(getRating()), getPosition());
+        //todo использовать статы игрока для генерации строки, чтобы избежать коллизий спец карточек одинакового рейтинга и позиции
+    }
 }
