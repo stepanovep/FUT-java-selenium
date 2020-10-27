@@ -64,15 +64,7 @@ public class MassBidder {
                 driver.sleep(2000);
             }
 
-            for (int i = 0; i < 15; i++) {
-                if (driver.isInterrupted()) {
-                    System.out.println("Thread interrupted - aborting mass bidding");
-                    return;
-                }
-                bidChecker.checkBids();
-                driver.sleep(10000, 15000);
-            }
-
+            bidChecker.checkBids(5);
             driver.sleep(2000, 3000);
 
         } catch (Exception exc) {
@@ -157,6 +149,10 @@ public class MassBidder {
             auctionService.insertActiveAuction(ActiveAuction.of(auction.getTradeId(), targetPrice));
             log.info("Player bid: name={}, rating={}, bidPrice={}, tradeId={}",
                     extendedData.getName(), extendedData.getRating(), nextBid, auction.getTradeId());
+
+        } else if (bidResult == BidResult.LIMIT_REACHED) {
+            log.info("Transfer targets limit reached, stop mass bidding");
+            driver.interrupt();
 
         } else {
             log.warn("Couldn't bid player: name={}, rating={}, bidPrice={}, bidResult={}",

@@ -25,7 +25,7 @@ public class TransferListPage {
         navigateToPage();
         if (driver.isElementPresent(TransferListLocators.RELIST_ALL_BUTTON)) {
             driver.clickElement(TransferListLocators.RELIST_ALL_BUTTON);
-            driver.submitDialogMessage();
+            driver.acceptDialogMessage();
             log.info("Items relisted");
         }
     }

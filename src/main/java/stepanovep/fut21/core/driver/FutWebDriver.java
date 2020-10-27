@@ -13,10 +13,12 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import stepanovep.fut21.core.page.FutActiveMenu;
 
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -102,19 +104,28 @@ public class FutWebDriver extends ChromeDriver {
                 });
     }
 
-    /**
-     * Нажимает кнопку "ОК" в окошке диалога
-     */
-    public void submitDialogMessage() {
-        this.sleep(50, 100);
+    public Optional<WebElement> getDialog() {
         List<WebElement> binaryDialogs = this.findElements(By.cssSelector(".Dialog.ui-dialog-type-message"));
         List<WebElement> unaryDialogs = this.findElements(By.cssSelector(".Dialog.ui-dialog-type-alert"));
-        List<WebElement> dialogs = Stream.concat(binaryDialogs.stream(), unaryDialogs.stream()).collect(Collectors.toList());
-        if (dialogs.isEmpty()) {
+
+        return Stream.concat(binaryDialogs.stream(), unaryDialogs.stream())
+                .collect(Collectors.toList())
+                .stream()
+                .findFirst();
+    }
+
+    /**
+     * Нажимает кнопку "ОК" или "YES" в окошке диалога
+     *
+     * Диалог может быть вопросительным (с кнопками "yes" или "cancel") или информативным (с одной кнопкой "ok")
+     */
+    public void acceptDialogMessage() {
+        this.sleep(50, 100);
+        Optional<WebElement> dialogOpt = getDialog();
+        if (dialogOpt.isEmpty()) {
             return;
         }
-        // ожидается максимум один диалог, используются List'ы, чтобы не было ElementNotFoundException
-        WebElement dialog = dialogs.get(0);
+        WebElement dialog = dialogOpt.get();
         List<WebElement> dialogButtons = dialog.findElements(By.cssSelector("button"));
         for (WebElement button: dialogButtons) {
             String buttonText = button.getText().toLowerCase();
@@ -125,6 +136,30 @@ public class FutWebDriver extends ChromeDriver {
         }
 
         throw new IllegalStateException("Submit button hasn't been clicked");
+    }
+
+    /**
+     * Нажимает кнопку "CANCEL" в окошке диалога
+     *
+     * Диалог ожидается быть вопросительным
+     */
+    public void declineDialogMessage() {
+        this.sleep(50, 100);
+        Optional<WebElement> dialogOpt = getDialog();
+        if (dialogOpt.isEmpty()) {
+            return;
+        }
+        WebElement dialog = dialogOpt.get();
+        List<WebElement> dialogButtons = dialog.findElements(By.cssSelector("button"));
+        for (WebElement button: dialogButtons) {
+            String buttonText = button.getText().toLowerCase();
+            if (buttonText.equals("cancel") || buttonText.equals("no")) {
+                button.click();
+                return;
+            }
+        }
+
+        throw new IllegalStateException("Decline button hasn't been clicked");
     }
 
     /**
@@ -151,6 +186,10 @@ public class FutWebDriver extends ChromeDriver {
 
     public void wakeup() {
         this.interrupted = false;
+    }
+
+    public void interrupt() {
+        this.interrupted = true;
     }
 
     /**

@@ -8,6 +8,7 @@ public enum BidResult {
     SUCCESS,
     OUTBID,
     IGNORED,
+    LIMIT_REACHED,
     BID_BUTTON_INACTIVE,
     BID_CHANGED_ERROR,
     TOO_MANY_ACTIONS_ERROR,

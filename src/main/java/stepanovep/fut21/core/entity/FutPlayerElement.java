@@ -18,6 +18,7 @@ import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_BUTTON;
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENTS;
@@ -73,6 +74,26 @@ public class FutPlayerElement {
                     return BidResult.BID_CHANGED_ERROR;
                 }
                 return BidResult.TOO_MANY_ACTIONS_ERROR;
+            }
+
+            Optional<WebElement> dialogOpt = driver.getDialog();
+            if (dialogOpt.isPresent()) {
+                WebElement dialog = dialogOpt.get();
+                String dialogTitle = dialog.findElement(By.cssSelector(".dialog-title")).getText();
+                if (dialogTitle.equals("LIMIT REACHED")) {
+                    log.warn("Transfer targets limit reached");
+                    driver.acceptDialogMessage();
+                    return BidResult.LIMIT_REACHED;
+                }
+                if (dialogTitle.equals("ALREADY HIGHEST BIDDER")) {
+                    log.warn("Already highest bidder");
+                    driver.declineDialogMessage();
+                    return BidResult.SUCCESS;
+                }
+                if (dialogTitle.equals("BID TOO LOW")) {
+                    log.warn("Bid too low");
+                    driver.acceptDialogMessage();
+                }
             }
         }
 
