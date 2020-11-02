@@ -13,7 +13,6 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import stepanovep.fut21.core.page.FutActiveMenu;
 
-import javax.swing.text.html.Option;
 import java.io.File;
 import java.time.Duration;
 import java.util.Collections;

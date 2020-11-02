@@ -19,6 +19,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_BUTTON;
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENTS;
@@ -36,6 +38,8 @@ public class FutPlayerElement {
     private final WebElement webElement;
     private final WebElement entityContainer;
     private final WebElement auctionContainer;
+
+    private static final Pattern EXPIRATION_TIME_REGEX = Pattern.compile("(<?)(\\d+)(.+)");
 
     public FutPlayerElement(FutWebDriver driver, WebElement webElement) {
         this.driver = driver;
@@ -80,17 +84,17 @@ public class FutPlayerElement {
             if (dialogOpt.isPresent()) {
                 WebElement dialog = dialogOpt.get();
                 String dialogTitle = dialog.findElement(By.cssSelector(".dialog-title")).getText();
-                if (dialogTitle.equals("LIMIT REACHED")) {
+                if (dialogTitle.toUpperCase().equals("LIMIT REACHED")) {
                     log.warn("Transfer targets limit reached");
                     driver.acceptDialogMessage();
                     return BidResult.LIMIT_REACHED;
                 }
-                if (dialogTitle.equals("ALREADY HIGHEST BIDDER")) {
+                if (dialogTitle.toUpperCase().equals("ALREADY HIGHEST BIDDER")) {
                     log.warn("Already highest bidder");
                     driver.declineDialogMessage();
                     return BidResult.SUCCESS;
                 }
-                if (dialogTitle.equals("BID TOO LOW")) {
+                if (dialogTitle.toUpperCase().equals("BID TOO LOW")) {
                     log.warn("Bid too low");
                     driver.acceptDialogMessage();
                 }
@@ -221,6 +225,37 @@ public class FutPlayerElement {
     public int getBoughtPrice() {
         WebElement boughtPriceElement = driver.findElement(FutElementLocators.BOUGHT_PRICE);
         return Integer.parseInt(boughtPriceElement.getText().replace(",", ""));
+    }
+
+    public Duration getExpirationTime() {
+        WebElement expirationTimeElement = auctionContainer.findElement(By.cssSelector(".auction-state > .time"));
+        String expirationTimeStr = expirationTimeElement.getText();
+        if (expirationTimeStr.equals("Processing...") || expirationTimeStr.equals("Expired")) {
+            return Duration.ZERO;
+        }
+
+        Matcher matcher = EXPIRATION_TIME_REGEX.matcher(expirationTimeStr);
+        if (!matcher.find()) {
+            throw new IllegalStateException("Expiration time cannot be parsed");
+        }
+
+        long time = Long.parseLong(matcher.group(2));
+
+        if (expirationTimeStr.contains("Second")) {
+            return Duration.ofSeconds(time);
+
+        } else if (expirationTimeStr.contains("Minute")) {
+            if (matcher.group(1).equals("<")) {
+                return Duration.ofMinutes(1);
+            }
+            return Duration.ofMinutes(time+1);
+
+        } else if (expirationTimeStr.contains("Hour")) {
+            return Duration.ofHours(time);
+
+        } else {
+            return Duration.ofDays(1L);
+        }
     }
 
     public String getPlayerAsString() {
