@@ -65,6 +65,12 @@ public class FutPlayerElement {
         driver.clickElement(FutElementLocators.BID_BUTTON);
         for (int tries = 0; tries < 3; tries++) {
             driver.sleep(400, 750);
+
+            Optional<BidResult> dialogBidResult = handleDialogIfPresent();
+            if (dialogBidResult.isPresent()) {
+                return dialogBidResult.get();
+            }
+
             if (isBid()) {
                 return BidResult.SUCCESS;
             }
@@ -79,29 +85,33 @@ public class FutPlayerElement {
                 }
                 return BidResult.TOO_MANY_ACTIONS_ERROR;
             }
-
-            Optional<WebElement> dialogOpt = driver.getDialog();
-            if (dialogOpt.isPresent()) {
-                WebElement dialog = dialogOpt.get();
-                String dialogTitle = dialog.findElement(By.cssSelector(".dialog-title")).getText();
-                if (dialogTitle.toUpperCase().equals("LIMIT REACHED")) {
-                    log.warn("Transfer targets limit reached");
-                    driver.acceptDialogMessage();
-                    return BidResult.LIMIT_REACHED;
-                }
-                if (dialogTitle.toUpperCase().equals("ALREADY HIGHEST BIDDER")) {
-                    log.warn("Already highest bidder");
-                    driver.declineDialogMessage();
-                    return BidResult.SUCCESS;
-                }
-                if (dialogTitle.toUpperCase().equals("BID TOO LOW")) {
-                    log.warn("Bid too low");
-                    driver.acceptDialogMessage();
-                }
-            }
         }
 
         return BidResult.IGNORED;
+    }
+
+    private Optional<BidResult> handleDialogIfPresent() {
+        Optional<WebElement> dialogOpt = driver.getDialog();
+        if (dialogOpt.isPresent()) {
+            WebElement dialog = dialogOpt.get();
+            String dialogTitle = dialog.findElement(By.cssSelector(".dialog-title")).getText();
+            if (dialogTitle.toUpperCase().equals("LIMIT REACHED")) {
+                log.warn("Transfer targets limit reached");
+                driver.acceptDialogMessage();
+                return Optional.of(BidResult.LIMIT_REACHED);
+            }
+            if (dialogTitle.toUpperCase().equals("ALREADY HIGHEST BIDDER")) {
+                log.warn("Already highest bidder");
+                driver.declineDialogMessage();
+                return Optional.of(BidResult.SUCCESS);
+            }
+            if (dialogTitle.toUpperCase().equals("BID TOO LOW")) {
+                log.warn("Bid too low");
+                driver.acceptDialogMessage();
+            }
+        }
+
+        return Optional.empty();
     }
 
     public void buyNow() {
