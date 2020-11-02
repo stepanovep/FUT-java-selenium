@@ -28,6 +28,7 @@ import stepanovep.fut21.mongo.WonAuction;
 import stepanovep.fut21.telegrambot.TelegramBotNotifier;
 import stepanovep.fut21.utils.FutPriceUtils;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -111,42 +112,54 @@ public class BidChecker {
 
     @Retryable(include = {StaleElementReferenceException.class, TimeoutException.class}, backoff = @Backoff(delay = 3000))
     public void listWonItemsToTransferMarket() {
-        List<FutPlayerElement> wonItems = transferTargetsPage.getWonItems();
+        List<FutPlayerElement> activeBids = transferTargetsPage.getActiveBids();
+        Duration earliestExpirationTime = Duration.ofHours(1L);
+        if (!activeBids.isEmpty()) {
+            earliestExpirationTime = activeBids.get(0).getExpirationTime();
+        }
+        if (earliestExpirationTime.compareTo(Duration.ofSeconds(16L)) < 0) {
+            return;
+        }
 
+        List<FutPlayerElement> wonItems = transferTargetsPage.getWonItems();
         while (!wonItems.isEmpty()) {
             FutPlayerElement playerElement = wonItems.get(0);
-            playerElement.focus();
-            log.info("Expiration time: {}", playerElement.getExpirationTime());
-            FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
-            String resourceId = extendedData.getResourceId();
-            Optional<Player> playerOpt = playerService.getByResourceId(resourceId);
-
-            int bidPrice = playerElement.getBoughtPrice();
-            if (playerOpt.isPresent()) {
-                Player player = playerOpt.get();
-                int marketPrice = player.getPcPrice();
-                String message = String.format("Player bid won! %s: bidPrice=%d, marketPrice=%d", extendedData.getName(), bidPrice, marketPrice);
-                log.info(message);
-                telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message); //TODO делать скриншот элемента, а не всей страницы
-                int buyNowPrice = Math.max(marketPrice + 200, (int) (bidPrice * 1.1));
-                playerElement.listToTransferMarket(marketPrice - 200, buyNowPrice);
-                auctionService.insertWonAuction(WonAuction.builder()
-                        .withTradeId(extendedData.getAuction().getTradeId())
-                        .withPlayerName(extendedData.getName())
-                        .withPlayerRating(extendedData.getRating())
-                        .withBoughtPrice(bidPrice)
-                        .withPotentialProfit((int) (buyNowPrice*0.95 - bidPrice))
-                        .build());
-
-            } else {
-                String message = String.format("Player bid won, but resourceId is unknown: %s, bidPrice=%d", extendedData.getName(), bidPrice);
-                log.info(message);
-                telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
-                playerElement.sendToTransferMarket();
-            }
+            listPlayerToTransferMarket(playerElement);
 
             driver.sleep(1000, 2000);
             wonItems = transferTargetsPage.getWonItems();
+        }
+    }
+
+    private void listPlayerToTransferMarket(FutPlayerElement playerElement) {
+        playerElement.focus();
+        log.info("Expiration time: {}", playerElement.getExpirationTime());
+        FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
+        String resourceId = extendedData.getResourceId();
+        Optional<Player> playerOpt = playerService.getByResourceId(resourceId);
+
+        int bidPrice = playerElement.getBoughtPrice();
+        if (playerOpt.isPresent()) {
+            Player player = playerOpt.get();
+            int marketPrice = player.getPcPrice();
+            String message = String.format("Player bid won! %s: bidPrice=%d, marketPrice=%d", extendedData.getName(), bidPrice, marketPrice);
+            log.info(message);
+            telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message); //TODO делать скриншот элемента, а не всей страницы
+            int buyNowPrice = Math.max(marketPrice + 200, (int) (bidPrice * 1.1));
+            playerElement.listToTransferMarket(marketPrice - 200, buyNowPrice);
+            auctionService.insertWonAuction(WonAuction.builder()
+                    .withTradeId(extendedData.getAuction().getTradeId())
+                    .withPlayerName(extendedData.getName())
+                    .withPlayerRating(extendedData.getRating())
+                    .withBoughtPrice(bidPrice)
+                    .withPotentialProfit((int) (buyNowPrice*0.95 - bidPrice))
+                    .build());
+
+        } else {
+            String message = String.format("Player bid won, but resourceId is unknown: %s, bidPrice=%d", extendedData.getName(), bidPrice);
+            log.info(message);
+            telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
+            playerElement.sendToTransferMarket();
         }
     }
 
