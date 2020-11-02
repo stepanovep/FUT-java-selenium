@@ -15,7 +15,11 @@ import stepanovep.fut21.core.entity.BidResult;
 import stepanovep.fut21.core.entity.FutPlayerAuctionData;
 import stepanovep.fut21.core.entity.FutPlayerElement;
 import stepanovep.fut21.core.entity.PlayerAuctionDataService;
+import stepanovep.fut21.core.page.FutActiveMenu;
+import stepanovep.fut21.core.page.transfers.TransferMarketPage;
+import stepanovep.fut21.core.page.transfers.TransferSearchResult;
 import stepanovep.fut21.core.page.transfers.TransferTargetsPage;
+import stepanovep.fut21.core.page.transfers.filter.TransferMarketSearchFilter;
 import stepanovep.fut21.mongo.ActiveAuction;
 import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.Player;
@@ -26,6 +30,7 @@ import stepanovep.fut21.utils.FutPriceUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class BidChecker {
@@ -39,6 +44,8 @@ public class BidChecker {
     @Autowired
     private TransferTargetsPage transferTargetsPage;
     @Autowired
+    private TransferMarketPage transferMarketPage;
+    @Autowired
     private PlayerService playerService;
     @Autowired
     private PlayerAuctionDataService playerAuctionDataService;
@@ -49,16 +56,20 @@ public class BidChecker {
 
     public void checkBids(int repeat) {
         driver.wakeup();
-        try {
-            for (int i = 0; i < repeat; i++) {
+        for (int i = 0; i < repeat; i++) {
+            try {
                 checkBids();
-            }
-        } catch (Exception exc) {
-            log.error("Bid checker failed", exc);
-            telegramBotNotifier.notifyAboutException(driver.screenshot());
-            return;
-        }
 
+            } catch (StaleElementReferenceException exc) {
+                driver.activeMenu = FutActiveMenu.HOME;
+                log.error("Bid checker failed", exc);
+
+            } catch (Exception exc) {
+                log.error("Bid checker failed", exc);
+                telegramBotNotifier.notifyAboutException(driver.screenshot());
+                return;
+            }
+        }
         log.info("Bid checker successfully finished");
         telegramBotNotifier.sendMessage("Bid checker successfully finished");
     }
@@ -70,7 +81,6 @@ public class BidChecker {
             return;
         }
         transferTargetsPage.navigateToPage();
-        listWonItemsToTransferMarket();
         driver.sleep(2000);
         List<FutPlayerElement> activeBids = transferTargetsPage.getActiveBids();
         log.info("Checking bids: activeBids count = {}", activeBids.size());
@@ -88,7 +98,9 @@ public class BidChecker {
             }
         }
 
-        transferTargetsPage.removeOneExpiredItem(20);
+        listWonItemsToTransferMarket();
+        ensureExpiredItemsCount();
+
         driver.sleep(2000, 3000);
     }
 
@@ -104,6 +116,7 @@ public class BidChecker {
         while (!wonItems.isEmpty()) {
             FutPlayerElement playerElement = wonItems.get(0);
             playerElement.focus();
+            log.info("Expiration time: {}", playerElement.getExpirationTime());
             FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
             String resourceId = extendedData.getResourceId();
             Optional<Player> playerOpt = playerService.getByResourceId(resourceId);
@@ -151,7 +164,7 @@ public class BidChecker {
 
             } else {
                 log.info("Player bid is too high: name={}, nextBid={}, targetPrice={}", extendedData.getName(), nextBid, targetPrice);
-                transferTargetsPage.unwatchOutbidPlayer(player);
+                player.toggleWatch();
             }
         }
     }
@@ -160,10 +173,52 @@ public class BidChecker {
         driver.sleep(400, 600);
         BidResult bidResult = player.makeBid();
         if (bidResult != BidResult.SUCCESS) {
-            transferTargetsPage.removeOneExpiredItem();
-            checkBids();
+            bidResult = player.makeBid();
+            if (bidResult != BidResult.SUCCESS) {
+                removeOneExpiredItem();
+                checkBids();
+            }
         }
         log.info("Player has been rebid");
         driver.sleep(400, 600);
+    }
+
+    private void ensureExpiredItemsCount() {
+        List<FutPlayerElement> expiredItems = transferTargetsPage.getExpiredItems();
+        List<FutPlayerElement> watchedItems = transferTargetsPage.getWatchedItems();
+
+        if (expiredItems.size() > 15) {
+            FutPlayerElement expiredItem = expiredItems.get(0);
+            expiredItem.focus();
+            expiredItem.toggleWatch();
+
+        } else if (expiredItems.size() + watchedItems.size() < 5) {
+            addWatchItems(10);
+        }
+
+        driver.sleep(1000, 2000);
+    }
+
+    private void removeOneExpiredItem() {
+        List<FutPlayerElement> expiredItems = transferTargetsPage.getExpiredItems();
+        if (!expiredItems.isEmpty()) {
+            expiredItems.get(0).toggleWatch();
+        }
+        driver.sleep(1000);
+    }
+
+    private void addWatchItems(int count) {
+        TransferMarketSearchFilter emptyFilter = TransferMarketSearchFilter.builder().build();
+        TransferSearchResult searchResult = transferMarketPage.search(emptyFilter);
+        List<FutPlayerElement> players = searchResult.getPlayers()
+                .stream()
+                .limit(count)
+                .collect(Collectors.toList());
+
+        players.forEach(player -> {
+            player.focus();
+            player.toggleWatch();
+            driver.sleep(1000, 2000);
+        });
     }
 }

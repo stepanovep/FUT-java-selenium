@@ -30,54 +30,45 @@ public class TransferTargetsPage {
         driver.sleep(500);
     }
 
+    /**
+     * Получить список активных сделок
+     */
     public List<FutPlayerElement> getActiveBids() {
         WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.ACTIVE_BIDS_SECTION);
-        List<WebElement> elements = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
-
-        return elements.stream()
-                .map(activeBid -> new FutPlayerElement(driver, activeBid))
-                .collect(Collectors.toList());
-    }
-
-    public List<FutPlayerElement> getWonItems() {
-        WebElement wonItemsSection = driver.findElementWithWait(TransferTargetsLocators.WON_BIDS_SECTION);
-        List<WebElement> elements = wonItemsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
-
-        return elements.stream()
-                .map(wonItem -> new FutPlayerElement(driver, wonItem))
-                .collect(Collectors.toList());
-    }
-
-    public void unwatchOutbidPlayer(FutPlayerElement player) {
-        WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.EXPIRED_BIDS_SECTION);
-        List<WebElement> expiredItems = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
-        if (expiredItems.size() > 0) {
-            player.toggleWatch();
-        }
-    }
-
-    public void unwatchExpiredPlayer() {
-        // TODO
-    }
-
-
-    public void removeOneExpiredItem() {
-        removeOneExpiredItem(0);
+        List<WebElement> activeBids = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
+        return mapToPlayers(activeBids);
     }
 
     /**
-     * TODO expired items tracker
+     * Получить список выигранных сделок
      */
-    public void removeOneExpiredItem(int lowerBound) {
-        driver.sleep(1000);
-        WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.EXPIRED_BIDS_SECTION);
-        List<WebElement> expiredItems = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
-        if (expiredItems.size() > lowerBound) {
-            FutPlayerElement expiredItem = new FutPlayerElement(driver, expiredItems.get(0));
-            expiredItem.focus();
-            expiredItem.toggleWatch();
-        }
-        driver.sleep(1000, 2000);
+    public List<FutPlayerElement> getWonItems() {
+        WebElement wonItemsSection = driver.findElementWithWait(TransferTargetsLocators.WON_BIDS_SECTION);
+        List<WebElement> wonItems = wonItemsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
+        return mapToPlayers(wonItems);
     }
 
+    /**
+     * Получить список наблюдения
+     */
+    public List<FutPlayerElement> getWatchedItems() {
+        WebElement watchedSection = driver.findElementWithWait(TransferTargetsLocators.WATCHED_BIDS_SECTION);
+        List<WebElement> watchedItems = watchedSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
+        return mapToPlayers(watchedItems);
+    }
+
+    /**
+     * Получить список просроченных сделок (проигранные или просто наблюдаемые)
+     */
+    public List<FutPlayerElement> getExpiredItems() {
+        WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.EXPIRED_BIDS_SECTION);
+        List<WebElement> expiredItems = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
+        return mapToPlayers(expiredItems);
+    }
+
+    private List<FutPlayerElement> mapToPlayers(List<WebElement> webElements) {
+        return webElements.stream()
+                .map(webElement -> new FutPlayerElement(driver, webElement))
+                .collect(Collectors.toList());
+    }
 }

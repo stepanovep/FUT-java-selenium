@@ -6,6 +6,7 @@ import org.openqa.selenium.support.ui.FluentWait;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.entity.FutPlayerElement;
 import stepanovep.fut21.core.locators.TransferMarketLocators;
+import stepanovep.fut21.core.page.FutActiveMenu;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
@@ -44,6 +45,7 @@ public class TransferSearchResult {
                 .map(webElem -> new FutPlayerElement(driver, webElem))
                 .collect(Collectors.toList());
 
+        driver.activeMenu = FutActiveMenu.TRANSFER_SEARCH_RESULT;
         return new TransferSearchResult(items);
     }
 
