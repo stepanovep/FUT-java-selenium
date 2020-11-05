@@ -9,6 +9,7 @@ public class FutElementLocators {
     public static By COMPARE_PRICE_ELEMENTS = By.cssSelector(".ui-layout-right ul.paginated > li");
     public static By COMPARE_PRICE_ELEMENT_BUY_NOW_VALUE = By.cssSelector("div.auction > div:nth-child(3) > span.value");
     public static By COMPARE_PRICE_NEXT_BUTTON = By.cssSelector(".ui-layout-right button.next");
+    public static By COMPARE_PRICE_BACK_TO_LAYOUT_BUTTON = By.cssSelector(".ui-layout-right .ut-navigation-button-control");
 
     public static By LIST_TO_TRANSFER_MARKET_OPEN_MENU = LocatorsUtils.byText("List on Transfer Market");
     public static By LIST_TO_TRANSFER_MARKET_START_PRICE = By.cssSelector(".panelActions.open > div:nth-child(2) > .ut-numeric-input-spinner-control > input");

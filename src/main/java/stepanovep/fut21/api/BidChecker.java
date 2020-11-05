@@ -82,13 +82,13 @@ public class BidChecker {
             return;
         }
         transferTargetsPage.navigateToPage();
-        driver.sleep(2000);
+        driver.sleep(1000);
         List<FutPlayerElement> activeBids = transferTargetsPage.getActiveBids();
         log.info("Checking bids: activeBids count = {}", activeBids.size());
 
         for (FutPlayerElement player: activeBids) {
             if (player.isOutbid()) {
-                driver.sleep(1000, 2000);
+                driver.sleep(700, 1200);
                 player.focus();
                 FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
                 if (extendedData.getAuction().getExpires() > MAX_EXPIRATION_TIME_SECONDS_TO_CHECK) {
@@ -139,6 +139,7 @@ public class BidChecker {
         Optional<Player> playerOpt = playerService.getByResourceId(resourceId);
 
         int bidPrice = playerElement.getBoughtPrice();
+        String tradeId = extendedData.getAuction().getTradeId();
         if (playerOpt.isPresent()) {
             Player player = playerOpt.get();
             int marketPrice = player.getPcPrice();
@@ -148,7 +149,7 @@ public class BidChecker {
             int buyNowPrice = Math.max(marketPrice + 200, (int) (bidPrice * 1.1));
             playerElement.listToTransferMarket(marketPrice - 200, buyNowPrice);
             auctionService.insertWonAuction(WonAuction.builder()
-                    .withTradeId(extendedData.getAuction().getTradeId())
+                    .withTradeId(tradeId)
                     .withPlayerName(extendedData.getName())
                     .withPlayerRating(extendedData.getRating())
                     .withBoughtPrice(bidPrice)
@@ -156,10 +157,17 @@ public class BidChecker {
                     .build());
 
         } else {
-            String message = String.format("Player bid won, but resourceId is unknown: %s, bidPrice=%d", extendedData.getName(), bidPrice);
-            log.info(message);
-            telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
-            playerElement.sendToTransferMarket();
+            Optional<ActiveAuction> auctionOpt = auctionService.getActiveAuction(tradeId);
+            if (auctionOpt.isPresent()) {
+                String message = String.format("Player bid won, but resourceId is unknown: %s, bidPrice=%d", extendedData.getName(), bidPrice);
+                log.info(message);
+                telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
+                ActiveAuction auction = auctionOpt.get();
+                int targetPrice = auction.getTargetPrice();
+                int binPrice = Math.max((int) (targetPrice * 1.15), (int) (targetPrice * 1.1) + 500);
+                playerElement.listToTransferMarket(binPrice - 400, binPrice);
+
+            }
         }
     }
 
@@ -183,7 +191,6 @@ public class BidChecker {
     }
 
     private void rebid(FutPlayerElement player) {
-        driver.sleep(400, 600);
         BidResult bidResult = player.makeBid();
         if (bidResult != BidResult.SUCCESS) {
             bidResult = player.makeBid();
@@ -200,13 +207,13 @@ public class BidChecker {
         List<FutPlayerElement> expiredItems = transferTargetsPage.getExpiredItems();
         List<FutPlayerElement> watchedItems = transferTargetsPage.getWatchedItems();
 
-        if (expiredItems.size() > 15) {
+        if (expiredItems.size() >= 10) {
             FutPlayerElement expiredItem = expiredItems.get(0);
             expiredItem.focus();
             expiredItem.toggleWatch();
 
         } else if (expiredItems.size() + watchedItems.size() < 5) {
-            addWatchItems(10);
+            addWatchItems(7);
         }
 
         driver.sleep(1000, 2000);

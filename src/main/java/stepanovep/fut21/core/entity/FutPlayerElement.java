@@ -17,11 +17,13 @@ import stepanovep.fut21.utils.FutPriceUtils;
 import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_BACK_TO_LAYOUT_BUTTON;
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_BUTTON;
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENTS;
 import static stepanovep.fut21.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENT_BUY_NOW_VALUE;
@@ -58,7 +60,7 @@ public class FutPlayerElement {
 
     public BidResult makeBid() {
         focus();
-        driver.sleep(500);
+        driver.sleep(250, 500);
         if (!driver.findElement(FutElementLocators.BID_BUTTON).isEnabled()) {
             return BidResult.BID_BUTTON_INACTIVE;
         }
@@ -150,18 +152,37 @@ public class FutPlayerElement {
         driver.clickElement(COMPARE_PRICE_BUTTON);
         int pages = 0;
         List<Integer> prices = new ArrayList<>();
-        do {
-            driver.sleep(1500, 2500);
+        while (pages < 3) {
+            driver.sleep(1250, 2000);
             List<WebElement> compareElements = driver.findElementsWithWait(COMPARE_PRICE_ELEMENTS);
             compareElements.forEach(element -> {
                 String buyNowStr = element.findElement(COMPARE_PRICE_ELEMENT_BUY_NOW_VALUE).getText();
                 prices.add(Integer.parseInt(buyNowStr.replace(",", "")));
             });
-            driver.clickElement(COMPARE_PRICE_NEXT_BUTTON);
+            try {
+                driver.clickElement(COMPARE_PRICE_NEXT_BUTTON);
+            } catch (Exception exc) {
+                break;
+            }
+            pages++;
+        }
 
-        } while (driver.isElementPresent(COMPARE_PRICE_NEXT_BUTTON) && ++pages < 4);
-
+        driver.clickElement(COMPARE_PRICE_BACK_TO_LAYOUT_BUTTON);
         return prices;
+    }
+
+    public Optional<Integer> getBinPrice() {
+        List<Integer> binPrices = comparePrice();
+        if (binPrices.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (binPrices.size() == 1) {
+            return Optional.of(binPrices.get(0));
+        }
+
+        Collections.sort(binPrices);
+        return Optional.of(binPrices.get(1));
     }
 
     public void toggleWatch() {

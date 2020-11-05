@@ -53,7 +53,7 @@ public class MassBidder {
         driver.wakeup();
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(20, 2000, 15000);
+            List<Player> players = playerService.getPlayersForMassBid(30, 1700, 17000);
             for (Player player: players) {
                 if (driver.isInterrupted()) {
                     System.out.println("Thread interrupted - aborting mass bidding");
@@ -64,7 +64,6 @@ public class MassBidder {
                 driver.sleep(2000);
             }
 
-            bidChecker.checkBids(5);
             driver.sleep(2000, 3000);
 
         } catch (Exception exc) {
@@ -151,7 +150,9 @@ public class MassBidder {
                     extendedData.getName(), extendedData.getRating(), nextBid, auction.getTradeId());
 
         } else if (bidResult == BidResult.LIMIT_REACHED) {
-            log.info("Transfer targets limit reached, stop mass bidding");
+            String message = "Transfer targets limit reached, stop mass bidding";
+            log.info(message);
+            telegramBotNotifier.sendMessage(message);
             driver.interrupt();
 
         } else {
