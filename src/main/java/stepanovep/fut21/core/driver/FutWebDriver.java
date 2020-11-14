@@ -32,7 +32,7 @@ public class FutWebDriver extends ChromeDriver {
 
     public FutActiveMenu activeMenu = FutActiveMenu.HOME;
 
-    private boolean interrupted = false;
+    private volatile boolean interrupted = false;
 
     public FutWebDriver(ChromeOptions chromeOptions) {
         super(chromeOptions);

@@ -27,7 +27,7 @@ public class TransferSearchResult {
 
     public static TransferSearchResult from(FutWebDriver driver) {
         new FluentWait<WebDriver>(driver)
-                .withTimeout(Duration.ofSeconds(5))
+                .withTimeout(Duration.ofSeconds(10))
                 .pollingEvery(Duration.ofMillis(100))
                 .ignoring(NoSuchElementException.class)
                 .until(webDriver -> {
