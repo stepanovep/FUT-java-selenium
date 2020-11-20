@@ -147,7 +147,7 @@ public class BidChecker {
             log.info(message);
             telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message); //TODO делать скриншот элемента, а не всей страницы
             int buyNowPrice = Math.max(marketPrice + 200, (int) (bidPrice * 1.1));
-            playerElement.listToTransferMarket(marketPrice - 200, buyNowPrice);
+            playerElement.listToTransferMarket(marketPrice - 100, buyNowPrice);
             auctionService.insertWonAuction(WonAuction.builder()
                     .withTradeId(tradeId)
                     .withPlayerName(extendedData.getName())

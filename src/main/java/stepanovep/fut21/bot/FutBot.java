@@ -49,9 +49,7 @@ public class FutBot {
     }
 
     public void stop() {
-        if (currentTask != null) {
-            currentTask.cancel(true);
-        }
+        driver.interrupt();
     }
 
     /**
