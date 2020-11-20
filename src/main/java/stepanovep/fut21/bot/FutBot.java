@@ -11,8 +11,9 @@ import stepanovep.fut21.core.page.transfers.TransferListPage;
 import stepanovep.fut21.futbin.FutbinService;
 
 import java.io.File;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class FutBot {
@@ -21,7 +22,7 @@ public class FutBot {
     private FutWebDriver driver;
 
     @Autowired
-    private ExecutorService futbotExecutor;
+    private ScheduledExecutorService futbotExecutor;
 
     @Autowired
     private LoginService loginService;
@@ -48,8 +49,12 @@ public class FutBot {
         currentTask = futbotExecutor.submit(() -> loginService.login());
     }
 
+    /**
+     * Остановить текущую задачу
+     */
     public void stop() {
         driver.interrupt();
+        currentTask.cancel(true);
     }
 
     /**
@@ -59,19 +64,41 @@ public class FutBot {
         return true; //todo
     }
 
+    /**
+     * Запустить задачу для массовых ставок
+     */
     public void massBid() {
         driver.activeMenu = FutActiveMenu.HOME;
         currentTask = futbotExecutor.submit(() -> massBidder.massBid());
     }
 
+    /**
+     * Запустить задачу для проверки ставок
+     */
     public void checkBids() {
         driver.activeMenu = FutActiveMenu.HOME;
         currentTask = futbotExecutor.submit(() -> bidChecker.checkBids(15));
     }
 
+    /**
+     * Перевыставить игроков на продажу
+     */
     public void relistAll() {
         driver.activeMenu = FutActiveMenu.HOME;
-        currentTask = futbotExecutor.submit(() -> transferListPage.relistAll());
+        futbotExecutor.submit(() -> transferListPage.relistAll());
+    }
+
+    /**
+     * Запустить периодическую задачу для перепродажи игроков
+     */
+    public void scheduleRelistAll() {
+        System.out.println("scheduleRelistAll");
+        for (int i = 0; i <= 6; i++) {
+            currentTask = futbotExecutor.schedule(() -> {
+                loginService.login();
+                transferListPage.relistAll();
+            }, i*60 + i*2, TimeUnit.MINUTES);
+        }
     }
 
     public void shutdown() {

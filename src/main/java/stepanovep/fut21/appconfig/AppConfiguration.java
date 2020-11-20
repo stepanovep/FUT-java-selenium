@@ -1,37 +1,38 @@
 package stepanovep.fut21.appconfig;
 
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.mongo.ActiveAuction;
-import stepanovep.fut21.mongo.WonAuction;
 import stepanovep.fut21.mongo.Player;
+import stepanovep.fut21.mongo.WonAuction;
 import stepanovep.fut21.telegrambot.TelegramBot;
 import stepanovep.fut21.telegrambot.TelegramBotCommandHandler;
 import stepanovep.fut21.telegrambot.TelegramBotProperties;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Configuration
+@EnableScheduling
 public class AppConfiguration {
 
     @Bean
@@ -98,8 +99,8 @@ public class AppConfiguration {
     }
 
     @Bean
-    public ExecutorService futbotExecutor() {
-        return Executors.newSingleThreadExecutor();
+    public ScheduledExecutorService futbotExecutor() {
+        return Executors.newSingleThreadScheduledExecutor();
     }
 
     @Bean

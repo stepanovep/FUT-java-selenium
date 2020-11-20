@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut21.appconfig.EaAuthorizationProperties;
 import stepanovep.fut21.core.driver.FutWebDriver;
+import stepanovep.fut21.core.page.FutActiveMenu;
 
 import java.time.Duration;
 
@@ -54,5 +55,7 @@ public class LoginService {
             log.info("Logged in successfully: coins={}", coinsElement.getText());
             driver.sleep(10000);
         }
+
+        driver.activeMenu = FutActiveMenu.HOME;
     }
 }

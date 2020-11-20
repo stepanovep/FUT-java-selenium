@@ -36,4 +36,8 @@ public class TelegramFutBotService {
     public void relistAll() {
         futBot.relistAll();
     }
+
+    public void scheduleRelistAll() {
+        futBot.scheduleRelistAll();
+    }
 }

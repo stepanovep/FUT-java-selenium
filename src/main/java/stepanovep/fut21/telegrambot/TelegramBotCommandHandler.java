@@ -34,6 +34,10 @@ public class TelegramBotCommandHandler {
             case "/checkbids":
                 telegramFutBotService.checkBids();
                 break;
+
+            case "/schedulerelistall":
+                telegramFutBotService.scheduleRelistAll();
+                break;
         }
     }
 }
