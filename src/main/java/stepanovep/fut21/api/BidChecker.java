@@ -133,7 +133,6 @@ public class BidChecker {
 
     private void listPlayerToTransferMarket(FutPlayerElement playerElement) {
         playerElement.focus();
-        log.info("Expiration time: {}", playerElement.getExpirationTime());
         FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
         String resourceId = extendedData.getResourceId();
         Optional<Player> playerOpt = playerService.getByResourceId(resourceId);
@@ -166,7 +165,6 @@ public class BidChecker {
                 int targetPrice = auction.getTargetPrice();
                 int binPrice = Math.max((int) (targetPrice * 1.15), (int) (targetPrice * 1.1) + 500);
                 playerElement.listToTransferMarket(binPrice - 400, binPrice);
-
             }
         }
     }

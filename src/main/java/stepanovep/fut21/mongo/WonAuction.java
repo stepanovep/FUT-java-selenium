@@ -33,20 +33,51 @@ public class WonAuction {
         return tradeId;
     }
 
+    public void setTradeId(String tradeId) {
+        this.tradeId = tradeId;
+    }
+
     public String getPlayerName() {
         return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 
     public Integer getPlayerRating() {
         return playerRating;
     }
 
+    public void setPlayerRating(Integer playerRating) {
+        this.playerRating = playerRating;
+    }
+
     public Integer getBoughtPrice() {
         return boughtPrice;
     }
 
+    public void setBoughtPrice(Integer boughtPrice) {
+        this.boughtPrice = boughtPrice;
+    }
+
     public Integer getPotentialProfit() {
         return potentialProfit;
+    }
+
+    public void setPotentialProfit(Integer potentialProfit) {
+        this.potentialProfit = potentialProfit;
+    }
+
+    @Override
+    public String toString() {
+        return "WonAuction{" +
+                "tradeId='" + tradeId + '\'' +
+                ", playerName='" + playerName + '\'' +
+                ", playerRating=" + playerRating +
+                ", boughtPrice=" + boughtPrice +
+                ", potentialProfit=" + potentialProfit +
+                '}';
     }
 
     public static Builder builder() {

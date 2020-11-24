@@ -2,15 +2,20 @@ package stepanovep.fut21.mongo;
 
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.DeleteResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.exists;
+import static com.mongodb.client.model.Filters.lte;
 import static java.util.Objects.requireNonNull;
 
 @Service
@@ -45,6 +50,16 @@ public class AuctionService {
     public Optional<ActiveAuction> getActiveAuction(@Nonnull String tradeId) {
         requireNonNull(tradeId, "tradeId");
         return Optional.ofNullable(activeAuctions.find(eq("tradeId", tradeId)).first());
+    }
+
+    /**
+     * Очистить аукционы, которые были созданы 24 или более часов назад
+     */
+    public void cleanUpOldAuctions() {
+        DeleteResult deleteResult = activeAuctions.deleteMany(and(
+                exists("createdDt"),
+                lte("createdDt", LocalDateTime.now().minusDays(1L))));
+        log.info("Deleted old auctions: count={}", deleteResult.getDeletedCount());
     }
 
 }
