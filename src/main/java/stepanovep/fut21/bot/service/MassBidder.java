@@ -1,4 +1,4 @@
-package stepanovep.fut21.api;
+package stepanovep.fut21.bot.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class MassBidder {
         driver.wakeup();
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(30, 1700, 17000);
+            List<Player> players = playerService.getPlayersForMassBid(30, 1700, 20000);
             for (Player player: players) {
                 if (driver.isInterrupted()) {
                     System.out.println("Thread interrupted - aborting mass bidding");

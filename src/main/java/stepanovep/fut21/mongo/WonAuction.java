@@ -1,5 +1,7 @@
 package stepanovep.fut21.mongo;
 
+import net.gcardone.junidecode.Junidecode;
+
 import javax.annotation.Nonnull;
 
 public class WonAuction {
@@ -100,7 +102,7 @@ public class WonAuction {
         }
 
         public Builder withPlayerName(String playerName) {
-            this.playerName = playerName;
+            this.playerName = Junidecode.unidecode(playerName);
             return this;
         }
 

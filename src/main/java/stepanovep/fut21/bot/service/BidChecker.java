@@ -1,4 +1,4 @@
-package stepanovep.fut21.api;
+package stepanovep.fut21.bot.service;
 
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;

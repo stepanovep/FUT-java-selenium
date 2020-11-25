@@ -2,8 +2,8 @@ package stepanovep.fut21.bot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import stepanovep.fut21.api.BidChecker;
-import stepanovep.fut21.api.MassBidder;
+import stepanovep.fut21.bot.service.BidChecker;
+import stepanovep.fut21.bot.service.MassBidder;
 import stepanovep.fut21.bot.service.LoginService;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.page.FutActiveMenu;
