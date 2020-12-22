@@ -1,5 +1,7 @@
 package stepanovep.fut21.bot;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut21.bot.service.BidChecker;
@@ -9,6 +11,7 @@ import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.page.FutActiveMenu;
 import stepanovep.fut21.core.page.transfers.TransferListPage;
 import stepanovep.fut21.futbin.FutbinService;
+import stepanovep.fut21.telegrambot.TelegramBotNotifier;
 
 import java.io.File;
 import java.util.concurrent.Future;
@@ -17,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class FutBot {
+
+    private static final Logger log = LoggerFactory.getLogger(FutBot.class);
 
     @Autowired
     private FutWebDriver driver;
@@ -38,6 +43,9 @@ public class FutBot {
 
     @Autowired
     private FutbinService futbinService;
+
+    @Autowired
+    private TelegramBotNotifier telegramBotNotifier;
 
     private Future<?> currentTask;
 
@@ -69,7 +77,10 @@ public class FutBot {
      */
     public void massBid() {
         driver.activeMenu = FutActiveMenu.HOME;
-        currentTask = futbotExecutor.submit(() -> massBidder.massBid());
+        currentTask = futbotExecutor.submit(() ->  {
+            massBidder.massBid();
+            telegramBotNotifier.sendMessage("Mass bidding successfully finished");
+        });
     }
 
     /**
@@ -77,7 +88,10 @@ public class FutBot {
      */
     public void checkBids() {
         driver.activeMenu = FutActiveMenu.HOME;
-        currentTask = futbotExecutor.submit(() -> bidChecker.checkBids(15));
+        currentTask = futbotExecutor.submit(() ->  {
+            bidChecker.checkBids(15);
+            telegramBotNotifier.sendMessage("Bid checker successfully finished");
+        });
     }
 
     /**

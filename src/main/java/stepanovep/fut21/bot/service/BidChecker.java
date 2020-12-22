@@ -72,8 +72,6 @@ public class BidChecker {
                 return;
             }
         }
-        log.info("Bid checker successfully finished");
-        telegramBotNotifier.sendMessage("Bid checker successfully finished");
     }
 
     @Retryable(include = {StaleElementReferenceException.class}, backoff = @Backoff(delay = 3000))

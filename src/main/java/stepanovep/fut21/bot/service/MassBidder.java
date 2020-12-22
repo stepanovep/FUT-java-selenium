@@ -71,9 +71,6 @@ public class MassBidder {
             telegramBotNotifier.notifyAboutException(driver.screenshot());
             return;
         }
-
-        log.info("Mass bidding successfully finished");
-        telegramBotNotifier.sendMessage("Mass bidding successfully finished");
     }
 
     private void massBidPlayer(Player player) {
@@ -150,10 +147,8 @@ public class MassBidder {
                     extendedData.getName(), extendedData.getRating(), nextBid, auction.getTradeId());
 
         } else if (bidResult == BidResult.LIMIT_REACHED) {
-            String message = "Transfer targets limit reached, stop mass bidding";
-            log.info(message);
-            telegramBotNotifier.sendMessage(message);
-            driver.interrupt();
+            telegramBotNotifier.sendMessage("Transfer targets limit reached, stop mass bidding and starting bid checker instead.");
+            bidChecker.checkBids(10);
 
         } else {
             log.warn("Couldn't bid player: name={}, rating={}, bidPrice={}, bidResult={}",

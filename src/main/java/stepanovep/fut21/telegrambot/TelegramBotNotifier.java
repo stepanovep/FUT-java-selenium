@@ -1,5 +1,7 @@
 package stepanovep.fut21.telegrambot;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -10,6 +12,8 @@ import java.io.File;
 
 @Component
 public class TelegramBotNotifier {
+
+    private final static Logger log = LoggerFactory.getLogger(TelegramBotNotifier.class);
 
     @Autowired
     private TelegramBot telegramBot;
@@ -46,9 +50,11 @@ public class TelegramBotNotifier {
     }
 
     public void sendMessage(String message) {
+        log.info(message);
         SendMessage sendMessage = new SendMessage(properties.getChatId(), message);
         try {
             telegramBot.execute(sendMessage);
+
         } catch (TelegramApiException exc) {
             exc.printStackTrace();
         }
