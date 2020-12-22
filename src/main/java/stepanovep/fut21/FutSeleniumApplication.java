@@ -29,6 +29,7 @@ public class FutSeleniumApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        statisticService.displayOverallBuys();
         log.info("EXECUTING : command line runner");
     }
 }

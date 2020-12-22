@@ -8,6 +8,7 @@ import stepanovep.fut21.mongo.WonAuction;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class StatisticService {
@@ -29,10 +30,16 @@ public class StatisticService {
             countSum.add(auction.getPotentialProfit());
         });
 
+        AtomicInteger totalEstimatedProfit = new AtomicInteger();
         map.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
-                .forEach(System.out::println);
+                .forEach(entry -> {
+                    System.out.println(entry);
+                    totalEstimatedProfit.addAndGet(entry.getValue().getSum());
+                });
+
+        System.out.println("\n### Total estimated profit: " + totalEstimatedProfit.get() + " ###\n");
     }
 
     private static class CountSum implements Comparable<CountSum> {

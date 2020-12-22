@@ -11,6 +11,7 @@ public final class TransferTargetsLocators {
     public static By WATCHED_BIDS_SECTION = By.cssSelector(".ut-content section:nth-child(2)");
     public static By WON_BIDS_SECTION = By.cssSelector(".ut-content section:nth-child(3)");
     public static By EXPIRED_BIDS_SECTION = By.cssSelector(".ut-content section:nth-child(4)");
+    public static By CLEAR_EXPIRED_ITEMS_BUTTON = By.cssSelector(".ut-content section:nth-child(4) > header > button");
     public static By SECTION_ELEMENTS = By.cssSelector(".itemList > li");
 
 }

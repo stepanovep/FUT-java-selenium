@@ -15,6 +15,7 @@ import stepanovep.fut21.core.entity.BidResult;
 import stepanovep.fut21.core.entity.FutPlayerAuctionData;
 import stepanovep.fut21.core.entity.FutPlayerElement;
 import stepanovep.fut21.core.entity.PlayerAuctionDataService;
+import stepanovep.fut21.core.locators.TransferTargetsLocators;
 import stepanovep.fut21.core.page.FutActiveMenu;
 import stepanovep.fut21.core.page.transfers.TransferMarketPage;
 import stepanovep.fut21.core.page.transfers.TransferSearchResult;
@@ -205,16 +206,21 @@ public class BidChecker {
         List<FutPlayerElement> expiredItems = transferTargetsPage.getExpiredItems();
         List<FutPlayerElement> watchedItems = transferTargetsPage.getWatchedItems();
 
-        if (expiredItems.size() >= 10) {
-            FutPlayerElement expiredItem = expiredItems.get(0);
-            expiredItem.focus();
-            expiredItem.toggleWatch();
+        if (expiredItems.size() >= 20) {
+            driver.clickElement(TransferTargetsLocators.CLEAR_EXPIRED_ITEMS_BUTTON);
 
+        } else if (expiredItems.size() >= 10) {
+            for (int i = 0; i < 2; i++) {
+                FutPlayerElement expiredItem = expiredItems.get(i);
+                expiredItem.focus();
+                expiredItem.toggleWatch();
+                driver.sleep(1000);
+            }
         } else if (expiredItems.size() + watchedItems.size() < 5) {
-            addWatchItems(7);
+            addWatchItems(5);
         }
 
-        driver.sleep(1000, 2000);
+        driver.sleep(750, 1500);
     }
 
     private void removeOneExpiredItem() {

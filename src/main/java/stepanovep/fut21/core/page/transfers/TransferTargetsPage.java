@@ -61,8 +61,8 @@ public class TransferTargetsPage {
      * Получить список просроченных сделок (проигранные или просто наблюдаемые)
      */
     public List<FutPlayerElement> getExpiredItems() {
-        WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.EXPIRED_BIDS_SECTION);
-        List<WebElement> expiredItems = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
+        WebElement expiredItemsSection = driver.findElementWithWait(TransferTargetsLocators.EXPIRED_BIDS_SECTION);
+        List<WebElement> expiredItems = expiredItemsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         return mapToPlayers(expiredItems);
     }
 
