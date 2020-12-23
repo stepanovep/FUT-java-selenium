@@ -3,6 +3,7 @@ package stepanovep.fut21.mongo;
 import net.gcardone.junidecode.Junidecode;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDateTime;
 
 public class WonAuction {
 
@@ -10,6 +11,7 @@ public class WonAuction {
     private String playerName;
     private Integer playerRating;
     private Integer boughtPrice;
+    private LocalDateTime boughtDt;
     private Integer potentialProfit;
 
     /**
@@ -23,11 +25,13 @@ public class WonAuction {
                        @Nonnull String playerName,
                        @Nonnull Integer playerRating,
                        @Nonnull Integer boughtPrice,
+                       @Nonnull LocalDateTime boughtDt,
                        @Nonnull Integer potentialProfit) {
         this.tradeId = tradeId;
         this.playerName = playerName;
         this.playerRating = playerRating;
         this.boughtPrice = boughtPrice;
+        this.boughtDt = boughtDt;
         this.potentialProfit = potentialProfit;
     }
 
@@ -63,6 +67,14 @@ public class WonAuction {
         this.boughtPrice = boughtPrice;
     }
 
+    public LocalDateTime getBoughtDt() {
+        return boughtDt;
+    }
+
+    public void setBoughtDt(LocalDateTime boughtDt) {
+        this.boughtDt = boughtDt;
+    }
+
     public Integer getPotentialProfit() {
         return potentialProfit;
     }
@@ -78,6 +90,7 @@ public class WonAuction {
                 ", playerName='" + playerName + '\'' +
                 ", playerRating=" + playerRating +
                 ", boughtPrice=" + boughtPrice +
+                ", boughtDt=" + boughtDt +
                 ", potentialProfit=" + potentialProfit +
                 '}';
     }
@@ -91,6 +104,7 @@ public class WonAuction {
         private String playerName;
         private Integer playerRating;
         private Integer boughtPrice;
+        private LocalDateTime boughtDt;
         private Integer potentialProfit;
 
         private Builder() {
@@ -116,13 +130,19 @@ public class WonAuction {
             return this;
         }
 
+        public Builder withBoughtDt(LocalDateTime boughtDt) {
+            this.boughtDt = boughtDt;
+            return this;
+        }
+
         public Builder withPotentialProfit(Integer potentialProfit) {
             this.potentialProfit = potentialProfit;
             return this;
         }
 
         public WonAuction build() {
-            return new WonAuction(tradeId, playerName, playerRating, boughtPrice, potentialProfit);
+            boughtDt = boughtDt == null ? LocalDateTime.now() : boughtDt;
+            return new WonAuction(tradeId, playerName, playerRating, boughtPrice, boughtDt, potentialProfit);
         }
     }
 }

@@ -1,11 +1,14 @@
 package stepanovep.fut21.bot.service;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut21.mongo.WonAuction;
+import stepanovep.fut21.telegrambot.TelegramBotNotifier;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +18,9 @@ public class StatisticService {
 
     @Autowired
     private MongoCollection<WonAuction> wonAuctions;
+
+    @Autowired
+    private TelegramBotNotifier telegramBotNotifier;
 
     /**
      * Вывести на консоль статистику покупок: { игрок # кол-во покупок # суммарный профит }
@@ -40,6 +46,22 @@ public class StatisticService {
                 });
 
         System.out.println("\n### Total estimated profit: " + totalEstimatedProfit.get() + " ###\n");
+    }
+
+    /**
+     * Отправить уведомление о дневной статистики покупки игроков
+     */
+    public void showDailyStatistic() {
+        AtomicInteger count = new AtomicInteger(0);
+        AtomicInteger profitSum = new AtomicInteger(0);
+        wonAuctions.find(Filters.gte("boughtDt", LocalDate.now().atStartOfDay()))
+                .forEach(auction -> {
+                    count.incrementAndGet();
+                    profitSum.addAndGet(auction.getPotentialProfit());
+                });
+
+        telegramBotNotifier.sendMessage(String.format("Today so far bought players: count=%d, potential profit=%d",
+                count.get(), profitSum.get()));
     }
 
     private static class CountSum implements Comparable<CountSum> {

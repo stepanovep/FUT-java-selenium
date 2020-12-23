@@ -5,3 +5,4 @@ schedulerelistall - schedule relist all items every hour
 massbid - start mass bidding players
 checkbids - check bids
 screenshot - send a screenshot of current state
+showdailystatistic - send daily purchase/profit statistic

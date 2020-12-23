@@ -47,8 +47,6 @@ public class LoginService {
         } catch (TimeoutException exc) {
             log.info("Login button disabled. Waiting for FUT menu to load itself.");
 
-            // TODO: use credentials if page redirects to ea.login.com
-
         } finally {
             WebElement coinsElement = new WebDriverWait(driver, Duration.ofSeconds(30))
                     .until(d -> d.findElement(COINS_ELEM_LOCATOR));

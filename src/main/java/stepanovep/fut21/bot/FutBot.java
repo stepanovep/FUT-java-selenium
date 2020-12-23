@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import stepanovep.fut21.bot.service.BidChecker;
 import stepanovep.fut21.bot.service.MassBidder;
 import stepanovep.fut21.bot.service.LoginService;
+import stepanovep.fut21.bot.service.StatisticService;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.page.FutActiveMenu;
 import stepanovep.fut21.core.page.transfers.TransferListPage;
@@ -45,6 +46,9 @@ public class FutBot {
     private FutbinService futbinService;
 
     @Autowired
+    private StatisticService statisticService;
+
+    @Autowired
     private TelegramBotNotifier telegramBotNotifier;
 
     private Future<?> currentTask;
@@ -63,13 +67,6 @@ public class FutBot {
     public void stop() {
         driver.interrupt();
         currentTask.cancel(true);
-    }
-
-    /**
-     * Активна ли текущая сессия
-     */
-    public boolean isLoggedIn() {
-        return true; //todo
     }
 
     /**
@@ -113,6 +110,13 @@ public class FutBot {
                 transferListPage.relistAll();
             }, i*60 + i*2, TimeUnit.MINUTES);
         }
+    }
+
+    /**
+     * Показать дневную статистику покупок
+     */
+    public void showDailyStatistic() {
+        statisticService.showDailyStatistic();
     }
 
     public void shutdown() {

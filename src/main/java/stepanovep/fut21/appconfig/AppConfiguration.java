@@ -84,6 +84,7 @@ public class AppConfiguration {
         MongoDatabase database = mongoClient().getDatabase("fut");
         MongoCollection<WonAuction> auctionsHistory = database.getCollection("wonAuctions", WonAuction.class);
         auctionsHistory.createIndex(Indexes.ascending("tradeId"), new IndexOptions().unique(true));
+        auctionsHistory.createIndex(Indexes.ascending("boughtDt"));
         return auctionsHistory;
     }
 

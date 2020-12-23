@@ -38,6 +38,10 @@ public class TelegramBotCommandHandler {
             case "/schedulerelistall":
                 telegramFutBotService.scheduleRelistAll();
                 break;
+
+            case "/showdailystatistic":
+                telegramFutBotService.showDailyStatistic();
+                break;
         }
     }
 }
