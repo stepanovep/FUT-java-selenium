@@ -108,4 +108,9 @@ public class AppConfiguration {
     public ExecutorService futbinExecutor() {
         return Executors.newSingleThreadExecutor();
     }
+
+    @Bean
+    public ExecutorService telegramNotifierExecutor() {
+        return Executors.newSingleThreadExecutor();
+    }
 }

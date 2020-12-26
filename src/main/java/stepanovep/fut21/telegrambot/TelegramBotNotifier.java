@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
 
 @Component
 public class TelegramBotNotifier {
@@ -20,6 +21,9 @@ public class TelegramBotNotifier {
 
     @Autowired
     private TelegramBotProperties properties;
+
+    @Autowired
+    private ExecutorService telegramNotifierExecutor;
 
     public void notifyAboutBoughtPlayer(File screenshot, String message) {
         sendScreenshot(screenshot, message);
@@ -37,26 +41,42 @@ public class TelegramBotNotifier {
         sendScreenshot(screenshot, null);
     }
 
+    /**
+     * Async send screenshot via telegram
+     *
+     * @param screenshot screenshot file
+     * @param caption caption message
+     */
     public void sendScreenshot(File screenshot, String caption) {
-        SendPhoto sendPhoto = new SendPhoto()
-                .setPhoto(screenshot)
-                .setChatId(properties.getChatId())
-                .setCaption(caption);
-        try {
-            telegramBot.execute(sendPhoto);
-        } catch (TelegramApiException exc) {
-            exc.printStackTrace();
-        }
+        telegramNotifierExecutor.submit(() -> {
+            SendPhoto sendPhoto = new SendPhoto()
+                    .setPhoto(screenshot)
+                    .setChatId(properties.getChatId())
+                    .setCaption(caption);
+            try {
+                telegramBot.execute(sendPhoto);
+            } catch (TelegramApiException exc) {
+                log.error("Telegram send screenshot failed", exc);
+            }
+        });
     }
 
+    /**
+     * Async send message via telegram
+     *
+     * @param message message
+     */
     public void sendMessage(String message) {
-        log.info(message);
-        SendMessage sendMessage = new SendMessage(properties.getChatId(), message);
-        try {
-            telegramBot.execute(sendMessage);
+        telegramNotifierExecutor.submit(() -> {
+            log.info(message);
+            SendMessage sendMessage = new SendMessage(properties.getChatId(), message);
+            try {
+                telegramBot.execute(sendMessage);
 
-        } catch (TelegramApiException exc) {
-            exc.printStackTrace();
-        }
+            } catch (TelegramApiException exc) {
+                log.error("Telegram send message failed", exc);
+            }
+        });
+
     }
 }
