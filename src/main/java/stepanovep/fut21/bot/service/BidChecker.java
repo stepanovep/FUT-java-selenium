@@ -164,6 +164,13 @@ public class BidChecker {
                 int targetPrice = auction.getTargetPrice();
                 int binPrice = Math.max((int) (targetPrice * 1.15), (int) (targetPrice * 1.1) + 500);
                 playerElement.listToTransferMarket(binPrice - 400, binPrice);
+                auctionService.insertWonAuction(WonAuction.builder()
+                        .withTradeId(tradeId)
+                        .withPlayerName(extendedData.getName())
+                        .withPlayerRating(extendedData.getRating())
+                        .withBoughtPrice(bidPrice)
+                        .withPotentialProfit((int) (binPrice*0.95 - bidPrice))
+                        .build());
 
             } else {
                 playerElement.sendToTransferMarket();
