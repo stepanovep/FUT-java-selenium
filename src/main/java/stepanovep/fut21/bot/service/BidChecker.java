@@ -134,47 +134,41 @@ public class BidChecker {
         playerElement.focus();
         FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
         String resourceId = extendedData.getResourceId();
-        Optional<Player> playerOpt = playerService.getByResourceId(resourceId);
 
-        int bidPrice = playerElement.getBoughtPrice();
+        int boughtPrice = playerElement.getBoughtPrice();
         String tradeId = extendedData.getAuction().getTradeId();
+
+        Optional<Player> playerOpt = playerService.getByResourceId(resourceId);
+        Optional<ActiveAuction> auctionOpt = auctionService.getActiveAuction(tradeId);
+
+        Integer marketPrice = null;
+
         if (playerOpt.isPresent()) {
             Player player = playerOpt.get();
-            int marketPrice = player.getPcPrice();
-            String message = String.format("Player bid won! %s: bidPrice=%d, marketPrice=%d", extendedData.getName(), bidPrice, marketPrice);
+            marketPrice = player.getPcPrice();
+
+        } else if (auctionOpt.isPresent()) {
+            ActiveAuction auction = auctionOpt.get();
+            int targetPrice = auction.getTargetPrice();
+            marketPrice = FutPriceUtils.roundToValidFutPrice((int) Math.max((targetPrice * 10.0) / 9, (targetPrice + 500) / 0.95));
+
+        } else {
+            playerElement.sendToTransferMarket();
+        }
+
+        if (marketPrice != null) {
+            int listBinPrice = Math.max(marketPrice + 200, (int) (boughtPrice * 1.1));
+            String message = String.format("Bid won! %s: bidPrice=%d, marketPrice=%d", extendedData.getName(), boughtPrice, marketPrice);
             log.info(message);
-            telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message); //TODO делать скриншот элемента, а не всей страницы
-            int buyNowPrice = Math.max(marketPrice + 200, (int) (bidPrice * 1.1));
-            playerElement.listToTransferMarket(marketPrice - 100, buyNowPrice);
+            telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
+            playerElement.listToTransferMarket(listBinPrice - 300, listBinPrice);
             auctionService.insertWonAuction(WonAuction.builder()
                     .withTradeId(tradeId)
                     .withPlayerName(extendedData.getName())
                     .withPlayerRating(extendedData.getRating())
-                    .withBoughtPrice(bidPrice)
-                    .withPotentialProfit((int) (buyNowPrice*0.95 - bidPrice))
+                    .withBoughtPrice(boughtPrice)
+                    .withPotentialProfit((int) (listBinPrice * 0.95 - boughtPrice))
                     .build());
-
-        } else {
-            Optional<ActiveAuction> auctionOpt = auctionService.getActiveAuction(tradeId);
-            if (auctionOpt.isPresent()) {
-                String message = String.format("Player bid won, but resourceId is unknown: %s, bidPrice=%d", extendedData.getName(), bidPrice);
-                log.info(message);
-                telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
-                ActiveAuction auction = auctionOpt.get();
-                int targetPrice = auction.getTargetPrice();
-                int binPrice = Math.max((int) (targetPrice * 1.15), (int) (targetPrice * 1.1) + 500);
-                playerElement.listToTransferMarket(binPrice - 400, binPrice);
-                auctionService.insertWonAuction(WonAuction.builder()
-                        .withTradeId(tradeId)
-                        .withPlayerName(extendedData.getName())
-                        .withPlayerRating(extendedData.getRating())
-                        .withBoughtPrice(bidPrice)
-                        .withPotentialProfit((int) (binPrice*0.95 - bidPrice))
-                        .build());
-
-            } else {
-                playerElement.sendToTransferMarket();
-            }
         }
     }
 
@@ -225,7 +219,7 @@ public class BidChecker {
                 driver.sleep(1000);
             }
         } else if (expiredItems.size() + watchedItems.size() < 5) {
-            addWatchItems(5);
+            addWatchItems(6);
         }
 
         driver.sleep(750, 1500);

@@ -53,7 +53,7 @@ public class MassBidder {
         driver.wakeup();
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(30, 1700, 20000);
+            List<Player> players = playerService.getPlayersForMassBid(30, 1700, 25000);
             for (Player player: players) {
                 if (driver.isInterrupted()) {
                     System.out.println("Thread interrupted - aborting mass bidding");
@@ -69,7 +69,6 @@ public class MassBidder {
         } catch (Exception exc) {
             log.error("Mass bid failed: ", exc);
             telegramBotNotifier.notifyAboutException(driver.screenshot());
-            return;
         }
     }
 

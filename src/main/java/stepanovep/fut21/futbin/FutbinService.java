@@ -34,6 +34,7 @@ public class FutbinService {
     private static final List<String> FUTBIN_TRADE_SQUADS_URLS = List.of(
             "https://www.futbin.com/21/squad/658385",
             "https://www.futbin.com/21/squad/655419",
+            "https://www.futbin.com/21/squad/867466",
             "https://www.futbin.com/21/squad/655317"
     );
 
