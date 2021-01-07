@@ -1,4 +1,4 @@
-package stepanovep.fut21.bot.service;
+package stepanovep.fut21.bot.service.bidding;
 
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;

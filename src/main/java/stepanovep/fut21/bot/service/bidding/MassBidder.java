@@ -1,4 +1,4 @@
-package stepanovep.fut21.bot.service;
+package stepanovep.fut21.bot.service.bidding;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
