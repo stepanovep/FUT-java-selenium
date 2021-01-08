@@ -12,9 +12,9 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 
 @Component
-public class TelegramBotNotifier {
+public class TelegramNotifier {
 
-    private final static Logger log = LoggerFactory.getLogger(TelegramBotNotifier.class);
+    private final static Logger log = LoggerFactory.getLogger(TelegramNotifier.class);
 
     @Autowired
     private TelegramBot telegramBot;

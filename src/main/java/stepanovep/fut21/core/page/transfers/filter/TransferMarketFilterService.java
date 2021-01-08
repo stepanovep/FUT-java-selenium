@@ -16,9 +16,12 @@ import static stepanovep.fut21.core.locators.TransferMarketLocators.MIN_BID_PRIC
 import static stepanovep.fut21.core.locators.TransferMarketLocators.MIN_BIN_PRICE_FORM_INPUT;
 import static stepanovep.fut21.core.locators.TransferMarketLocators.PLAYERS_DROPDOWN_GET_FIRST;
 import static stepanovep.fut21.core.locators.TransferMarketLocators.SEARCH_CHEM_STYLE_LIST;
+import static stepanovep.fut21.core.locators.TransferMarketLocators.SEARCH_LEAGUE_LIST;
+import static stepanovep.fut21.core.locators.TransferMarketLocators.SEARCH_NATIONALITY_LIST;
 import static stepanovep.fut21.core.locators.TransferMarketLocators.SEARCH_PLAYER_NAME_INPUT;
 import static stepanovep.fut21.core.locators.TransferMarketLocators.SEARCH_POSITION_LIST;
 import static stepanovep.fut21.core.locators.TransferMarketLocators.SEARCH_QUALITY_LIST;
+import static stepanovep.fut21.core.locators.TransferMarketLocators.SEARCH_RARITY_LIST;
 
 @Component
 public class TransferMarketFilterService {
@@ -30,6 +33,9 @@ public class TransferMarketFilterService {
         filter.getName().ifPresent(this::setNameFilter);
 
         filter.getQuality().ifPresent(quality -> setDropDownFilter(SEARCH_QUALITY_LIST, quality));
+        filter.getRarity().ifPresent(rarity -> setDropDownFilter(SEARCH_RARITY_LIST, rarity));
+        filter.getNationality().ifPresent(nationality -> setDropDownFilter(SEARCH_NATIONALITY_LIST, nationality));
+        filter.getLeague().ifPresent(league -> setDropDownFilter(SEARCH_LEAGUE_LIST, league));
         filter.getPosition().ifPresent(position -> setDropDownFilter(SEARCH_POSITION_LIST, position));
         filter.getChemStyle().ifPresent(chemStyle -> setDropDownFilter(SEARCH_CHEM_STYLE_LIST, chemStyle));
 

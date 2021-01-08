@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut21.mongo.WonAuction;
-import stepanovep.fut21.telegrambot.TelegramBotNotifier;
+import stepanovep.fut21.telegrambot.TelegramNotifier;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class StatisticService {
     private MongoCollection<WonAuction> wonAuctions;
 
     @Autowired
-    private TelegramBotNotifier telegramBotNotifier;
+    private TelegramNotifier telegramNotifier;
 
     /**
      * Вывести на консоль статистику покупок: { игрок # кол-во покупок # суммарный профит }
@@ -60,7 +60,7 @@ public class StatisticService {
                     profitSum.addAndGet(auction.getPotentialProfit());
                 });
 
-        telegramBotNotifier.sendMessage(String.format("Today so far bought players: count=%d, potential profit=%d",
+        telegramNotifier.sendMessage(String.format("Today so far bought players: count=%d, potential profit=%d",
                 count.get(), profitSum.get()));
     }
 

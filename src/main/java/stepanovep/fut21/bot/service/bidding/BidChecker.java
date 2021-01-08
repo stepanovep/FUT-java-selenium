@@ -26,7 +26,7 @@ import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.mongo.PlayerService;
 import stepanovep.fut21.mongo.WonAuction;
-import stepanovep.fut21.telegrambot.TelegramBotNotifier;
+import stepanovep.fut21.telegrambot.TelegramNotifier;
 import stepanovep.fut21.utils.FutPriceUtils;
 
 import java.time.Duration;
@@ -54,7 +54,7 @@ public class BidChecker {
     @Autowired
     private AuctionService auctionService;
     @Autowired
-    private TelegramBotNotifier telegramBotNotifier;
+    private TelegramNotifier telegramNotifier;
 
     public void checkBids(int repeat) {
         driver.wakeup();
@@ -68,7 +68,7 @@ public class BidChecker {
 
             } catch (Exception exc) {
                 log.error("Bid checker failed", exc);
-                telegramBotNotifier.notifyAboutException(driver.screenshot());
+                telegramNotifier.notifyAboutException(driver.screenshot());
                 return;
             }
         }
@@ -160,7 +160,7 @@ public class BidChecker {
             int listBinPrice = Math.max(marketPrice + 200, (int) (boughtPrice * 1.1));
             String message = String.format("Bid won! %s: bidPrice=%d, marketPrice=%d", extendedData.getName(), boughtPrice, marketPrice);
             log.info(message);
-            telegramBotNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
+            telegramNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
             playerElement.listToTransferMarket(listBinPrice - 300, listBinPrice);
             auctionService.insertWonAuction(WonAuction.builder()
                     .withTradeId(tradeId)
@@ -235,7 +235,7 @@ public class BidChecker {
 
     private void addWatchItems(int count) {
         TransferMarketSearchFilter emptyFilter = TransferMarketSearchFilter.builder().build();
-        TransferSearchResult searchResult = transferMarketPage.search(emptyFilter);
+        TransferSearchResult searchResult = transferMarketPage.applyFilterAndSearch(emptyFilter);
         List<FutPlayerElement> players = searchResult.getPlayers()
                 .stream()
                 .limit(count)

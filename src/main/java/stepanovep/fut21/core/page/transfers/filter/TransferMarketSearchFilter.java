@@ -9,28 +9,24 @@ import java.util.Optional;
  */
 public class TransferMarketSearchFilter {
 
-    @Nullable
     private final String name;
-    @Nullable
     private final Quality quality;
-    @Nullable
+    private final Rarity rarity;
+    private final Nationality nationality;
+    private final League league;
     private final Position position;
-    @Nullable
     private final ChemStyle chemStyle;
-    @Nullable
     private final Integer bidMin;
-    @Nullable
     private final Integer bidMax;
-    @Nullable
     private final Integer buyNowMin;
-    @Nullable
     private final Integer buyNowMax;
-
-    @Nullable
     private final Integer targetPrice;
 
     private TransferMarketSearchFilter(@Nullable String name,
                                        @Nullable Quality quality,
+                                       @Nullable Rarity rarity,
+                                       @Nullable Nationality nationality,
+                                       @Nullable League league,
                                        @Nullable Position position,
                                        @Nullable ChemStyle chemStyle,
                                        @Nullable Integer bidMin, @Nullable Integer bidMax,
@@ -38,6 +34,9 @@ public class TransferMarketSearchFilter {
                                        @Nullable Integer targetPrice) {
         this.name = name;
         this.quality = quality;
+        this.rarity = rarity;
+        this.nationality = nationality;
+        this.league = league;
         this.position = position;
         this.chemStyle = chemStyle;
         this.bidMin = bidMin;
@@ -55,6 +54,21 @@ public class TransferMarketSearchFilter {
     @Nonnull
     public Optional<Quality> getQuality() {
         return Optional.ofNullable(quality);
+    }
+
+    @Nonnull
+    public Optional<Rarity> getRarity() {
+        return Optional.ofNullable(rarity);
+    }
+
+    @Nonnull
+    public Optional<Nationality> getNationality() {
+        return Optional.ofNullable(nationality);
+    }
+
+    @Nonnull
+    public Optional<League> getLeague() {
+        return Optional.ofNullable(league);
     }
 
     @Nonnull
@@ -94,9 +108,12 @@ public class TransferMarketSearchFilter {
 
     @Override
     public String toString() {
-        return "TransferMarketFilter{" +
+        return "TransferMarketSearchFilter{" +
                 "name='" + name + '\'' +
                 ", quality=" + quality +
+                ", rarity=" + rarity +
+                ", nationality=" + nationality +
+                ", league=" + league +
                 ", position=" + position +
                 ", chemStyle=" + chemStyle +
                 ", bidMin=" + bidMin +
@@ -114,6 +131,9 @@ public class TransferMarketSearchFilter {
     public static final class Builder {
         private String name;
         private Quality quality;
+        private Rarity rarity;
+        private Nationality nationality;
+        private League league;
         private Position position;
         private ChemStyle chemStyle;
         private Integer bidMin;
@@ -132,6 +152,21 @@ public class TransferMarketSearchFilter {
 
         public Builder withQuality(Quality quality) {
             this.quality = quality;
+            return this;
+        }
+
+        public Builder withRarity(Rarity rarity) {
+            this.rarity = rarity;
+            return this;
+        }
+
+        public Builder withNationality(Nationality nationality) {
+            this.nationality = nationality;
+            return this;
+        }
+
+        public Builder withLeague(League league) {
+            this.league = league;
             return this;
         }
 
@@ -172,9 +207,8 @@ public class TransferMarketSearchFilter {
 
         public TransferMarketSearchFilter build() {
             return new TransferMarketSearchFilter(
-                    name, quality, position, chemStyle,
-                    bidMin, bidMax, buyNowMin, buyNowMax,
-                    targetPrice);
+                    name, quality, rarity, nationality, league, position, chemStyle,
+                    bidMin, bidMax, buyNowMin, buyNowMax, targetPrice);
         }
     }
 }

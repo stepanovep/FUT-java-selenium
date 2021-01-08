@@ -25,13 +25,42 @@ public class TransferMarketPage {
     @Autowired
     private TransferMarketFilterService filterService;
 
-    public TransferSearchResult search(TransferMarketSearchFilter filter) {
+    public TransferSearchResult applyFilterAndSearch(TransferMarketSearchFilter filter) {
+        applyFilter(filter);
+        driver.clickElement(TransferMarketLocators.SEARCH_BUTTON);
+        return TransferSearchResult.from(driver);
+    }
+
+    public void applyFilter(TransferMarketSearchFilter filter) {
         navigateToPage();
         log.info("Searching: filter={}", filter);
         filterService.resetAllFilters();
         filterService.applyFilter(filter);
+    }
+
+    public TransferSearchResult search() {
         driver.clickElement(TransferMarketLocators.SEARCH_BUTTON);
         return TransferSearchResult.from(driver);
+    }
+
+    public void backToSearchForm() {
+        driver.clickElement(TransferMarketLocators.BACK_TO_SEARCH_FORM_BUTTON);
+    }
+
+    public void changeMinBidPriceFilter(int sign) {
+        if (sign > 0) {
+            driver.clickElement(TransferMarketLocators.MIN_BID_PRICE_INCREASE_BUTTON);
+        } else {
+            driver.clickElement(TransferMarketLocators.MIN_BID_PRICE_DECREASE_BUTTON);
+        }
+    }
+
+    public void changeMinBuyNowPriceFilter(int sign) {
+        if (sign > 0) {
+            driver.clickElement(TransferMarketLocators.MIN_BIN_PRICE_INCREASE_BUTTON);
+        } else {
+            driver.clickElement(TransferMarketLocators.MIN_BIN_PRICE_DECREASE_BUTTON);
+        }
     }
 
     private void navigateToPage() {

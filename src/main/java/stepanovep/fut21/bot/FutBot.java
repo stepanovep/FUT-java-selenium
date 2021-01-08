@@ -12,7 +12,7 @@ import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.page.FutActiveMenu;
 import stepanovep.fut21.core.page.transfers.TransferListPage;
 import stepanovep.fut21.futbin.FutbinService;
-import stepanovep.fut21.telegrambot.TelegramBotNotifier;
+import stepanovep.fut21.telegrambot.TelegramNotifier;
 
 import java.io.File;
 import java.util.concurrent.Future;
@@ -49,7 +49,7 @@ public class FutBot {
     private StatisticService statisticService;
 
     @Autowired
-    private TelegramBotNotifier telegramBotNotifier;
+    private TelegramNotifier telegramNotifier;
 
     private Future<?> currentTask;
 
@@ -76,7 +76,7 @@ public class FutBot {
         driver.activeMenu = FutActiveMenu.HOME;
         currentTask = futbotExecutor.submit(() ->  {
             massBidder.massBid();
-            telegramBotNotifier.sendMessage("Mass bidding successfully finished");
+            telegramNotifier.sendMessage("Mass bidding successfully finished");
         });
     }
 
@@ -87,7 +87,7 @@ public class FutBot {
         driver.activeMenu = FutActiveMenu.HOME;
         currentTask = futbotExecutor.submit(() ->  {
             bidChecker.checkBids(15);
-            telegramBotNotifier.sendMessage("Bid checker successfully finished");
+            telegramNotifier.sendMessage("Bid checker successfully finished");
         });
     }
 

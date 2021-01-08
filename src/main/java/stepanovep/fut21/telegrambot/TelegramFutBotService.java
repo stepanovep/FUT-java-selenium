@@ -11,7 +11,7 @@ public class TelegramFutBotService {
     private FutBot futBot;
 
     @Autowired
-    private TelegramBotNotifier telegramBotNotifier;
+    private TelegramNotifier telegramNotifier;
 
     public void login() {
          futBot.login();
@@ -22,7 +22,7 @@ public class TelegramFutBotService {
     }
 
     public void screenshot() {
-        telegramBotNotifier.sendScreenshot(futBot.screenshot());
+        telegramNotifier.sendScreenshot(futBot.screenshot());
     }
 
     public void massBid() {

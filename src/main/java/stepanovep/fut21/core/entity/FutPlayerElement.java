@@ -117,7 +117,9 @@ public class FutPlayerElement {
     }
 
     public void buyNow() {
-
+        driver.clickElement(FutElementLocators.BUY_NOW_BUTTON);
+        driver.sleep(50, 100);
+        driver.acceptDialogMessage();
     }
 
     public void sendToClub() {

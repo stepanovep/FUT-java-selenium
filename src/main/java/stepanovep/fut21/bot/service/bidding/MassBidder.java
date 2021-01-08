@@ -18,7 +18,7 @@ import stepanovep.fut21.mongo.ActiveAuction;
 import stepanovep.fut21.mongo.AuctionService;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.mongo.PlayerService;
-import stepanovep.fut21.telegrambot.TelegramBotNotifier;
+import stepanovep.fut21.telegrambot.TelegramNotifier;
 import stepanovep.fut21.utils.FutPriceUtils;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class MassBidder {
     @Autowired
     private PlayerService playerService;
     @Autowired
-    private TelegramBotNotifier telegramBotNotifier;
+    private TelegramNotifier telegramNotifier;
 
     private static final int MAX_COUNT_BIDS = 5;
     private static final int MAX_BID_EXPIRATION_TIME_LEFT_IN_SECONDS = 20 * 60;
@@ -68,7 +68,7 @@ public class MassBidder {
 
         } catch (Exception exc) {
             log.error("Mass bid failed: ", exc);
-            telegramBotNotifier.notifyAboutException(driver.screenshot());
+            telegramNotifier.notifyAboutException(driver.screenshot());
         }
     }
 
@@ -76,7 +76,7 @@ public class MassBidder {
         int bidsCount = 0;
         TransferMarketSearchFilter filter = mapToSearchFilter(player);
         Integer targetPrice = filter.getTargetPrice().orElseThrow(() -> new IllegalStateException("targetPrice is mandatory here"));
-        TransferSearchResult searchResult = transferMarket.search(filter);
+        TransferSearchResult searchResult = transferMarket.applyFilterAndSearch(filter);
         if (targetPrice > getAdjustedTargetPrice(searchResult)) {
             targetPrice = getAdjustedTargetPrice(searchResult);
             int newActualPrice = Math.max((int) (targetPrice * 1.15), (int) (targetPrice * 1.1) + 500);
@@ -146,7 +146,7 @@ public class MassBidder {
                     extendedData.getName(), extendedData.getRating(), nextBid, auction.getTradeId());
 
         } else if (bidResult == BidResult.LIMIT_REACHED) {
-            telegramBotNotifier.sendMessage("Transfer targets limit reached, stop mass bidding and starting bid checker instead.");
+            telegramNotifier.sendMessage("Transfer targets limit reached, stop mass bidding and starting bid checker instead.");
             bidChecker.checkBids(10);
 
         } else {
