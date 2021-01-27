@@ -36,6 +36,8 @@ public class FutPlayerElement {
 
     private static final Logger log = LoggerFactory.getLogger(FutPlayerElement.class);
 
+    private static final int BID_TRIES = 4;
+
     private final FutWebDriver driver;
     private final WebElement webElement;
     private final WebElement entityContainer;
@@ -65,8 +67,8 @@ public class FutPlayerElement {
             return BidResult.BID_BUTTON_INACTIVE;
         }
         driver.clickElement(FutElementLocators.BID_BUTTON);
-        for (int tries = 0; tries < 3; tries++) {
-            driver.sleep(400, 750);
+        for (int tries = 0; tries < BID_TRIES; tries++) {
+            driver.sleep(500, 1000);
 
             Optional<BidResult> dialogBidResult = handleDialogIfPresent();
             if (dialogBidResult.isPresent()) {
@@ -83,7 +85,9 @@ public class FutPlayerElement {
             if (errorPopups.size() > 0) {
                 String errorText = errorPopups.get(0).findElement(By.cssSelector("p")).getText();
                 if (errorText.contains("Bid status changed")) {
-                    return BidResult.BID_CHANGED_ERROR;
+                    if (tries == BID_TRIES - 1)
+                        return BidResult.BID_CHANGED_ERROR;
+                    continue;
                 }
                 return BidResult.TOO_MANY_ACTIONS_ERROR;
             }
@@ -215,26 +219,26 @@ public class FutPlayerElement {
         return Junidecode.unidecode(entityContainer.findElement(By.cssSelector(".name")).getText());
     }
 
-    public int getNextBid() {
+    public Optional<Integer> getNextBid() {
         WebElement startPriceDiv = auctionContainer.findElements(By.cssSelector(".auctionValue")).get(0);
         if (!startPriceDiv.findElement(By.cssSelector(".label")).getText().contains("START PRICE")) {
             log.error("Start price element is incorrect: auctionContainer={}", auctionContainer.getText());
-            throw new IllegalStateException("Start price element is incorrect");
+            return Optional.empty();
         }
 
         WebElement currentBidDiv = auctionContainer.findElements(By.cssSelector(".auctionValue")).get(1);
         if (!currentBidDiv.findElement(By.cssSelector(".label")).getText().contains("BID")) {
             log.error("Start price element is incorrect: auctionContainer={}", auctionContainer.getText());
-            throw new IllegalStateException("Bid price element is incorrect");
+            return Optional.empty();
         }
 
         String startPriceStr = startPriceDiv.findElement(By.cssSelector(".value")).getText();
         String currentBidStr = currentBidDiv.findElement(By.cssSelector(".value")).getText();
         if (currentBidStr.equals("---")) {
-            return Integer.parseInt(startPriceStr.replace(",", ""));
+            return Optional.of(Integer.parseInt(startPriceStr.replace(",", "")));
         }
 
-        return FutPriceUtils.getNextBid(Integer.parseInt(currentBidStr.replace(",", "")));
+        return Optional.of(FutPriceUtils.getNextBid(Integer.parseInt(currentBidStr.replace(",", ""))));
     }
 
     public int getBuyNowPrice() {

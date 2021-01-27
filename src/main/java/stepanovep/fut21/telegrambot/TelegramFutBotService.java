@@ -44,4 +44,8 @@ public class TelegramFutBotService {
     public void showDailyStatistic() {
         futBot.showDailyStatistic();
     }
+
+    public void clubStock() {
+        futBot.clubStock();
+    }
 }

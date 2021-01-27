@@ -42,6 +42,10 @@ public class TelegramBotCommandHandler {
             case "/showdailystatistic":
                 telegramFutBotService.showDailyStatistic();
                 break;
+
+            case "/clubstock":
+                telegramFutBotService.clubStock();
+                break;
         }
     }
 }

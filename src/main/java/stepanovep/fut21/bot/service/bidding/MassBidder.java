@@ -53,7 +53,7 @@ public class MassBidder {
         driver.wakeup();
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(30, 1700, 25000);
+            List<Player> players = playerService.getPlayersForMassBid(30, 1500, 27500);
             for (Player player: players) {
                 if (driver.isInterrupted()) {
                     System.out.println("Thread interrupted - aborting mass bidding");

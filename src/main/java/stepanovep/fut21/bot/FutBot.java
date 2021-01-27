@@ -8,6 +8,7 @@ import stepanovep.fut21.bot.service.bidding.BidChecker;
 import stepanovep.fut21.bot.service.bidding.MassBidder;
 import stepanovep.fut21.bot.service.LoginService;
 import stepanovep.fut21.bot.service.StatisticService;
+import stepanovep.fut21.bot.service.clubstocking.ClubStocker;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.page.FutActiveMenu;
 import stepanovep.fut21.core.page.transfers.TransferListPage;
@@ -38,6 +39,9 @@ public class FutBot {
 
     @Autowired
     private BidChecker bidChecker;
+
+    @Autowired
+    private ClubStocker clubStocker;
 
     @Autowired
     private TransferListPage transferListPage;
@@ -117,6 +121,13 @@ public class FutBot {
      */
     public void showDailyStatistic() {
         statisticService.showDailyStatistic();
+    }
+
+    /**
+     * Club stock low rated (gold rare players) by bidding
+     */
+    public void clubStock() {
+        futbotExecutor.submit(() -> clubStocker.clubStock());
     }
 
     public void shutdown() {

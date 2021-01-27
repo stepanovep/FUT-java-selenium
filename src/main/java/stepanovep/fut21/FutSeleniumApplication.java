@@ -11,13 +11,8 @@ import org.springframework.retry.annotation.EnableRetry;
 import stepanovep.fut21.appconfig.AppConfiguration;
 import stepanovep.fut21.bot.service.LoginService;
 import stepanovep.fut21.bot.service.StatisticService;
+import stepanovep.fut21.bot.service.clubstocking.ClubStocker;
 import stepanovep.fut21.bot.service.sniping.SnipingService;
-import stepanovep.fut21.core.page.transfers.filter.League;
-import stepanovep.fut21.core.page.transfers.filter.Nationality;
-import stepanovep.fut21.core.page.transfers.filter.Position;
-import stepanovep.fut21.core.page.transfers.filter.Quality;
-import stepanovep.fut21.core.page.transfers.filter.Rarity;
-import stepanovep.fut21.core.page.transfers.filter.TransferMarketSearchFilter;
 
 @SpringBootApplication
 @Import(AppConfiguration.class)
@@ -33,6 +28,9 @@ public class FutSeleniumApplication implements CommandLineRunner {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private ClubStocker clubStocker;
+
     private static final Logger log = LoggerFactory.getLogger(FutSeleniumApplication.class);
 
     public static void main(String[] args) {
@@ -46,14 +44,11 @@ public class FutSeleniumApplication implements CommandLineRunner {
         log.info("EXECUTING : command line runner");
         statisticService.displayOverallBuys();
 
+//        foo();
+    }
+
+    private void foo() {
         loginService.login();
-        snipingService.snipe(TransferMarketSearchFilter.builder()
-//                .withQuality(Quality.GOLD)
-//                .withPosition(Position.DEFENDER)
-//                .withNationality(Nationality.ITALY)
-                .withLeague(League.LIGA_NOS)
-                .withRarity(Rarity.UCL_NON_RARE)
-                .withBuyNowMax(3300)
-                .build());
+        clubStocker.clubStock();
     }
 }
