@@ -78,8 +78,19 @@ public class FutBot {
      */
     public void massBid() {
         driver.activeMenu = FutActiveMenu.HOME;
+        futbinService.updatePrices();
+
+        currentTask = futbotExecutor.submit(() ->  {
+            loginService.login();
+            transferListPage.relistAll();
+        });
+
         currentTask = futbotExecutor.submit(() ->  {
             massBidder.massBid();
+            bidChecker.checkBids(10);
+            massBidder.massBid();
+            bidChecker.checkBids(10);
+
             telegramNotifier.sendMessage("Mass bidding successfully finished");
         });
     }

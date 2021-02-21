@@ -28,6 +28,8 @@ public class TransferListPage {
             driver.acceptDialogMessage();
             log.info("Items relisted");
         }
+
+        driver.sleep(2000);
     }
 
     public void navigateToPage() {
