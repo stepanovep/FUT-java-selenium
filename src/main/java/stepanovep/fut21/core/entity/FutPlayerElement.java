@@ -101,19 +101,23 @@ public class FutPlayerElement {
         if (dialogOpt.isPresent()) {
             WebElement dialog = dialogOpt.get();
             String dialogTitle = dialog.findElement(By.cssSelector(".dialog-title")).getText();
-            if (dialogTitle.toUpperCase().equals("LIMIT REACHED")) {
-                log.warn("Transfer targets limit reached");
-                driver.acceptDialogMessage();
-                return Optional.of(BidResult.LIMIT_REACHED);
-            }
-            if (dialogTitle.toUpperCase().equals("ALREADY HIGHEST BIDDER")) {
-                log.warn("Already highest bidder");
-                driver.declineDialogMessage();
-                return Optional.of(BidResult.SUCCESS);
-            }
-            if (dialogTitle.toUpperCase().equals("BID TOO LOW")) {
-                log.warn("Bid too low");
-                driver.acceptDialogMessage();
+            switch (dialogTitle.toUpperCase()) {
+                case "LIMIT REACHED":
+                    log.warn("Transfer targets limit reached");
+                    driver.acceptDialogMessage();
+                    return Optional.of(BidResult.LIMIT_REACHED);
+                case "ALREADY HIGHEST BIDDER":
+                    log.warn("Already highest bidder");
+                    driver.declineDialogMessage();
+                    return Optional.of(BidResult.SUCCESS);
+                case "BID TOO LOW":
+                    log.warn("Bid too low");
+                    driver.acceptDialogMessage();
+                    break;
+                case "CANNOT UNWATCH":
+                    log.warn("Cannot unwatch an item bidding on");
+                    driver.acceptDialogMessage();
+                    break;
             }
         }
 
@@ -193,6 +197,7 @@ public class FutPlayerElement {
 
     public void toggleWatch() {
         driver.clickElement(By.cssSelector("button.watch"));
+        handleDialogIfPresent();
     }
 
     public void discard() {
