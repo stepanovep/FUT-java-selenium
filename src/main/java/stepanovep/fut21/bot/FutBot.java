@@ -20,6 +20,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * High level FutBot methods
+ */
 @Service
 public class FutBot {
 
@@ -58,7 +61,7 @@ public class FutBot {
     private Future<?> currentTask;
 
     /**
-     * Войти в FUT web-app
+     * Login to Web-app
      */
     public void login() {
         futbinService.updatePrices();
@@ -66,7 +69,8 @@ public class FutBot {
     }
 
     /**
-     * Остановить текущую задачу
+     * Stop current task
+     * todo: sometimes task won't stop
      */
     public void stop() {
         driver.interrupt();
@@ -74,7 +78,7 @@ public class FutBot {
     }
 
     /**
-     * Запустить задачу для массовых ставок
+     * Run mass bidding
      */
     public void massBid() {
         driver.activeMenu = FutActiveMenu.HOME;
@@ -82,6 +86,7 @@ public class FutBot {
 
         currentTask = futbotExecutor.submit(() ->  {
             loginService.login();
+            // TODO fix relistAll() thread stuck if nothing to relist
             transferListPage.relistAll();
         });
 
@@ -96,7 +101,7 @@ public class FutBot {
     }
 
     /**
-     * Запустить задачу для проверки ставок
+     * Run bid checker only
      */
     public void checkBids() {
         driver.activeMenu = FutActiveMenu.HOME;
@@ -107,7 +112,7 @@ public class FutBot {
     }
 
     /**
-     * Перевыставить игроков на продажу
+     * Relist all players
      */
     public void relistAll() {
         driver.activeMenu = FutActiveMenu.HOME;
@@ -115,7 +120,7 @@ public class FutBot {
     }
 
     /**
-     * Запустить периодическую задачу для перепродажи игроков
+     * Schedule relist all every hour for 6 hours
      */
     public void scheduleRelistAll() {
         System.out.println("scheduleRelistAll");
@@ -128,7 +133,7 @@ public class FutBot {
     }
 
     /**
-     * Показать дневную статистику покупок
+     * Show daily statistics: amount of players bought and potential profit
      */
     public void showDailyStatistic() {
         statisticService.showDailyStatistic();
