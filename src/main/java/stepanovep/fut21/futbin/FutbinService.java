@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import stepanovep.fut21.core.Platform;
 import stepanovep.fut21.mongo.Player;
 import stepanovep.fut21.mongo.PlayerService;
 
@@ -66,7 +67,7 @@ public class FutbinService {
     }
 
     private boolean updatedRecently() {
-        List<Player> players = playerService.getPlayersForMassBid(1, 200, 100_000);
+        List<Player> players = playerService.getPlayersForMassBid(1, 200, 100_000, Platform.PC);
         if (players.isEmpty()) {
             return false;
         }
@@ -91,7 +92,11 @@ public class FutbinService {
     private void updatePlayerPrice(Element playerDiv, String futbinId) {
         Element pricesBlock = playerDiv.selectFirst(".prices");
         int pcPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
-        playerService.updatePriceByFutbinId(futbinId, pcPrice);
+        int psPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-ps-price").text().replace(",", ""));
+        int xboxPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-xbox-price").text().replace(",", ""));
+        playerService.updatePriceByFutbinId(futbinId, pcPrice, Platform.PC);
+        playerService.updatePriceByFutbinId(futbinId, psPrice, Platform.PS);
+        playerService.updatePriceByFutbinId(futbinId, xboxPrice, Platform.XBOX);
     }
 
     private void insertNewPlayer(Element playerDiv, String futbinId) {
@@ -100,6 +105,8 @@ public class FutbinService {
         String name = Junidecode.unidecode(playerDiv.attr("data-player-commom"));
         Element pricesBlock = playerDiv.selectFirst(".prices");
         int pcPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
+        int psPrice = Integer.parseInt(pricesBlock.selectFirst("pcdisplay-ps-price").text().replace(",", ""));
+        int xboxPrice = Integer.parseInt(pricesBlock.selectFirst("pcdisplay-xbox-price").text().replace(",", ""));
         int rating = Integer.parseInt(playerDiv.attr("data-rating"));
         int nationId = Integer.parseInt(playerDiv.attr("data-player-nation"));
         int leagueId = Integer.parseInt(playerDiv.attr("data-player-league"));
@@ -108,6 +115,8 @@ public class FutbinService {
         player.setResourceId(resourceId);
         player.setName(name);
         player.setPcPrice(pcPrice == 0 ? null : pcPrice);
+        player.setPsPrice(psPrice == 0 ? null: psPrice);
+        player.setXboxPrice(xboxPrice == 0 ? null : xboxPrice);
         player.setRating(rating);
         playerService.insert(player);
     }

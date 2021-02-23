@@ -1,5 +1,7 @@
 package stepanovep.fut21.mongo;
 
+import stepanovep.fut21.core.Platform;
+
 import java.time.LocalDateTime;
 
 public class Player {
@@ -51,24 +53,25 @@ public class Player {
         this.rating = rating;
     }
 
-    public Integer getPcPrice() {
-        return pcPrice;
+    public Integer getPrice(Platform platform) {
+        switch (platform) {
+            case PC:
+                return pcPrice;
+            case PS:
+                return psPrice;
+            case XBOX:
+                return xboxPrice;
+            default:
+                throw new IllegalArgumentException("Unknown platform: " + platform);
+        }
     }
 
     public void setPcPrice(Integer pcPrice) {
         this.pcPrice = pcPrice;
     }
 
-    public Integer getXboxPrice() {
-        return xboxPrice;
-    }
-
     public void setXboxPrice(Integer xboxPrice) {
         this.xboxPrice = xboxPrice;
-    }
-
-    public Integer getPsPrice() {
-        return psPrice;
     }
 
     public void setPsPrice(Integer psPrice) {

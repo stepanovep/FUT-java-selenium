@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import stepanovep.fut21.core.Platform;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.mongo.ActiveAuction;
 import stepanovep.fut21.mongo.Player;
@@ -35,6 +36,8 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @EnableScheduling
 public class AppConfiguration {
 
+    private final Platform platform = Platform.PC; //todo move to config file
+
     @Bean
     public ChromeOptions chromeOptions() {
         System.setProperty("webdriver.chrome.driver", "C:\\Selenium\\chromedriver.exe");
@@ -49,7 +52,7 @@ public class AppConfiguration {
 
     @Bean(name = "driver")
     public FutWebDriver futWebDriver(ChromeOptions chromeOptions) {
-        return new FutWebDriver(chromeOptions);
+        return new FutWebDriver(chromeOptions, platform);
     }
 
     @Bean

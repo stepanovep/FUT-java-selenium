@@ -11,6 +11,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import stepanovep.fut21.core.Platform;
 import stepanovep.fut21.core.page.FutActiveMenu;
 
 import java.io.File;
@@ -28,14 +29,19 @@ import java.util.stream.Stream;
  */
 public class FutWebDriver extends ChromeDriver {
 
-    private final Random rnd = new Random();
-
     public FutActiveMenu activeMenu = FutActiveMenu.HOME;
 
     private volatile boolean interrupted = false;
+    private final Random rnd = new Random();
+    private final Platform platform;
 
-    public FutWebDriver(ChromeOptions chromeOptions) {
+    public FutWebDriver(ChromeOptions chromeOptions, Platform platform) {
         super(chromeOptions);
+        this.platform = platform;
+    }
+
+    public Platform getPlatform() {
+        return platform;
     }
 
     /**

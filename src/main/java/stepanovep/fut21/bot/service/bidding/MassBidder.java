@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import stepanovep.fut21.core.Platform;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.entity.AuctionData;
 import stepanovep.fut21.core.entity.BidResult;
@@ -53,7 +54,7 @@ public class MassBidder {
         driver.wakeup();
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(30, 1500, 27500);
+            List<Player> players = playerService.getPlayersForMassBid(30, 1500, 27500, driver.getPlatform());
             for (Player player: players) {
                 if (driver.isInterrupted()) {
                     System.out.println("Thread interrupted - aborting mass bidding");
@@ -80,7 +81,7 @@ public class MassBidder {
         if (targetPrice > getAdjustedTargetPrice(searchResult)) {
             targetPrice = getAdjustedTargetPrice(searchResult);
             int newActualPrice = Math.max((int) (targetPrice * 1.15), (int) (targetPrice * 1.1) + 500);
-            playerService.updatePriceByFutbinId(player.getFutbinId(), FutPriceUtils.roundToValidFutPrice(newActualPrice));
+            playerService.updatePriceByFutbinId(player.getFutbinId(), FutPriceUtils.roundToValidFutPrice(newActualPrice), Platform.PC);
             log.info("Futbin price is outdated, changing targetPrice based on firstPage minimum bin price: new targetPrice={}", targetPrice);
         }
 
@@ -112,7 +113,7 @@ public class MassBidder {
     }
 
     private TransferMarketSearchFilter mapToSearchFilter(Player player) {
-            int targetPrice = calculateTargetPrice(player.getPcPrice());
+            int targetPrice = calculateTargetPrice(player.getPrice(driver.getPlatform()));
             return TransferMarketSearchFilter.builder()
                     .withName(player.getName())
                     .withTargetPrice(targetPrice)

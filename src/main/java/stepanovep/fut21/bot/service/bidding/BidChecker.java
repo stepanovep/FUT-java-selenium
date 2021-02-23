@@ -144,7 +144,7 @@ public class BidChecker {
 
         if (playerOpt.isPresent()) {
             Player player = playerOpt.get();
-            marketPrice = player.getPcPrice();
+            marketPrice = player.getPrice(driver.getPlatform());
 
         } else if (auctionOpt.isPresent()) {
             ActiveAuction auction = auctionOpt.get();
