@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import stepanovep.fut21.core.Platform;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,9 +37,10 @@ public class PlayerService {
         return Optional.ofNullable(playersCollection.find(eq("resourceId", resourceId)).first());
     }
 
-    public List<Player> getPlayersForMassBid(int count, int minPrice, int maxPrice) {
+    public List<Player> getPlayersForMassBid(int count, int minPrice, int maxPrice, Platform platform) {
+        String priceFieldName = getPriceFieldName(platform);
         List<Player> players = new ArrayList<>();
-        playersCollection.find(and(gte("pcPrice", minPrice), lte("pcPrice", maxPrice)))
+        playersCollection.find(and(gte(priceFieldName, minPrice), lte(priceFieldName, maxPrice)))
                 .forEach(players::add);
 
         LocalDateTime now = LocalDateTime.now();
@@ -57,14 +59,28 @@ public class PlayerService {
         playersCollection.updateOne(eq("resourceId", player.getResourceId()), set("priceUpdatedDt", LocalDateTime.now()));
     }
 
-    public void updatePriceByFutbinId(String futbinId, Integer price) {
+    public void updatePriceByFutbinId(String futbinId, Integer price, Platform platform) {
         Player player = playersCollection.find(eq("futbinId", futbinId)).first();
         if (player == null) {
             log.warn("Player not found: futbinId={}", futbinId);
             return;
         }
 
-        playersCollection.updateOne(eq("futbinId", futbinId), combine(set("pcPrice", price), set("priceUpdatedDt", LocalDateTime.now())));
+        String priceFieldName = getPriceFieldName(platform);
+        playersCollection.updateOne(eq("futbinId", futbinId), combine(set(priceFieldName, price), set("priceUpdatedDt", LocalDateTime.now())));
+    }
+
+    private String getPriceFieldName(Platform platform) {
+        switch (platform) {
+            case PC:
+                return "pcPrice";
+            case PS:
+                return "psPrice";
+            case XBOX:
+                return "xboxPrice";
+            default:
+                throw new IllegalArgumentException("Unknown platform: " + platform);
+        }
     }
 
     public void updateBidTime(Player player) {
