@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import stepanovep.fut21.appconfig.EaAuthorizationProperties;
 import stepanovep.fut21.core.driver.FutWebDriver;
 import stepanovep.fut21.core.page.FutActiveMenu;
 
@@ -31,9 +30,6 @@ public class LoginService {
 
     @Autowired
     private FutWebDriver driver;
-
-    @Autowired
-    private EaAuthorizationProperties credentialsProperties;
 
     public void login() {
         log.info("Login to FUT");
