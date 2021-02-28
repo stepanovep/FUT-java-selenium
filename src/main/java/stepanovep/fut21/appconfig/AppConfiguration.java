@@ -44,9 +44,13 @@ public class AppConfiguration {
         System.setProperty("webdriver.chrome.driver", appProperties.getChromeDriverExecutablePath());
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments(
-                appProperties.getChromeUserDataDir(),
+                "user-data-dir=" + appProperties.getChromeUserDataDir(),
                 "--no-sandbox",
                 "--start-maximized");
+
+        if (appProperties.isHeadless()) {
+            chromeOptions.addArguments("--headless");
+        }
 
         return chromeOptions;
     }

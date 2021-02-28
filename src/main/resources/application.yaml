@@ -1,6 +1,7 @@
 spring.main.web-application-type: none
 
 chrome-driver-executable-path: 'C:\Selenium\chromedriver.exe'
+headless: false
 
 telegram-bot:
   token: ${TELEGRAM_BOT_TOKEN}

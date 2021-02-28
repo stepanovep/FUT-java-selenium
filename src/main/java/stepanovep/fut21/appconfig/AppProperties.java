@@ -13,6 +13,7 @@ public class AppProperties {
     private String platform;
     private String chromeDriverExecutablePath;
     private String chromeUserDataDir;
+    private boolean headless;
 
     public Platform getPlatform() {
         return Enum.valueOf(Platform.class, platform);
@@ -36,5 +37,13 @@ public class AppProperties {
 
     public void setChromeUserDataDir(String chromeUserDataDir) {
         this.chromeUserDataDir = chromeUserDataDir;
+    }
+
+    public boolean isHeadless() {
+        return headless;
+    }
+
+    public void setHeadless(boolean headless) {
+        this.headless = headless;
     }
 }

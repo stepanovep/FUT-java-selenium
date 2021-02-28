@@ -1,2 +1,2 @@
 platform: PS
-chrome-user-data-dir: 'user-data-dir=C:\\Selenium\\UserData-Niurgun'
+chrome-user-data-dir: 'C:\\Selenium\\UserData-Niurgun'

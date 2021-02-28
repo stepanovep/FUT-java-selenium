@@ -52,22 +52,26 @@ public class TransferMarketFilterService {
 
     private void setNameFilter(String name) {
         WebElement nameInput = driver.findElement(SEARCH_PLAYER_NAME_INPUT);
-        driver.sendKeys(nameInput, name);
+        driver.sleep(300);
+        nameInput.clear();
+        nameInput.sendKeys(name);
+        driver.sleep(300);
 
         nameInput.sendKeys(Keys.ENTER);
+        driver.sleep(300);
         driver.findElementWithWait(PLAYERS_DROPDOWN_GET_FIRST).click();
-        driver.sleep(300, 600);
+        driver.sleep(500, 750);
     }
 
     private void setDropDownFilter(By dropDownMenuLocator, Enums.StringRepr filter) {
         driver.clickElement(dropDownMenuLocator);
         driver.clickElement(LocatorsUtils.byText(filter.getCode()));
-        driver.sleep(300, 600);
+        driver.sleep(500, 750);
     }
 
     private void setPriceFilter(By priceInputLocator, Integer price) {
         WebElement priceInput = driver.findElement(priceInputLocator);
         driver.sendKeys(priceInput, String.valueOf(price));
-        driver.sleep(300, 600);
+        driver.sleep(500, 750);
     }
 }

@@ -1,2 +1,2 @@
 platform: PC
-chrome-user-data-dir: 'user-data-dir=C:\\Selenium\\UserData'
+chrome-user-data-dir: 'C:\\Selenium\\UserData'
