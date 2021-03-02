@@ -136,7 +136,7 @@ public class FutBot {
      * Show daily statistics: amount of players bought and potential profit
      */
     public void showDailyStatistic() {
-        statisticService.showDailyStatistic();
+        statisticService.sendDailyStatistic();
     }
 
     /**

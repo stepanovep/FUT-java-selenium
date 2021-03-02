@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import stepanovep.fut21.mongo.WonAuction;
 import stepanovep.fut21.telegrambot.TelegramNotifier;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +25,7 @@ public class StatisticService {
     private TelegramNotifier telegramNotifier;
 
     /**
-     * Вывести на консоль статистику покупок: { игрок # кол-во покупок # суммарный профит }
+     * Display all time statistics
      */
     public void displayOverallBuys() {
         Map<String, CountSum> map = new TreeMap<>();
@@ -49,9 +51,25 @@ public class StatisticService {
     }
 
     /**
-     * Отправить уведомление о дневной статистики покупки игроков
+     * Display weekly (so far since Monday) statistic of bought players: count and potential profit
      */
-    public void showDailyStatistic() {
+    public void displayWeeklyStatistic() {
+        AtomicInteger count = new AtomicInteger(0);
+        AtomicInteger profitSum = new AtomicInteger(0);
+        LocalDateTime mondayMidnight = LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay();
+        wonAuctions.find(Filters.gte("boughtDt", mondayMidnight))
+                .forEach(auction -> {
+                    count.incrementAndGet();
+                    profitSum.addAndGet(auction.getPotentialProfit());
+                });
+
+        System.out.printf("\n####  Weekly statistic: count=%d, potential profit=%d  ####\n\n", count.get(), profitSum.get());
+    }
+
+    /**
+     * Send notification about daily statistics of bought players: count and potential profit
+     */
+    public void sendDailyStatistic() {
         AtomicInteger count = new AtomicInteger(0);
         AtomicInteger profitSum = new AtomicInteger(0);
         wonAuctions.find(Filters.gte("boughtDt", LocalDate.now().atStartOfDay()))
