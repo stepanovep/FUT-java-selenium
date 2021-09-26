@@ -47,11 +47,12 @@ public class PlayerService {
         players.sort((p1, p2) -> {
             LocalDateTime bidTime1 = p1.getBidDt() == null ? now : p1.getBidDt();
             LocalDateTime bidTime2 = p2.getBidDt() == null ? now : p2.getBidDt();
-            return bidTime1.compareTo(bidTime2);
+            return bidTime2.compareTo(bidTime1);
         });
 
+        players = players.stream().limit(count).collect(Collectors.toList());
         Collections.shuffle(players);
-        return players.stream().limit(count).collect(Collectors.toList());
+        return players;
     }
 
     public void insert(Player player) {
