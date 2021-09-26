@@ -103,8 +103,8 @@ public class FutbinService {
         String name = Junidecode.unidecode(playerDiv.attr("data-player-commom"));
         Element pricesBlock = playerDiv.selectFirst(".prices");
         int pcPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
-        int psPrice = Integer.parseInt(pricesBlock.selectFirst("pcdisplay-ps-price").text().replace(",", ""));
-        int xboxPrice = Integer.parseInt(pricesBlock.selectFirst("pcdisplay-xbox-price").text().replace(",", ""));
+        int psPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-ps-price").text().replace(",", ""));
+        int xboxPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-xbox-price").text().replace(",", ""));
         int rating = Integer.parseInt(playerDiv.attr("data-rating"));
         int nationId = Integer.parseInt(playerDiv.attr("data-player-nation"));
         int leagueId = Integer.parseInt(playerDiv.attr("data-player-league"));

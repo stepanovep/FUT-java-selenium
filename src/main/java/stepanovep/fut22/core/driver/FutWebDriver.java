@@ -110,7 +110,7 @@ public class FutWebDriver extends ChromeDriver {
     }
 
     public Optional<WebElement> getDialog() {
-        List<WebElement> binaryDialogs = this.findElements(By.cssSelector(".Dialog.ui-dialog-type-message"));
+        List<WebElement> binaryDialogs = this.findElements(By.cssSelector(".view-modal-container > .ea-dialog-view"));
         List<WebElement> unaryDialogs = this.findElements(By.cssSelector(".Dialog.ui-dialog-type-alert"));
 
         return Stream.concat(binaryDialogs.stream(), unaryDialogs.stream())

@@ -8,7 +8,7 @@ fun getFutExtendedDataScript() : String {
                 if (listController) {
                     current = listController.getIterator().current();
                     return {
-                        resourceId: current.resourceId,
+                        resourceId: current.definitionId,
                         name: current._staticData.name,
                         rating: current.rating,
                         type: current.type,
