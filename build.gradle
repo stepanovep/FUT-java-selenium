@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'stepanovep'
-version '1.0-SNAPSHOT'
+version '22.0-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
@@ -30,8 +30,10 @@ dependencies {
     compile 'net.gcardone.junidecode:junidecode:0.4.1'
 
     compile 'org.telegram:telegrambots:4.7'
-
     compile 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

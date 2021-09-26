@@ -1,12 +1,12 @@
 package stepanovep.fut22.futbin;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.gcardone.junidecode.Junidecode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut22.core.Platform;
@@ -19,10 +19,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+@Slf4j
 @Service
 public class FutbinService {
-
-    private static final Logger log = LoggerFactory.getLogger(FutbinService.class);
 
     @Autowired
     private PlayerService playerService;
@@ -33,10 +32,9 @@ public class FutbinService {
     private static final Duration MIN_TIME_BETWEEN_REQUESTS = Duration.ofMinutes(20);
 
     private static final List<String> FUTBIN_TRADE_SQUADS_URLS = List.of(
-            "https://www.futbin.com/21/squad/658385",
-            "https://www.futbin.com/21/squad/655419",
-            "https://www.futbin.com/21/squad/867466",
-            "https://www.futbin.com/21/squad/655317"
+            "https://www.futbin.com/22/squad/454889",
+            "https://www.futbin.com/22/squad/454511",
+            "https://www.futbin.com/22/squad/452851"
     );
 
     public void updatePrices() {
@@ -121,11 +119,8 @@ public class FutbinService {
         playerService.insert(player);
     }
 
+    @SneakyThrows
     private void sleep() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Thread.sleep(1000);
     }
 }
