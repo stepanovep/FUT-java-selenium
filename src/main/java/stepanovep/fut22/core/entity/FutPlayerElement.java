@@ -100,7 +100,7 @@ public class FutPlayerElement {
         Optional<WebElement> dialogOpt = driver.getDialog();
         if (dialogOpt.isPresent()) {
             WebElement dialog = dialogOpt.get();
-            String dialogTitle = dialog.findElement(By.cssSelector(".dialog-title")).getText();
+            String dialogTitle = dialog.findElement(By.cssSelector(".ea-dialog-view--title")).getText();
             switch (dialogTitle.toUpperCase()) {
                 case "LIMIT REACHED":
                     log.warn("Transfer targets limit reached");
