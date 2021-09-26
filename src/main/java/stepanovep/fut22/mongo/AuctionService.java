@@ -1,10 +1,8 @@
 package stepanovep.fut22.mongo;
 
-import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +16,9 @@ import static com.mongodb.client.model.Filters.exists;
 import static com.mongodb.client.model.Filters.lte;
 import static java.util.Objects.requireNonNull;
 
+@Slf4j
 @Service
 public class AuctionService {
-
-    private static final Logger log = LoggerFactory.getLogger(AuctionService.class);
 
     @Autowired
     private MongoCollection<ActiveAuction> activeAuctions;
@@ -31,20 +28,12 @@ public class AuctionService {
 
     public void insertActiveAuction(@Nonnull ActiveAuction activeAuction) {
         requireNonNull(activeAuction, "activeAuction");
-        try {
-            activeAuctions.insertOne(activeAuction);
-        } catch (MongoWriteException exc) {
-            log.error("Cannot insert active auction: ", exc);
-        }
+        activeAuctions.insertOne(activeAuction);
     }
 
     public void insertWonAuction(@Nonnull WonAuction wonAuction) {
         requireNonNull(wonAuction, "wonAuction");
-        try {
-            wonAuctions.insertOne(wonAuction);
-        } catch (MongoWriteException exc) {
-            log.error("Cannot insert won auction: ", exc);
-        }
+        wonAuctions.insertOne(wonAuction);
     }
 
     public Optional<ActiveAuction> getActiveAuction(@Nonnull String tradeId) {

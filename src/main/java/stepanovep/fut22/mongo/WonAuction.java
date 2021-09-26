@@ -1,10 +1,18 @@
 package stepanovep.fut22.mongo;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import net.gcardone.junidecode.Junidecode;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class WonAuction {
 
     private String tradeId;
@@ -13,13 +21,6 @@ public class WonAuction {
     private Integer boughtPrice;
     private LocalDateTime boughtDt;
     private Integer potentialProfit;
-
-    /**
-     * Пустой публичный контсруктор.
-     * Необходим для кодека mongoDb
-     */
-    public WonAuction() {
-    }
 
     private WonAuction(@Nonnull String tradeId,
                        @Nonnull String playerName,
@@ -33,66 +34,6 @@ public class WonAuction {
         this.boughtPrice = boughtPrice;
         this.boughtDt = boughtDt;
         this.potentialProfit = potentialProfit;
-    }
-
-    public String getTradeId() {
-        return tradeId;
-    }
-
-    public void setTradeId(String tradeId) {
-        this.tradeId = tradeId;
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
-    public Integer getPlayerRating() {
-        return playerRating;
-    }
-
-    public void setPlayerRating(Integer playerRating) {
-        this.playerRating = playerRating;
-    }
-
-    public Integer getBoughtPrice() {
-        return boughtPrice;
-    }
-
-    public void setBoughtPrice(Integer boughtPrice) {
-        this.boughtPrice = boughtPrice;
-    }
-
-    public LocalDateTime getBoughtDt() {
-        return boughtDt;
-    }
-
-    public void setBoughtDt(LocalDateTime boughtDt) {
-        this.boughtDt = boughtDt;
-    }
-
-    public Integer getPotentialProfit() {
-        return potentialProfit;
-    }
-
-    public void setPotentialProfit(Integer potentialProfit) {
-        this.potentialProfit = potentialProfit;
-    }
-
-    @Override
-    public String toString() {
-        return "WonAuction{" +
-                "tradeId='" + tradeId + '\'' +
-                ", playerName='" + playerName + '\'' +
-                ", playerRating=" + playerRating +
-                ", boughtPrice=" + boughtPrice +
-                ", boughtDt=" + boughtDt +
-                ", potentialProfit=" + potentialProfit +
-                '}';
     }
 
     public static Builder builder() {
