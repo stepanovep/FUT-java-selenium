@@ -9,7 +9,7 @@ public class TelegramBotCommandHandler {
     @Autowired
     private TelegramFutBotService telegramFutBotService;
 
-    public void handleCommand(String command) { //todo заменить на enum TelegramBotCommand
+    public void handleCommand(String command) {
         switch (command) {
             case "/stop":
                 telegramFutBotService.stop();

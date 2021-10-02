@@ -1,8 +1,7 @@
 package stepanovep.fut22.mongo;
 
 import com.mongodb.client.MongoCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut22.core.Platform;
@@ -21,10 +20,9 @@ import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
+@Slf4j
 @Service
 public class PlayerService {
-
-    private static final Logger log = LoggerFactory.getLogger(PlayerService.class);
 
     @Autowired
     private MongoCollection<Player> playersCollection;
@@ -43,11 +41,10 @@ public class PlayerService {
         playersCollection.find(and(gte(priceFieldName, minPrice), lte(priceFieldName, maxPrice)))
                 .forEach(players::add);
 
-        LocalDateTime now = LocalDateTime.now();
         players.sort((p1, p2) -> {
-            LocalDateTime bidTime1 = p1.getBidDt() == null ? now : p1.getBidDt();
-            LocalDateTime bidTime2 = p2.getBidDt() == null ? now : p2.getBidDt();
-            return bidTime2.compareTo(bidTime1);
+            LocalDateTime bidTime1 = p1.getBidDt() == null ? LocalDateTime.MIN : p1.getBidDt();
+            LocalDateTime bidTime2 = p2.getBidDt() == null ? LocalDateTime.MIN : p2.getBidDt();
+            return bidTime1.compareTo(bidTime2);
         });
 
         players = players.stream().limit(count).collect(Collectors.toList());
