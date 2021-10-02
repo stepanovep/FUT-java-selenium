@@ -84,7 +84,7 @@ public class BidChecker {
         List<FutPlayerElement> activeBids = transferTargetsPage.getActiveBids();
         log.info("Checking bids: activeBids count = {}", activeBids.size());
 
-        for (FutPlayerElement player: activeBids) {
+        for (FutPlayerElement player : activeBids) {
             if (player.isOutbid()) {
                 driver.sleep(700, 1200);
                 player.focus();
@@ -97,10 +97,39 @@ public class BidChecker {
             }
         }
 
+        if (checkAnyOutbidIsExpiring()) {
+            checkBids();
+        }
+
         listWonItemsToTransferMarket();
-        ensureExpiredItemsCount();
+        keepBalanceOfExpiredItems();
+
+        if (checkAnyOutbidIsExpiring()) {
+            checkBids();
+        }
 
         driver.sleep(2000, 3000);
+    }
+
+    private boolean checkAnyOutbidIsExpiring() {
+        List<FutPlayerElement> activeBids;
+        driver.sleep(1000);
+        activeBids = transferTargetsPage.getActiveBids();
+        for (FutPlayerElement player: activeBids) {
+            if (player.isOutbid()) {
+                driver.sleep(600, 900);
+                player.focus();
+                FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
+                if (extendedData.getAuction().getExpires() <= 30) {
+                    log.info("Some outbid auctions are expiring - need to run bid checker again");
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        return false;
     }
 
     @Recover
@@ -172,6 +201,10 @@ public class BidChecker {
     }
 
     private void handleOutbidPlayer(FutPlayerElement player, FutPlayerAuctionData extendedData) {
+        // TODO: снизить количество ставок. Большинство ставок все равно проигрывается в итоге - тратится количество ставок
+        //    - Менять стратегию ставок при 'bidding war'.
+        //    - Делать ставку только если осталось <15 секунд.
+        //    - Повышать ставку на 2 шага
         AuctionData auctionData = extendedData.getAuction();
         String tradeId = auctionData.getTradeId();
 
@@ -199,11 +232,12 @@ public class BidChecker {
                 checkBids();
             }
         }
+        // TODO log to the console and file as well
         log.info("Player has been rebid");
         driver.sleep(400, 600);
     }
 
-    private void ensureExpiredItemsCount() {
+    private void keepBalanceOfExpiredItems() {
         List<FutPlayerElement> expiredItems = transferTargetsPage.getExpiredItems();
         List<FutPlayerElement> watchedItems = transferTargetsPage.getWatchedItems();
 

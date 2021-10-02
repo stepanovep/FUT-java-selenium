@@ -54,7 +54,7 @@ public class MassBidder {
         driver.wakeup();
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(30, 1500, 14000, driver.getPlatform());
+            List<Player> players = playerService.getPlayersForMassBid(24, 1300, 8000, driver.getPlatform());
             for (Player player: players) {
                 if (driver.isInterrupted()) {
                     System.out.println("Thread interrupted - aborting mass bidding");
@@ -136,7 +136,7 @@ public class MassBidder {
         return true;
     }
 
-    private void makeBid(FutPlayerElement player, FutPlayerAuctionData extendedData, Integer targetPrice) {
+    private BidResult makeBid(FutPlayerElement player, FutPlayerAuctionData extendedData, Integer targetPrice) {
         BidResult bidResult = player.makeBid();
         AuctionData auction = extendedData.getAuction();
         Integer nextBid = FutPriceUtils.getNextBid(auction.getStartingBid(), auction.getCurrentBid());
@@ -151,9 +151,14 @@ public class MassBidder {
             bidChecker.checkBids(10);
 
         } else {
+            // TODO если не удалось сделать ставку, то надо либо:
+            // 1) просто выйти
+            // 2) идти проверять ставки
+            // 3) убрать игрока их expired списка, потом попытаться сделать ставку еще раз
             log.warn("Couldn't bid player: name={}, rating={}, bidPrice={}, bidResult={}",
                     extendedData.getName(), extendedData.getRating(), nextBid, bidResult);
         }
         driver.sleep(1000, 2000);
+        return bidResult;
     }
 }

@@ -1,5 +1,6 @@
 package stepanovep.fut22.core.entity;
 
+import lombok.extern.slf4j.Slf4j;
 import net.gcardone.junidecode.Junidecode;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -8,8 +9,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.FluentWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import stepanovep.fut22.core.driver.FutWebDriver;
 import stepanovep.fut22.core.locators.FutElementLocators;
 import stepanovep.fut22.utils.FutPriceUtils;
@@ -32,10 +31,10 @@ import static stepanovep.fut22.core.locators.FutElementLocators.COMPARE_PRICE_NE
 /**
  * FUT player element
  */
+@Slf4j
 public class FutPlayerElement {
 
-    private static final Logger log = LoggerFactory.getLogger(FutPlayerElement.class);
-
+    private static int BIDS_COUNT = 0;
     private static final int BID_TRIES = 4;
 
     private final FutWebDriver driver;
@@ -76,6 +75,8 @@ public class FutPlayerElement {
             }
 
             if (isBid()) {
+                BIDS_COUNT++;
+                log.info("Success bid count: {}", BIDS_COUNT);
                 return BidResult.SUCCESS;
             }
             if (isOutbid()) {
@@ -302,6 +303,5 @@ public class FutPlayerElement {
 
     public String getPlayerAsString() {
         return String.join("#", getName(), String.valueOf(getRating()), getPosition());
-        //todo использовать статы игрока для генерации строки, чтобы избежать коллизий спец карточек одинакового рейтинга и позиции
     }
 }
