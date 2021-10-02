@@ -14,6 +14,7 @@ import stepanovep.fut22.bot.service.LoginService;
 import stepanovep.fut22.bot.service.StatisticService;
 import stepanovep.fut22.bot.service.clubstocking.ClubStocker;
 import stepanovep.fut22.bot.service.sniping.SnipingService;
+import stepanovep.fut22.futbin.FutbinService;
 
 @SpringBootApplication
 @Import(AppConfiguration.class)
@@ -34,6 +35,9 @@ public class FutSeleniumApplication implements CommandLineRunner {
 
     @Autowired
     private FutBot futBot;
+
+    @Autowired
+    private FutbinService futbinService;
 
     private static final Logger log = LoggerFactory.getLogger(FutSeleniumApplication.class);
 
