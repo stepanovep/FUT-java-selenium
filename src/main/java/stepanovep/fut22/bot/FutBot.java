@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import stepanovep.fut22.bot.service.GemsSeller;
 import stepanovep.fut22.bot.service.bidding.BidChecker;
 import stepanovep.fut22.bot.service.bidding.MassBidder;
 import stepanovep.fut22.bot.service.LoginService;
@@ -45,6 +46,9 @@ public class FutBot {
 
     @Autowired
     private ClubStocker clubStocker;
+
+    @Autowired
+    private GemsSeller gemsSeller;
 
     @Autowired
     private TransferListPage transferListPage;
@@ -94,14 +98,14 @@ public class FutBot {
             massBidder.massBid();
             bidChecker.checkBids(10);
             massBidder.massBid();
-            bidChecker.checkBids(10);
+            bidChecker.checkBids(15);
 
             telegramNotifier.sendMessage("Mass bidding successfully finished");
         });
     }
 
     /**
-     * Run bid checker only
+     * Run bid checker
      */
     public void checkBids() {
         driver.activeMenu = FutActiveMenu.HOME;
@@ -134,8 +138,14 @@ public class FutBot {
 
     public void scheduleMassBid() {
         log.info("scheduleMassBid");
-        for (int i = 0; i <= 4; i++) {
-            currentTask = futbotExecutor.schedule(this::massBid, i*80, TimeUnit.MINUTES);
+        for (int i = 0; i <= 5; i++) {
+            futbotExecutor.schedule(this::massBid, i*100, TimeUnit.MINUTES);
+        }
+        for (int i = 0; i <= 8; i++) {
+            futbotExecutor.schedule(() -> {
+                loginService.login();
+                transferListPage.relistAll();
+            }, (i+1) * 62, TimeUnit.MINUTES);
         }
     }
 
@@ -151,6 +161,13 @@ public class FutBot {
      */
     public void clubStock() {
         futbotExecutor.submit(() -> clubStocker.clubStock());
+    }
+
+    /**
+     * Sell gems - low rated players with high current market price
+     */
+    public void sellGems() {
+        futbotExecutor.submit(() -> gemsSeller.sellGems());
     }
 
     public void shutdown() {

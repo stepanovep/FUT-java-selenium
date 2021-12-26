@@ -34,6 +34,8 @@ public class FutSeleniumApplication implements CommandLineRunner {
     private FutBot futBot;
     @Autowired
     private FutbinService futbinService;
+    @Autowired
+    private GemsSeller gemsSeller;
 
     private static final Logger log = LoggerFactory.getLogger(FutSeleniumApplication.class);
 
@@ -48,6 +50,9 @@ public class FutSeleniumApplication implements CommandLineRunner {
         log.info("EXECUTING : command line runner");
         statisticService.displayWeeklyStatistic();
         statisticService.displayOverallBuys();
+
+//        loginService.login();
+//        gemsSeller.sellGems();
     }
 
 }

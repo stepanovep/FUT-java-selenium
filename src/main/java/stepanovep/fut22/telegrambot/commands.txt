@@ -8,3 +8,4 @@ checkbids - check bids
 screenshot - send a screenshot of current state
 showdailystatistic - send daily purchase/profit statistic
 clubstock - start club stocking low rated gold rares players by bidding
+sellgems - sell low rated players with high current market price

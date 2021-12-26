@@ -1,17 +1,15 @@
 package stepanovep.fut22.telegrambot;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import stepanovep.fut22.bot.FutBot;
 
 @Component
+@RequiredArgsConstructor
 public class TelegramFutBotService {
 
-    @Autowired
-    private FutBot futBot;
-
-    @Autowired
-    private TelegramNotifier telegramNotifier;
+    private final FutBot futBot;
+    private final TelegramNotifier telegramNotifier;
 
     public void login() {
          futBot.login();
@@ -43,6 +41,10 @@ public class TelegramFutBotService {
 
     public void scheduleMassBid() {
         futBot.scheduleMassBid();
+    }
+
+    public void sellGems() {
+        futBot.sellGems();
     }
 
     public void showDailyStatistic() {

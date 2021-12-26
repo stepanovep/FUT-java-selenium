@@ -43,6 +43,10 @@ public class TelegramBotCommandHandler {
                 telegramFutBotService.scheduleMassBid();
                 break;
 
+            case "/sellgems":
+                telegramFutBotService.sellGems();
+                break;
+
             case "/showdailystatistic":
                 telegramFutBotService.showDailyStatistic();
                 break;
