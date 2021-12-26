@@ -1,5 +1,6 @@
 package stepanovep.fut22.core.page.transfers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,25 +19,21 @@ import java.util.stream.Collectors;
  * Page Object для страницы управления аукционами
  */
 @Component
+@Slf4j
 public class TransferTargetsPage {
-
-    private static final Logger log = LoggerFactory.getLogger(TransferTargetsPage.class);
 
     @Autowired
     private FutWebDriver driver;
 
     public void navigateToPage() {
-        if (driver.activeMenu != FutActiveMenu.TRANSFER_TARGETS) {
+//        if (driver.activeMenu != FutActiveMenu.TRANSFER_TARGETS) {
             driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
             driver.clickElement(MainPageLocators.GO_TO_TRANSFER_TARGETS);
-        }
+//        }
         driver.activeMenu = FutActiveMenu.TRANSFER_TARGETS;
         driver.sleep(500);
     }
 
-    /**
-     * Получить список активных сделок
-     */
     public List<FutPlayerElement> getActiveBids() {
         WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.ACTIVE_BIDS_SECTION);
         List<WebElement> activeBids = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
@@ -44,36 +41,24 @@ public class TransferTargetsPage {
         return mapToPlayers(activeBids);
     }
 
-    /**
-     * Получить список выигранных сделок
-     */
     public List<FutPlayerElement> getWonItems() {
         WebElement wonItemsSection = driver.findElementWithWait(TransferTargetsLocators.WON_BIDS_SECTION);
         List<WebElement> wonItems = wonItemsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         return mapToPlayers(wonItems);
     }
 
-    /**
-     * Получить список наблюдения
-     */
     public List<FutPlayerElement> getWatchedItems() {
         WebElement watchedSection = driver.findElementWithWait(TransferTargetsLocators.WATCHED_BIDS_SECTION);
         List<WebElement> watchedItems = watchedSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         return mapToPlayers(watchedItems);
     }
 
-    /**
-     * Получить список просроченных сделок (проигранные или просто наблюдаемые)
-     */
     public List<FutPlayerElement> getExpiredItems() {
         WebElement expiredItemsSection = driver.findElementWithWait(TransferTargetsLocators.EXPIRED_BIDS_SECTION);
         List<WebElement> expiredItems = expiredItemsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         return mapToPlayers(expiredItems);
     }
 
-    /**
-     * Send won items to club
-     */
     public void sendAllToClub() {
         log.info("Sending won items to club");
         new Thread(() -> {
@@ -86,9 +71,6 @@ public class TransferTargetsPage {
         driver.sleep(2000, 3000);
     }
 
-    /**
-     * Clear up all expired items
-     */
     public void clearAllExpiredItems() {
         log.info("Clean expired items");
         new Thread(() -> {

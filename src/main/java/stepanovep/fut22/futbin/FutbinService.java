@@ -77,8 +77,9 @@ public class FutbinService {
     private Elements getPlayersDivs(String futbinSquadUrl) {
         try {
             Document document = Jsoup.connect(futbinSquadUrl)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36")
+                    .userAgent("Chrome")
                     .referrer("http://www.google.com")
+                    .timeout(10000)
                     .get();
             return document.getElementsByClass("card-med");
 

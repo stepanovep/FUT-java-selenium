@@ -9,12 +9,12 @@ import stepanovep.fut22.core.driver.FutWebDriver;
 import stepanovep.fut22.core.entity.BidResult;
 import stepanovep.fut22.core.entity.FutPlayerElement;
 import stepanovep.fut22.core.page.transfers.TransferMarketPage;
-import stepanovep.fut22.core.page.transfers.TransferSearchResult;
+import stepanovep.fut22.core.page.transfers.SearchResult;
 import stepanovep.fut22.core.page.transfers.TransferTargetsPage;
-import stepanovep.fut22.core.page.transfers.filter.League;
-import stepanovep.fut22.core.page.transfers.filter.Quality;
-import stepanovep.fut22.core.page.transfers.filter.Rarity;
-import stepanovep.fut22.core.page.transfers.filter.TransferMarketSearchFilter;
+import stepanovep.fut22.core.page.transfers.search.League;
+import stepanovep.fut22.core.page.transfers.search.Quality;
+import stepanovep.fut22.core.page.transfers.search.Rarity;
+import stepanovep.fut22.core.page.transfers.search.TransferMarketSearchOptions;
 import stepanovep.fut22.telegrambot.TelegramNotifier;
 
 import java.time.Duration;
@@ -47,7 +47,7 @@ public class ClubStocker {
     private int goalkeepersCount = 0;
 
     public void clubStock() {
-        TransferMarketSearchFilter.Builder mainFilter = TransferMarketSearchFilter.builder()
+        TransferMarketSearchOptions.TransferMarketSearchOptionsBuilder searchOptions = TransferMarketSearchOptions.builder()
                 .withBidMax(800)
                 .withQuality(Quality.GOLD)
                 .withRarity(Rarity.RARE);
@@ -62,7 +62,7 @@ public class ClubStocker {
         Collections.shuffle(leagues);
 
         for (League league: leagues) {
-            MassBidResult massBidResult = massBid(mainFilter.withLeague(league).build());
+            MassBidResult massBidResult = massBid(searchOptions.withLeague(league).build());
             if (massBidResult == MassBidResult.TRANSFER_TARGETS_LIMIT_REACHED) {
                 int wonBids = checkWonBids();
                 if (wonBids >= 40) {
@@ -104,10 +104,10 @@ public class ClubStocker {
         clubStock();
     }
 
-    private MassBidResult massBid(TransferMarketSearchFilter searchFilter) {
-        transferMarketPage.applyFilter(searchFilter);
+    private MassBidResult massBid(TransferMarketSearchOptions searchOptions) {
+        transferMarketPage.applySearchOptions(searchOptions);
 
-        TransferSearchResult searchResult = transferMarketPage.search();
+        SearchResult searchResult = transferMarketPage.search();
         waitUntil30SecondsLeft(searchResult);
 
         int bidCount = 0;
@@ -115,7 +115,7 @@ public class ClubStocker {
             playerElement.focus();
 
             if (playerElement.getExpirationTime().compareTo(Duration.ofMinutes(2)) <= 0 && bidCount < 8) {
-                if (needToSkip(playerElement, searchFilter)) {
+                if (needToSkip(playerElement, searchOptions)) {
                     continue;
                 }
                 BidResult bidResult = playerElement.makeBid();
@@ -148,17 +148,17 @@ public class ClubStocker {
         return MassBidResult.CONTINUE;
     }
 
-    private boolean needToSkip(FutPlayerElement playerElement, TransferMarketSearchFilter searchFilter) {
+    private boolean needToSkip(FutPlayerElement playerElement, TransferMarketSearchOptions searchOptions) {
         if (playerElement.getNextBid().isEmpty()) {
             return true;
         }
-        int maxPrice = searchFilter.getBidMax().orElseThrow() + 50;
+        int maxPrice = searchOptions.getBidMax().orElseThrow() + 50;
         return playerElement.getNextBid().get() > maxPrice ||
                 playerElement.getPosition().equals("GK") && goalkeepersCount >= 5 ||
                 playerElement.getRating() >= 82;
     }
 
-    private void waitUntil30SecondsLeft(TransferSearchResult searchResult) {
+    private void waitUntil30SecondsLeft(SearchResult searchResult) {
         FutPlayerElement firstPlayer = searchResult.getPlayers().get(0);
 
         if (firstPlayer.getExpirationTime().compareTo(Duration.ofMinutes(2)) > 0) {

@@ -8,8 +8,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
-import stepanovep.fut22.appconfig.AppConfiguration;
+import stepanovep.fut22.config.AppConfiguration;
 import stepanovep.fut22.bot.FutBot;
+import stepanovep.fut22.bot.service.GemsSeller;
 import stepanovep.fut22.bot.service.LoginService;
 import stepanovep.fut22.bot.service.StatisticService;
 import stepanovep.fut22.bot.service.clubstocking.ClubStocker;
@@ -23,19 +24,14 @@ public class FutSeleniumApplication implements CommandLineRunner {
 
     @Autowired
     private StatisticService statisticService;
-
     @Autowired
     private SnipingService snipingService;
-
     @Autowired
     private LoginService loginService;
-
     @Autowired
     private ClubStocker clubStocker;
-
     @Autowired
     private FutBot futBot;
-
     @Autowired
     private FutbinService futbinService;
 

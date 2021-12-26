@@ -1,4 +1,4 @@
-package stepanovep.fut22.core.page.transfers.filter;
+package stepanovep.fut22.core.page.transfers.search;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -24,33 +24,33 @@ import static stepanovep.fut22.core.locators.TransferMarketLocators.SEARCH_QUALI
 import static stepanovep.fut22.core.locators.TransferMarketLocators.SEARCH_RARITY_LIST;
 
 @Component
-public class TransferMarketFilterService {
+public class TransferMarketSearchService {
 
     @Autowired
     private FutWebDriver driver;
 
-    public void applyFilter(TransferMarketSearchFilter filter) {
-        filter.getName().ifPresent(this::setNameFilter);
+    public void applySearchOptions(TransferMarketSearchOptions searchOption) {
+        searchOption.getName().ifPresent(this::setName);
 
-        filter.getQuality().ifPresent(quality -> setDropDownFilter(SEARCH_QUALITY_LIST, quality));
-        filter.getRarity().ifPresent(rarity -> setDropDownFilter(SEARCH_RARITY_LIST, rarity));
-        filter.getNationality().ifPresent(nationality -> setDropDownFilter(SEARCH_NATIONALITY_LIST, nationality));
-        filter.getLeague().ifPresent(league -> setDropDownFilter(SEARCH_LEAGUE_LIST, league));
-        filter.getPosition().ifPresent(position -> setDropDownFilter(SEARCH_POSITION_LIST, position));
-        filter.getChemStyle().ifPresent(chemStyle -> setDropDownFilter(SEARCH_CHEM_STYLE_LIST, chemStyle));
+        searchOption.getQuality().ifPresent(quality -> setDropDownOptions(SEARCH_QUALITY_LIST, quality));
+        searchOption.getRarity().ifPresent(rarity -> setDropDownOptions(SEARCH_RARITY_LIST, rarity));
+        searchOption.getNationality().ifPresent(nationality -> setDropDownOptions(SEARCH_NATIONALITY_LIST, nationality));
+        searchOption.getLeague().ifPresent(league -> setDropDownOptions(SEARCH_LEAGUE_LIST, league));
+        searchOption.getPosition().ifPresent(position -> setDropDownOptions(SEARCH_POSITION_LIST, position));
+        searchOption.getChemStyle().ifPresent(chemStyle -> setDropDownOptions(SEARCH_CHEM_STYLE_LIST, chemStyle));
 
-        filter.getBidMin().ifPresent(price -> setPriceFilter(MIN_BID_PRICE_FORM_INPUT, price));
-        filter.getBidMax().ifPresent(price -> setPriceFilter(MAX_BID_PRICE_FORM_INPUT, price));
-        filter.getTargetPrice().ifPresent(targetPrice -> setPriceFilter(MAX_BID_PRICE_FORM_INPUT, targetPrice));
-        filter.getBuyNowMin().ifPresent(price -> setPriceFilter(MIN_BIN_PRICE_FORM_INPUT, price));
-        filter.getBuyNowMax().ifPresent(price -> setPriceFilter(MAX_BIN_PRICE_FORM_INPUT, price));
+        searchOption.getBidMin().ifPresent(price -> setPrice(MIN_BID_PRICE_FORM_INPUT, price));
+        searchOption.getBidMax().ifPresent(price -> setPrice(MAX_BID_PRICE_FORM_INPUT, price));
+        searchOption.getTargetPrice().ifPresent(targetPrice -> setPrice(MAX_BID_PRICE_FORM_INPUT, targetPrice));
+        searchOption.getBuyNowMin().ifPresent(price -> setPrice(MIN_BIN_PRICE_FORM_INPUT, price));
+        searchOption.getBuyNowMax().ifPresent(price -> setPrice(MAX_BIN_PRICE_FORM_INPUT, price));
     }
 
-    public void resetAllFilters() {
-        driver.clickElement(TransferMarketLocators.RESET_FILTER_BUTTON);
+    public void resetAll() {
+        driver.clickElement(TransferMarketLocators.RESET_SEARCH_OPTIONS_BUTTON);
     }
 
-    private void setNameFilter(String name) {
+    private void setName(String name) {
         WebElement nameInput = driver.findElement(SEARCH_PLAYER_NAME_INPUT);
         driver.sleep(300);
         nameInput.clear();
@@ -63,13 +63,13 @@ public class TransferMarketFilterService {
         driver.sleep(500, 750);
     }
 
-    private void setDropDownFilter(By dropDownMenuLocator, Enums.StringRepr filter) {
+    private void setDropDownOptions(By dropDownMenuLocator, Enums.StringRepr value) {
         driver.clickElement(dropDownMenuLocator);
-        driver.clickElement(LocatorsUtils.byText(filter.getCode()));
+        driver.clickElement(LocatorsUtils.byText(value.getCode()));
         driver.sleep(500, 750);
     }
 
-    private void setPriceFilter(By priceInputLocator, Integer price) {
+    private void setPrice(By priceInputLocator, Integer price) {
         WebElement priceInput = driver.findElement(priceInputLocator);
         driver.sendKeys(priceInput, String.valueOf(price));
         driver.sleep(500, 750);

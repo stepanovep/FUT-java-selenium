@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import stepanovep.fut22.core.driver.FutWebDriver;
 import stepanovep.fut22.core.entity.FutPlayerElement;
 import stepanovep.fut22.core.page.transfers.TransferMarketPage;
-import stepanovep.fut22.core.page.transfers.TransferSearchResult;
-import stepanovep.fut22.core.page.transfers.filter.TransferMarketSearchFilter;
+import stepanovep.fut22.core.page.transfers.SearchResult;
+import stepanovep.fut22.core.page.transfers.search.TransferMarketSearchOptions;
 import stepanovep.fut22.telegrambot.TelegramNotifier;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class SnipingService {
     @Autowired
     private TelegramNotifier telegramNotifier;
 
-    public void snipe(TransferMarketSearchFilter searchFilter) {
-        transferMarket.applyFilter(searchFilter);
+    public void snipe(TransferMarketSearchOptions searchOptions) {
+        transferMarket.applySearchOptions(searchOptions);
 
         for (int i = 0 ; i < 20; i++) {
-            updateSearchFilterForm(i);
-            TransferSearchResult searchResult = transferMarket.search();
+            updateSearchOptions(i);
+            SearchResult searchResult = transferMarket.search();
             if (!searchResult.getPlayers().isEmpty()) {
                 List<FutPlayerElement> players = searchResult.getPlayers();
                 for (FutPlayerElement player: players) {
@@ -50,7 +50,7 @@ public class SnipingService {
         }
     }
 
-    private void updateSearchFilterForm(int i) {
-        transferMarket.changeMinBuyNowPriceFilter(1);
+    private void updateSearchOptions(int i) {
+        transferMarket.changeMinBuyNowPrice(1);
     }
 }

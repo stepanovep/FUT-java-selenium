@@ -9,7 +9,7 @@ public final class TransferMarketLocators {
     }
 
     public static By SEARCH_BUTTON = By.cssSelector(".button-container > .btn-standard.call-to-action");
-    public static By RESET_FILTER_BUTTON = By.cssSelector(".button-container > .btn-standard");
+    public static By RESET_SEARCH_OPTIONS_BUTTON = By.cssSelector(".button-container > .btn-standard");
     public static By BACK_TO_SEARCH_FORM_BUTTON = By.cssSelector(".ut-navigation-button-control");
 
     public static By SEARCH_PLAYER_NAME_INPUT = By.cssSelector("input.ut-text-input-control");

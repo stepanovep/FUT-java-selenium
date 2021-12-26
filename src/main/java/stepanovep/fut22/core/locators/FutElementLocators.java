@@ -17,6 +17,7 @@ public class FutElementLocators {
     public static By LIST_TO_TRANSFER_MARKET_SUBMIT_BUTTON = By.cssSelector(".panelActions.open > button");
 
     public static By SEND_TO_TRANSFER_MARKET_BUTTON = LocatorsUtils.byText("Send to Transfer List");
+    public static By UNTRADABLE_FLAG = LocatorsUtils.byText("This item cannot be traded");
 
     public static By BID_BUTTON = By.cssSelector(".bidButton");
     public static By BUY_NOW_BUTTON = By.cssSelector(".buyButton");

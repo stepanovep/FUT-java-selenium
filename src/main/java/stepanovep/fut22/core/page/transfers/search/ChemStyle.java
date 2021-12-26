@@ -1,4 +1,4 @@
-package stepanovep.fut22.core.page.transfers.filter;
+package stepanovep.fut22.core.page.transfers.search;
 
 import stepanovep.fut22.utils.Enums;
 

@@ -44,17 +44,11 @@ public class FutWebDriver extends ChromeDriver {
         return platform;
     }
 
-    /**
-     * Получает элемент по локатору с явным ожиданием
-     */
     public WebElement findElementWithWait(By locator) {
         return new WebDriverWait(this, Duration.ofSeconds(5))
                 .until(ExpectedConditions.presenceOfElementLocated(locator));
     }
 
-    /**
-     * Получает список элементов по локатору с явным ожиданием
-     */
     public List<WebElement> findElementsWithWait(By locator) {
         try {
             return new FluentWait<WebDriver>(this)
@@ -70,18 +64,10 @@ public class FutWebDriver extends ChromeDriver {
         }
     }
 
-    /**
-     * Проверить есть ли элемент на странице по заданному локатору
-     */
     public boolean isElementPresent(By locator) {
         return !this.findElements(locator).isEmpty();
     }
 
-    /**
-     * Находит и кликает элемент по заданному локатору
-     *
-     * @param locator локатор элемента для клика
-     */
     public void clickElement(By locator) {
         this.sleep(150, 250);
         new FluentWait<WebDriver>(this)
@@ -94,6 +80,11 @@ public class FutWebDriver extends ChromeDriver {
                     webElement.click();
                     return true;
                 });
+    }
+
+    public void clickElement(By locator, int sleepAfter) {
+        clickElement(locator);
+        sleep(sleepAfter);
     }
 
     public void clickElement(WebElement webElement) {
@@ -167,12 +158,6 @@ public class FutWebDriver extends ChromeDriver {
         throw new IllegalStateException("Decline button hasn't been clicked");
     }
 
-    /**
-     * Заполняет форму ввода элемента заданным текстом
-     *
-     * @param element веб элемент с формой для ввода
-     * @param keys текст для ввода
-     */
     public void sendKeys(WebElement element, String keys) {
         sleep(400);
         element.clear();
@@ -197,9 +182,6 @@ public class FutWebDriver extends ChromeDriver {
         this.interrupted = true;
     }
 
-    /**
-     * Ставит поток на паузу для имитации естественной пользователькой задержки
-     */
     public void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
@@ -209,17 +191,11 @@ public class FutWebDriver extends ChromeDriver {
         }
     }
 
-    /**
-     * Ставит поток на паузу для имитации естественной пользователькой задержки
-     */
     public void sleep(int millisecondsFrom, int millisecondsTo) {
         int milliseconds = millisecondsFrom + rnd.nextInt(millisecondsTo-millisecondsFrom);
         sleep(milliseconds);
     }
 
-    /**
-     * Возвращает скриншот текущей страницы в виде файла
-     */
     public File screenshot() {
         return this.getScreenshotAs(OutputType.FILE);
     }

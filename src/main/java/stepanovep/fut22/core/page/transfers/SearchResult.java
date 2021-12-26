@@ -2,6 +2,7 @@ package stepanovep.fut22.core.page.transfers;
 
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.FluentWait;
 import stepanovep.fut22.core.driver.FutWebDriver;
 import stepanovep.fut22.core.entity.FutPlayerElement;
@@ -14,18 +15,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Результат поиска через Трансферный Рынок (ТР)
- */
-public class TransferSearchResult {
+public class SearchResult {
 
     private final List<FutPlayerElement> players;
 
-    private TransferSearchResult(List<FutPlayerElement> players) {
+    private SearchResult(List<FutPlayerElement> players) {
         this.players = players;
     }
 
-    public static TransferSearchResult from(FutWebDriver driver) {
+    public static SearchResult from(FutWebDriver driver) {
         new FluentWait<WebDriver>(driver)
                 .withTimeout(Duration.ofSeconds(10))
                 .pollingEvery(Duration.ofMillis(100))
@@ -46,7 +44,7 @@ public class TransferSearchResult {
                 .collect(Collectors.toList());
 
         driver.activeMenu = FutActiveMenu.TRANSFER_SEARCH_RESULT;
-        return new TransferSearchResult(items);
+        return new SearchResult(items);
     }
 
     @Nonnull

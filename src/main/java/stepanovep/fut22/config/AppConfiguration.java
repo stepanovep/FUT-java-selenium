@@ -1,4 +1,4 @@
-package stepanovep.fut22.appconfig;
+package stepanovep.fut22.config;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -12,7 +12,6 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -32,23 +31,23 @@ import java.util.concurrent.ScheduledExecutorService;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-@Configuration
+@org.springframework.context.annotation.Configuration
 @EnableScheduling
 public class AppConfiguration {
 
     @Autowired
-    private AppProperties appProperties;
+    private Properties properties;
 
     @Bean
     public ChromeOptions chromeOptions() {
-        System.setProperty("webdriver.chrome.driver", appProperties.getChromeDriverExecutablePath());
+        System.setProperty("webdriver.chrome.driver", properties.getChromeDriverExecutablePath());
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments(
-                "user-data-dir=" + appProperties.getChromeUserDataDir(),
+                "user-data-dir=" + properties.getChromeUserDataDir(),
                 "--no-sandbox",
                 "--start-maximized");
 
-        if (appProperties.isHeadless()) {
+        if (properties.isHeadless()) {
             chromeOptions.addArguments("--headless");
         }
 
@@ -57,7 +56,7 @@ public class AppConfiguration {
 
     @Bean(name = "driver")
     public FutWebDriver futWebDriver(ChromeOptions chromeOptions) {
-        return new FutWebDriver(chromeOptions, appProperties.getPlatform());
+        return new FutWebDriver(chromeOptions, properties.getPlatform());
     }
 
     @Bean

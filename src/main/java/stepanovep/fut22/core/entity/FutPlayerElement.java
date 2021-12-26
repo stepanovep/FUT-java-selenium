@@ -28,9 +28,6 @@ import static stepanovep.fut22.core.locators.FutElementLocators.COMPARE_PRICE_EL
 import static stepanovep.fut22.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENT_BUY_NOW_VALUE;
 import static stepanovep.fut22.core.locators.FutElementLocators.COMPARE_PRICE_NEXT_BUTTON;
 
-/**
- * FUT player element
- */
 @Slf4j
 public class FutPlayerElement {
 
@@ -298,6 +295,19 @@ public class FutPlayerElement {
 
         } else {
             return Duration.ofDays(1L);
+        }
+    }
+
+    public boolean isTradable() {
+        return !isUntradable();
+    }
+
+    public boolean isUntradable() {
+        try {
+            driver.findElement(FutElementLocators.UNTRADABLE_FLAG);
+            return true;
+        } catch (NoSuchElementException exc) {
+            return false;
         }
     }
 

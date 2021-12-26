@@ -1,7 +1,6 @@
 package stepanovep.fut22.bot.service.bidding;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import stepanovep.fut22.core.Platform;
@@ -13,8 +12,8 @@ import stepanovep.fut22.core.entity.FutPlayerAuctionData;
 import stepanovep.fut22.core.entity.FutPlayerElement;
 import stepanovep.fut22.core.entity.PlayerAuctionDataService;
 import stepanovep.fut22.core.page.transfers.TransferMarketPage;
-import stepanovep.fut22.core.page.transfers.TransferSearchResult;
-import stepanovep.fut22.core.page.transfers.filter.TransferMarketSearchFilter;
+import stepanovep.fut22.core.page.transfers.SearchResult;
+import stepanovep.fut22.core.page.transfers.search.TransferMarketSearchOptions;
 import stepanovep.fut22.mongo.ActiveAuction;
 import stepanovep.fut22.mongo.AuctionService;
 import stepanovep.fut22.mongo.Player;
@@ -28,9 +27,8 @@ import java.util.List;
  * Биддер
  */
 @Component
+@Slf4j
 public class MassBidder {
-
-    private static final Logger log = LoggerFactory.getLogger(MassBidder.class);
 
     @Autowired
     private FutWebDriver driver;
@@ -54,7 +52,7 @@ public class MassBidder {
         driver.wakeup();
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(24, 1300, 8000, driver.getPlatform());
+            List<Player> players = playerService.getPlayersForMassBid(25, 1500, 14000, driver.getPlatform());
             for (Player player: players) {
                 if (driver.isInterrupted()) {
                     System.out.println("Thread interrupted - aborting mass bidding");
@@ -75,9 +73,9 @@ public class MassBidder {
 
     private void massBidPlayer(Player player) {
         int bidsCount = 0;
-        TransferMarketSearchFilter filter = mapToSearchFilter(player);
-        Integer targetPrice = filter.getTargetPrice().orElseThrow(() -> new IllegalStateException("targetPrice is mandatory here"));
-        TransferSearchResult searchResult = transferMarket.applyFilterAndSearch(filter);
+        TransferMarketSearchOptions searchOptions = mapToSearchOptions(player);
+        Integer targetPrice = searchOptions.getTargetPrice().orElseThrow(() -> new IllegalStateException("targetPrice is mandatory here"));
+        SearchResult searchResult = transferMarket.applySearchOptionsAndSearch(searchOptions);
         if (targetPrice > getAdjustedTargetPrice(searchResult)) {
             targetPrice = getAdjustedTargetPrice(searchResult);
             int newActualPrice = Math.max((int) (targetPrice * 1.15), (int) (targetPrice * 1.1) + 500);
@@ -103,7 +101,7 @@ public class MassBidder {
         playerService.updateBidTime(player);
     }
 
-    private int getAdjustedTargetPrice(TransferSearchResult searchResult) {
+    private int getAdjustedTargetPrice(SearchResult searchResult) {
         return searchResult.getPlayers()
                 .stream()
                 .map(FutPlayerElement::getBuyNowPrice)
@@ -112,12 +110,12 @@ public class MassBidder {
                 .orElse(0);
     }
 
-    private TransferMarketSearchFilter mapToSearchFilter(Player player) {
-            int targetPrice = calculateTargetPrice(player.getPrice(driver.getPlatform()));
-            return TransferMarketSearchFilter.builder()
-                    .withName(player.getName())
-                    .withTargetPrice(targetPrice)
-                    .build();
+    private TransferMarketSearchOptions mapToSearchOptions(Player player) {
+        int targetPrice = calculateTargetPrice(player.getPrice(driver.getPlatform()));
+        return TransferMarketSearchOptions.builder()
+                .withName(player.getName())
+                .withTargetPrice(targetPrice)
+                .build();
     }
 
     private int calculateTargetPrice(int price) {
