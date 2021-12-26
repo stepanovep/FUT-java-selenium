@@ -9,9 +9,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
 import stepanovep.fut22.core.driver.FutWebDriver;
+import stepanovep.fut22.core.locators.MainPageLocators;
 import stepanovep.fut22.core.page.FutActiveMenu;
 
-import java.awt.event.KeyEvent;
 import java.time.Duration;
 
 import static stepanovep.fut22.core.locators.LoginLocators.LOGIN_BUTTON_LOCATOR;
@@ -47,9 +47,17 @@ public class LoginService {
                     .until(d -> d.findElement(COINS_ELEM_LOCATOR));
             log.info("Logged in successfully: coins={}", coinsElement.getText());
             driver.sleep(7500);
-            // TODO close popup
+
+            closeLiveMessagePopup();
         }
 
         driver.activeMenu = FutActiveMenu.HOME;
+    }
+
+    private void closeLiveMessagePopup() {
+        if (driver.isElementPresent(MainPageLocators.LIVE_MESSAGE_POPUP)) {
+            WebElement liveMessageCloseButton = driver.findElement(MainPageLocators.LIVE_MESSAGE_CLOSE_BUTTON);
+            liveMessageCloseButton.click();
+        }
     }
 }

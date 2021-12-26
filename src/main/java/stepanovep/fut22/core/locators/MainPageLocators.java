@@ -18,5 +18,7 @@ public final class MainPageLocators {
     public static final By COINS_ELEM_LOCATOR = By.cssSelector(".view-navbar-currency > .view-navbar-currency-coins");
 
     public static final By DIALOG_SUBMIT_BUTTON = By.cssSelector(".dialog-body button");
+    public static final By LIVE_MESSAGE_POPUP = By.cssSelector(".ut-livemessage");
+    public static final By LIVE_MESSAGE_CLOSE_BUTTON = By.cssSelector(".ut-livemessage > div > button");
 
 }
