@@ -1,9 +1,8 @@
 package stepanovep.fut22.bot.service.bidding;
 
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -16,10 +15,10 @@ import stepanovep.fut22.core.entity.FutPlayerAuctionData;
 import stepanovep.fut22.core.entity.FutPlayerElement;
 import stepanovep.fut22.core.entity.PlayerAuctionDataService;
 import stepanovep.fut22.core.page.FutActiveMenu;
+import stepanovep.fut22.core.page.transfers.SearchResult;
 import stepanovep.fut22.core.page.transfers.TransferMarketPage;
-import stepanovep.fut22.core.page.transfers.TransferSearchResult;
 import stepanovep.fut22.core.page.transfers.TransferTargetsPage;
-import stepanovep.fut22.core.page.transfers.filter.TransferMarketSearchFilter;
+import stepanovep.fut22.core.page.transfers.search.TransferMarketSearchOptions;
 import stepanovep.fut22.mongo.ActiveAuction;
 import stepanovep.fut22.mongo.AuctionService;
 import stepanovep.fut22.mongo.Player;
@@ -34,9 +33,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class BidChecker {
-
-    private static final Logger log = LoggerFactory.getLogger(BidChecker.class);
 
     private static final int MAX_EXPIRATION_TIME_SECONDS_TO_CHECK = 50;
 
@@ -75,13 +73,12 @@ public class BidChecker {
 
     @Retryable(include = {StaleElementReferenceException.class}, backoff = @Backoff(delay = 3000))
     public void checkBids() {
-        if (driver.isInterrupted()) {
-            System.out.println("Thread is interrupted - aborting bid checker");
-            return;
-        }
         transferTargetsPage.navigateToPage();
         driver.sleep(1000);
         List<FutPlayerElement> activeBids = transferTargetsPage.getActiveBids();
+        if (activeBids.isEmpty()) {
+            return;
+        }
         log.info("Checking bids: activeBids count = {}", activeBids.size());
 
         for (FutPlayerElement player : activeBids) {
@@ -97,16 +94,16 @@ public class BidChecker {
             }
         }
 
-        if (checkAnyOutbidIsExpiring()) {
-            checkBids();
-        }
+//        if (checkAnyOutbidIsExpiring()) {
+//            checkBids();
+//        }
 
         listWonItemsToTransferMarket();
         keepBalanceOfExpiredItems();
 
-        if (checkAnyOutbidIsExpiring()) {
-            checkBids();
-        }
+//        if (checkAnyOutbidIsExpiring()) {
+//            checkBids();
+//        }
 
         driver.sleep(2000, 3000);
     }
@@ -148,18 +145,35 @@ public class BidChecker {
             return;
         }
 
-        List<FutPlayerElement> wonItems = transferTargetsPage.getWonItems();
+        List<FutPlayerElement> wonItems = transferTargetsPage.getWonItems()
+                .stream()
+                .filter(item -> {
+                    item.focus();
+                    return item.isTradable();
+                })
+                .collect(Collectors.toList());
+
         while (!wonItems.isEmpty()) {
             FutPlayerElement playerElement = wonItems.get(0);
             listPlayerToTransferMarket(playerElement);
 
             driver.sleep(1000, 2000);
-            wonItems = transferTargetsPage.getWonItems();
+            wonItems = transferTargetsPage.getWonItems()
+                    .stream()
+                    .filter(item -> {
+                        item.focus();
+                        return item.isTradable();
+                    })
+                    .collect(Collectors.toList());;
         }
     }
 
     private void listPlayerToTransferMarket(FutPlayerElement playerElement) {
         playerElement.focus();
+        if (playerElement.isUntradable()) {
+            log.error("Player is untradable. Skipping item");
+            return;
+        }
         FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
         String resourceId = extendedData.getResourceId();
 
@@ -202,7 +216,6 @@ public class BidChecker {
 
     private void handleOutbidPlayer(FutPlayerElement player, FutPlayerAuctionData extendedData) {
         // TODO: снизить количество ставок. Большинство ставок все равно проигрывается в итоге - тратится количество ставок
-        //    - Менять стратегию ставок при 'bidding war'.
         //    - Делать ставку только если осталось <15 секунд.
         //    - Повышать ставку на 2 шага
         AuctionData auctionData = extendedData.getAuction();
@@ -267,8 +280,8 @@ public class BidChecker {
     }
 
     private void addWatchItems(int count) {
-        TransferMarketSearchFilter emptyFilter = TransferMarketSearchFilter.builder().build();
-        TransferSearchResult searchResult = transferMarketPage.applyFilterAndSearch(emptyFilter);
+        TransferMarketSearchOptions emptyOptions = TransferMarketSearchOptions.builder().build();
+        SearchResult searchResult = transferMarketPage.applySearchOptionsAndSearch(emptyOptions);
         List<FutPlayerElement> players = searchResult.getPlayers()
                 .stream()
                 .limit(count)
