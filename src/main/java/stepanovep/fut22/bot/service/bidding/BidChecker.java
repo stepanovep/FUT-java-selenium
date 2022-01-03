@@ -257,13 +257,12 @@ public class BidChecker {
         if (expiredItems.size() >= 20) {
             transferTargetsPage.clearAllExpiredItems();
 
-        } else if (expiredItems.size() >= 10) {
-            for (int i = 0; i < 2; i++) {
-                FutPlayerElement expiredItem = expiredItems.get(i);
-                expiredItem.focus();
-                expiredItem.toggleWatch();
-                driver.sleep(1000);
-            }
+        } else if (expiredItems.size() >= 5) {
+            FutPlayerElement expiredItem = expiredItems.get(0);
+            expiredItem.focus();
+            expiredItem.toggleWatch();
+            driver.sleep(1000);
+
         } else if (expiredItems.size() + watchedItems.size() < 5) {
             addWatchItems(6);
         }

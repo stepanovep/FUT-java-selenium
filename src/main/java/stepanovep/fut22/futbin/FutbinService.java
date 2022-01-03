@@ -1,5 +1,6 @@
 package stepanovep.fut22.futbin;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.gcardone.junidecode.Junidecode;
@@ -7,7 +8,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut22.core.Platform;
 import stepanovep.fut22.mongo.Player;
@@ -21,21 +21,20 @@ import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FutbinService {
 
-    @Autowired
-    private PlayerService playerService;
-
-    @Autowired
-    private ExecutorService futbinExecutor;
+    private final PlayerService playerService;
+    private final ExecutorService futbinExecutor;
 
     private static final Duration MIN_TIME_BETWEEN_REQUESTS = Duration.ofMinutes(20);
 
     private static final List<String> FUTBIN_TRADE_SQUADS_URLS = List.of(
-            "https://www.futbin.com/22/squad/454889",
-            "https://www.futbin.com/22/squad/454511",
-            "https://www.futbin.com/22/squad/452851",
-            "https://www.futbin.com/22/squad/945509"
+            "https://www.futbin.com/22/squad/4519955",
+            "https://www.futbin.com/22/squad/4519882",
+            "https://www.futbin.com/22/squad/4519764",
+            "https://www.futbin.com/22/squad/4519654",
+            "https://www.futbin.com/22/squad/4519450"
     );
 
     public void updatePrices() {

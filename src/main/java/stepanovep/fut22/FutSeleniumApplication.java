@@ -50,9 +50,6 @@ public class FutSeleniumApplication implements CommandLineRunner {
         log.info("EXECUTING : command line runner");
         statisticService.displayWeeklyStatistic();
         statisticService.displayOverallBuys();
-
-//        loginService.login();
-//        gemsSeller.sellGems();
     }
 
 }
