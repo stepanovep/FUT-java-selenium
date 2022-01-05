@@ -7,15 +7,15 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
+import lombok.SneakyThrows;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import stepanovep.fut22.core.driver.FutWebDriver;
 import stepanovep.fut22.mongo.ActiveAuction;
 import stepanovep.fut22.mongo.Player;
@@ -95,11 +95,11 @@ public class AppConfiguration {
         return auctionsHistory;
     }
 
+    @SneakyThrows
     @Bean
     public TelegramBot telegramBot(TelegramBotProperties properties,
-                                   TelegramBotCommandHandler commandHandler) throws TelegramApiRequestException {
-        ApiContextInitializer.init();
-        TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+                                   TelegramBotCommandHandler commandHandler) {
+        TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         TelegramBot telegramBot = new TelegramBot(properties, commandHandler);
         telegramBotsApi.registerBot(telegramBot);
 

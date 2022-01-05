@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
@@ -49,10 +50,11 @@ public class TelegramNotifier {
      */
     public void sendScreenshot(File screenshot, String caption) {
         telegramNotifierExecutor.submit(() -> {
-            SendPhoto sendPhoto = new SendPhoto()
-                    .setPhoto(screenshot)
-                    .setChatId(properties.getChatId())
-                    .setCaption(caption);
+            SendPhoto sendPhoto = SendPhoto.builder()
+                    .photo(new InputFile(screenshot))
+                    .chatId(String.valueOf(properties.getChatId()))
+                    .caption(caption)
+                    .build();
             try {
                 telegramBot.execute(sendPhoto);
             } catch (TelegramApiException exc) {
@@ -69,7 +71,7 @@ public class TelegramNotifier {
     public void sendMessage(String message) {
         telegramNotifierExecutor.submit(() -> {
             log.info(message);
-            SendMessage sendMessage = new SendMessage(properties.getChatId(), message);
+            SendMessage sendMessage = new SendMessage(String.valueOf(properties.getChatId()), message);
             try {
                 telegramBot.execute(sendMessage);
 

@@ -29,8 +29,8 @@ dependencies {
 
     compile 'net.gcardone.junidecode:junidecode:0.4.1'
 
-    compile 'org.telegram:telegrambots:4.7'
-    compile 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+    compile 'org.telegram:telegrambots:5.6.0'
+    compile 'org.telegram:telegrambotsextensions:5.6.0'
 
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
