@@ -1,11 +1,13 @@
 package stepanovep.fut22.bot.service.clubstocking;
 
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.time.Duration;
 
 /**
  * Keyboard and mouse clicker for FIFA.exe application
@@ -61,15 +63,15 @@ public class GameApplicationService {
         }
     }
 
-    private void clickFifaAppIconInDesktop() throws InterruptedException {
+    @SneakyThrows
+    private void clickFifaAppIconInDesktop() {
         Thread.sleep(5000);
         pressAndRelease(KeyEvent.VK_WINDOWS, KeyEvent.VK_D);
         Thread.sleep(500);
 
         robot.mouseMove(FIFA_21_ICON_POSITION[0], FIFA_21_ICON_POSITION[1]);
         clickAndRelease();
-        clickAndRelease();
-        Thread.sleep(12000);
+        clickAndRelease(Duration.ofSeconds(12L));
     }
 
     private void clickStartGameButton() throws InterruptedException {
@@ -82,68 +84,49 @@ public class GameApplicationService {
         Thread.sleep(20000);
     }
 
-    private void activateAppWindow() throws InterruptedException {
+    @SneakyThrows
+    private void activateAppWindow() {
         robot.mouseMove(FIFA_21_WINDOW_POSITION[0], FIFA_21_WINDOW_POSITION[1]);
         clickAndRelease();
         Thread.sleep(5000);
     }
 
-    private void skipIntros() throws InterruptedException {
+    private void skipIntros() {
         log.info("Skip intros, choose profile and wait menu loading");
-        pressAndRelease(KeyEvent.VK_ENTER);
-        Thread.sleep(6000);
-
-        pressAndRelease(KeyEvent.VK_ENTER);
-        Thread.sleep(5000);
-
-        pressAndRelease(KeyEvent.VK_ENTER);
-        Thread.sleep(5000);
-
-        pressAndRelease(KeyEvent.VK_ENTER);
-        Thread.sleep(20000);
+        pressAndRelease(KeyEvent.VK_ENTER, Duration.ofSeconds(6L));
+        pressAndRelease(KeyEvent.VK_ENTER, Duration.ofSeconds(5L));
+        pressAndRelease(KeyEvent.VK_ENTER, Duration.ofSeconds(5L));
+        pressAndRelease(KeyEvent.VK_ENTER, Duration.ofSeconds(20L));
     }
 
-    private void loginToUltimateTeam() throws InterruptedException {
+    private void loginToUltimateTeam() {
         log.info("Login to Ultimate Team");
-        pressAndRelease(KeyEvent.VK_ENTER);
-        Thread.sleep(15000);
+        pressAndRelease(KeyEvent.VK_RIGHT, Duration.ofSeconds(1L));
+        pressAndRelease(KeyEvent.VK_ENTER, Duration.ofSeconds(30L));
     }
 
-    private void moveTargetsToUnassigned() throws InterruptedException {
-        pressAndRelease(KeyEvent.VK_RIGHT);
-        Thread.sleep(1000);
-        pressAndRelease(KeyEvent.VK_RIGHT);
-        Thread.sleep(1000);
-        pressAndRelease(KeyEvent.VK_RIGHT);
-        Thread.sleep(1000);
-        pressAndRelease(KeyEvent.VK_ENTER);
-        Thread.sleep(3000);
+    private void moveTargetsToUnassigned() {
+        pressAndRelease(KeyEvent.VK_RIGHT, Duration.ofSeconds(1L));
+        pressAndRelease(KeyEvent.VK_RIGHT, Duration.ofSeconds(1L));
+        pressAndRelease(KeyEvent.VK_ENTER, Duration.ofSeconds(3L));
 
-        pressAndRelease(KeyEvent.VK_LEFT);
-        Thread.sleep(1000);
-        pressAndRelease(KeyEvent.VK_ENTER);
-        Thread.sleep(3000);
+        pressAndRelease(KeyEvent.VK_LEFT, Duration.ofSeconds(1L));
+        pressAndRelease(KeyEvent.VK_ENTER, Duration.ofSeconds(3L));
 
-        pressAndRelease(KeyEvent.VK_W);
-        Thread.sleep(7500);
+        pressAndRelease(KeyEvent.VK_W, Duration.ofSeconds(8L));
         log.info("Transfer targets moved to unassigned pile");
     }
 
-    private void logoutAndCloseApp() throws InterruptedException {
-        pressAndRelease(KeyEvent.VK_ESCAPE);
-        Thread.sleep(1000);
+    @SneakyThrows
+    private void logoutAndCloseApp() {
+        pressAndRelease(KeyEvent.VK_ESCAPE, Duration.ofSeconds(1L));
         pressAndRelease(KeyEvent.VK_UP);
-        pressAndRelease(KeyEvent.VK_ENTER);
-        Thread.sleep(3000);
+        pressAndRelease(KeyEvent.VK_ENTER, Duration.ofSeconds(3L));
 
-        pressAndRelease(KeyEvent.VK_ESCAPE);
-        Thread.sleep(1000);
+        pressAndRelease(KeyEvent.VK_ESCAPE, Duration.ofSeconds(1L));
 
-        pressAndRelease(KeyEvent.VK_ESCAPE);
-        Thread.sleep(1000);
-        pressAndRelease(KeyEvent.VK_UP);
-        pressAndRelease(KeyEvent.VK_ENTER);
-        Thread.sleep(10000);
+        pressAndRelease(KeyEvent.VK_ESCAPE, Duration.ofSeconds(1L));
+        pressAndRelease(KeyEvent.VK_ENTER, Duration.ofSeconds(10L));
 
         pressAndRelease(KeyEvent.VK_ALT, KeyEvent.VK_F4);
         Thread.sleep(10000);
@@ -153,6 +136,13 @@ public class GameApplicationService {
     private void pressAndRelease(int keycode) {
         robot.keyPress(keycode);
         robot.keyRelease(keycode);
+    }
+
+    @SneakyThrows
+    private void pressAndRelease(int keycode, Duration pause) {
+        robot.keyPress(keycode);
+        robot.keyRelease(keycode);
+        Thread.sleep(pause.toMillis());
     }
 
     private void pressAndRelease(int keycode1, int keycode2) {
@@ -168,8 +158,10 @@ public class GameApplicationService {
         robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
     }
 
-    public static void main(String[] args) {
-        GameApplicationService gameApplicationService = new GameApplicationService();
-        gameApplicationService.moveTransferTargetsToUnassignedPile();
+    @SneakyThrows
+    private void clickAndRelease(Duration pause) {
+        robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+        Thread.sleep(pause.toMillis());
     }
 }

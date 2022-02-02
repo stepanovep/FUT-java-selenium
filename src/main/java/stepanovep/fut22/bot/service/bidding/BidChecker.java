@@ -257,7 +257,7 @@ public class BidChecker {
         if (expiredItems.size() >= 20) {
             transferTargetsPage.clearAllExpiredItems();
 
-        } else if (expiredItems.size() >= 5) {
+        } else if (expiredItems.size() >= 10) {
             FutPlayerElement expiredItem = expiredItems.get(0);
             expiredItem.focus();
             expiredItem.toggleWatch();

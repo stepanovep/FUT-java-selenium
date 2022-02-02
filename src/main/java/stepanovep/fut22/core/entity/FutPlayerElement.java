@@ -72,8 +72,7 @@ public class FutPlayerElement {
             }
 
             if (isBid()) {
-                BIDS_COUNT++;
-                log.info("Success bid count: {}", BIDS_COUNT);
+                log.info("Success bid count: {}", ++BIDS_COUNT);
                 return BidResult.SUCCESS;
             }
             if (isOutbid()) {

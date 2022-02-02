@@ -48,13 +48,13 @@ public class ClubStocker {
 
     public void clubStock() {
         TransferMarketSearchOptions.TransferMarketSearchOptionsBuilder searchOptions = TransferMarketSearchOptions.builder()
-                .withBidMax(800)
+                .withBidMax(750)
                 .withQuality(Quality.GOLD)
                 .withRarity(Rarity.RARE);
 
         List<League> leagues = new ArrayList<>(List.of(
-//                League.PREMIER_LEAGUE,
-                League.LIGUE_1,
+                League.PREMIER_LEAGUE,
+//                League.LIGUE_1,
                 League.BUNDESLIGA,
                 League.LA_LIGA,
                 League.SERIE_A
@@ -108,7 +108,7 @@ public class ClubStocker {
         transferMarketPage.applySearchOptions(searchOptions);
 
         SearchResult searchResult = transferMarketPage.search();
-        waitUntil30SecondsLeft(searchResult);
+//        waitUntil30SecondsLeft(searchResult);
 
         int bidCount = 0;
         for (FutPlayerElement playerElement : searchResult.getPlayers()) {
@@ -154,8 +154,7 @@ public class ClubStocker {
         }
         int maxPrice = searchOptions.getBidMax().orElseThrow() + 50;
         return playerElement.getNextBid().get() > maxPrice ||
-                playerElement.getPosition().equals("GK") && goalkeepersCount >= 5 ||
-                playerElement.getRating() >= 82;
+                playerElement.getPosition().equals("GK") && goalkeepersCount >= 5;
     }
 
     private void waitUntil30SecondsLeft(SearchResult searchResult) {

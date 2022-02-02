@@ -138,10 +138,10 @@ public class FutBot {
 
     public void scheduleMassBid() {
         log.info("scheduleMassBid");
-        for (int i = 0; i <= 5; i++) {
-            futbotExecutor.schedule(this::massBid, i*100, TimeUnit.MINUTES);
+        for (int i = 0; i <= 6; i++) {
+            futbotExecutor.schedule(this::massBid, i*90, TimeUnit.MINUTES);
         }
-        for (int i = 0; i <= 8; i++) {
+        for (int i = 0; i <= 9; i++) {
             futbotExecutor.schedule(() -> {
                 loginService.login();
                 transferListPage.relistAll();

@@ -7,6 +7,7 @@ import stepanovep.fut22.core.driver.FutWebDriver;
 import stepanovep.fut22.utils.JsExecuteUtilsKt;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class PlayerAuctionDataService {
@@ -25,5 +26,10 @@ public class PlayerAuctionDataService {
         } catch (IOException exc) {
             throw new RuntimeException(exc);
         }
+    }
+
+    // TODO get list of players
+    public List<FutPlayerAuctionData> getPlayers() {
+        return List.of();
     }
 }

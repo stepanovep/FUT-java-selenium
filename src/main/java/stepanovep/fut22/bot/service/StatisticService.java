@@ -78,7 +78,7 @@ public class StatisticService {
                     profitSum.addAndGet(auction.getPotentialProfit());
                 });
 
-        telegramNotifier.sendMessage(String.format("Today so far bought players: count=%d, potential profit=%d",
+        telegramNotifier.sendMessage(String.format("Daily massbidding stats: count=%d, potential profit=%d",
                 count.get(), profitSum.get()));
     }
 
