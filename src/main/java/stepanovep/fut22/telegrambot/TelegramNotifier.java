@@ -1,7 +1,6 @@
 package stepanovep.fut22.telegrambot;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,9 +12,8 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 
 @Component
+@Slf4j
 public class TelegramNotifier {
-
-    private final static Logger log = LoggerFactory.getLogger(TelegramNotifier.class);
 
     @Autowired
     private TelegramBot telegramBot;

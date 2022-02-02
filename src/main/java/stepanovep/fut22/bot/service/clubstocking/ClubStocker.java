@@ -1,7 +1,6 @@
 package stepanovep.fut22.bot.service.clubstocking;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut22.bot.service.LoginService;
@@ -23,9 +22,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ClubStocker {
-
-    private static final Logger log = LoggerFactory.getLogger(ClubStocker.class);
 
     @Autowired
     private TransferMarketPage transferMarketPage;

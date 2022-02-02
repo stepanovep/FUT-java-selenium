@@ -1,8 +1,7 @@
 package stepanovep.fut22.bot.service.clubstocking;
 
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -14,9 +13,8 @@ import java.time.Duration;
  *
  * Only for PC
  */
+@Slf4j
 public class GameApplicationService {
-
-    private static final Logger log = LoggerFactory.getLogger(GameApplicationService.class);
 
     /**
      * FIFA.exe launcher icon in desktop

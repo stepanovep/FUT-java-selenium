@@ -1,7 +1,6 @@
 package stepanovep.fut22.core.page.transfers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import stepanovep.fut22.core.driver.FutWebDriver;
@@ -13,9 +12,8 @@ import stepanovep.fut22.core.page.FutActiveMenu;
  * Page Object для страницы управления текущим трансферным списком
  */
 @Component
+@Slf4j
 public class TransferListPage {
-
-    private static final Logger log = LoggerFactory.getLogger(TransferListPage.class);
 
     @Autowired
     private FutWebDriver driver;

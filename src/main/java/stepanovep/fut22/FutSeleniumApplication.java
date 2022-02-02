@@ -1,7 +1,6 @@
 package stepanovep.fut22;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,6 +19,7 @@ import stepanovep.fut22.futbin.FutbinService;
 @SpringBootApplication
 @Import(AppConfiguration.class)
 @EnableRetry
+@Slf4j
 public class FutSeleniumApplication implements CommandLineRunner {
 
     @Autowired
@@ -36,8 +36,6 @@ public class FutSeleniumApplication implements CommandLineRunner {
     private FutbinService futbinService;
     @Autowired
     private GemsSeller gemsSeller;
-
-    private static final Logger log = LoggerFactory.getLogger(FutSeleniumApplication.class);
 
     public static void main(String[] args) {
         log.info("STARTING THE APPLICATION");
