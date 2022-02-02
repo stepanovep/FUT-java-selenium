@@ -54,7 +54,6 @@ public class BidChecker {
     private TelegramNotifier telegramNotifier;
 
     public void checkBids(int repeat) {
-        driver.wakeup();
         for (int i = 0; i < repeat; i++) {
             try {
                 checkBids();

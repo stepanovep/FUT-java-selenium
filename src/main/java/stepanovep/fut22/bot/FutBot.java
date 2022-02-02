@@ -1,14 +1,13 @@
 package stepanovep.fut22.bot;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut22.bot.service.GemsSeller;
-import stepanovep.fut22.bot.service.bidding.BidChecker;
-import stepanovep.fut22.bot.service.bidding.MassBidder;
 import stepanovep.fut22.bot.service.LoginService;
 import stepanovep.fut22.bot.service.StatisticService;
+import stepanovep.fut22.bot.service.bidding.BidChecker;
+import stepanovep.fut22.bot.service.bidding.MassBidder;
 import stepanovep.fut22.bot.service.clubstocking.ClubStocker;
 import stepanovep.fut22.core.driver.FutWebDriver;
 import stepanovep.fut22.core.page.FutActiveMenu;
@@ -17,7 +16,6 @@ import stepanovep.fut22.futbin.FutbinService;
 import stepanovep.fut22.telegrambot.TelegramNotifier;
 
 import java.io.File;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -25,9 +23,8 @@ import java.util.concurrent.TimeUnit;
  * High level FutBot methods
  */
 @Service
+@Slf4j
 public class FutBot {
-
-    private static final Logger log = LoggerFactory.getLogger(FutBot.class);
 
     @Autowired
     private FutWebDriver driver;
@@ -62,23 +59,19 @@ public class FutBot {
     @Autowired
     private TelegramNotifier telegramNotifier;
 
-    private Future<?> currentTask;
-
     /**
      * Login to Web-app
      */
     public void login() {
         futbinService.updatePrices();
-        currentTask = futbotExecutor.submit(() -> loginService.login());
+        futbotExecutor.submit(() -> loginService.login());
     }
 
     /**
      * Stop current task
-     * todo: sometimes task won't stop
      */
     public void stop() {
-        driver.interrupt();
-        currentTask.cancel(true);
+        // TODO Not Implemented
     }
 
     /**
@@ -88,13 +81,12 @@ public class FutBot {
         driver.activeMenu = FutActiveMenu.HOME;
         futbinService.updatePrices();
 
-        currentTask = futbotExecutor.submit(() ->  {
+        futbotExecutor.submit(() ->  {
             loginService.login();
-            // TODO fix relistAll() thread stuck if nothing to relist
             transferListPage.relistAll();
         });
 
-        currentTask = futbotExecutor.submit(() ->  {
+        futbotExecutor.submit(() ->  {
             massBidder.massBid();
             bidChecker.checkBids(10);
             massBidder.massBid();
@@ -109,7 +101,7 @@ public class FutBot {
      */
     public void checkBids() {
         driver.activeMenu = FutActiveMenu.HOME;
-        currentTask = futbotExecutor.submit(() ->  {
+        futbotExecutor.submit(() ->  {
             bidChecker.checkBids(15);
             telegramNotifier.sendMessage("Bid checker successfully finished");
         });
@@ -129,7 +121,7 @@ public class FutBot {
     public void scheduleRelistAll() {
         log.info("scheduleRelistAll");
         for (int i = 0; i <= 6; i++) {
-            currentTask = futbotExecutor.schedule(() -> {
+            futbotExecutor.schedule(() -> {
                 loginService.login();
                 transferListPage.relistAll();
             }, i*60 + i*2, TimeUnit.MINUTES);

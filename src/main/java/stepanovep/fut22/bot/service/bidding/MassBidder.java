@@ -49,15 +49,10 @@ public class MassBidder {
     private static final int MAX_BID_EXPIRATION_TIME_LEFT_IN_SECONDS = 20 * 60;
 
     public void massBid() {
-        driver.wakeup();
         try {
             log.info("Mass bidding");
             List<Player> players = playerService.getPlayersForMassBid(25, 1500, 16000, driver.getPlatform());
             for (Player player: players) {
-                if (driver.isInterrupted()) {
-                    System.out.println("Thread interrupted - aborting mass bidding");
-                    return;
-                }
                 bidChecker.checkBids();
                 massBidPlayer(player);
                 driver.sleep(2000);

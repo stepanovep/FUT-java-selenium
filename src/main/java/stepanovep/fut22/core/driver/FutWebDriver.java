@@ -31,12 +31,12 @@ public class FutWebDriver extends ChromeDriver {
 
     public FutActiveMenu activeMenu = FutActiveMenu.HOME;
 
-    private volatile boolean interrupted = false;
-    private final Random rnd = new Random();
+    private final Random rnd;
     private final Platform platform;
 
     public FutWebDriver(ChromeOptions chromeOptions, Platform platform) {
         super(chromeOptions);
+        this.rnd = new Random();
         this.platform = platform;
     }
 
@@ -170,24 +170,11 @@ public class FutWebDriver extends ChromeDriver {
         sleep(400);
     }
 
-    public boolean isInterrupted() {
-        return interrupted;
-    }
-
-    public void wakeup() {
-        this.interrupted = false;
-    }
-
-    public void interrupt() {
-        this.interrupted = true;
-    }
-
     public void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException exc) {
             System.out.println("Interrupted");
-            interrupted = true;
         }
     }
 
