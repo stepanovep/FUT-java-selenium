@@ -42,8 +42,6 @@ public class ClubStocker {
 
     private int failureCount = 0;
 
-    private int goalkeepersCount = 0;
-
     public void clubStock() {
         TransferMarketSearchOptions.TransferMarketSearchOptionsBuilder searchOptions = TransferMarketSearchOptions.builder()
                 .withBidMax(750)
@@ -67,7 +65,6 @@ public class ClubStocker {
                     telegramNotifier.sendMessage("Club stocking iteration complete");
                     GameApplicationService gameApplicationService = new GameApplicationService();
                     gameApplicationService.moveTransferTargetsToUnassignedPile();
-                    goalkeepersCount = 0;
                     driver.screenshot();
                     return;
 
@@ -119,9 +116,6 @@ public class ClubStocker {
                 BidResult bidResult = playerElement.makeBid();
                 if (bidResult == BidResult.SUCCESS | bidResult == BidResult.OUTBID) {
                     bidCount++;
-                    if (playerElement.getPosition().equals("GK")) {
-                        goalkeepersCount++;
-                    }
 
                 } else if (bidResult == BidResult.BID_CHANGED_ERROR) {
                     return MassBidResult.BID_CHANGED_ERROR;
@@ -151,8 +145,7 @@ public class ClubStocker {
             return true;
         }
         int maxPrice = searchOptions.getBidMax().orElseThrow() + 50;
-        return playerElement.getNextBid().get() > maxPrice ||
-                playerElement.getPosition().equals("GK") && goalkeepersCount >= 5;
+        return playerElement.getNextBid().get() > maxPrice;
     }
 
     private void waitUntil30SecondsLeft(SearchResult searchResult) {
