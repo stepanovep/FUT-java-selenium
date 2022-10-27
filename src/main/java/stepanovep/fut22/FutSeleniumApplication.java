@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 import stepanovep.fut22.bot.service.StatisticService;
 import stepanovep.fut22.config.AppConfiguration;
+import stepanovep.fut22.futbin.FutbinService;
 
 @SpringBootApplication
 @Import(AppConfiguration.class)
@@ -18,6 +19,8 @@ public class FutSeleniumApplication implements CommandLineRunner {
 
     @Autowired
     private StatisticService statisticService;
+    @Autowired
+    private FutbinService futbinService;
 
     public static void main(String[] args) {
         log.info("STARTING THE APPLICATION");

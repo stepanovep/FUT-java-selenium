@@ -198,11 +198,12 @@ public class BidChecker {
         }
 
         if (marketPrice != null) {
-            int listBinPrice = Math.max(marketPrice + 200, (int) (boughtPrice * 1.1));
+            int extraMargin = 0; // 200
+            int listBinPrice = Math.max(marketPrice + extraMargin, (int) (boughtPrice * 1.1));
             String message = String.format("Bid won! %s: bidPrice=%d, marketPrice=%d", extendedData.getName(), boughtPrice, marketPrice);
             log.info(message);
             telegramNotifier.notifyAboutBoughtPlayer(driver.screenshot(), message);
-            playerElement.listToTransferMarket(listBinPrice - 300, listBinPrice);
+            playerElement.listToTransferMarket(listBinPrice - 200, listBinPrice);
             auctionService.insertWonAuction(WonAuction.builder()
                     .withTradeId(tradeId)
                     .withPlayerName(extendedData.getName())

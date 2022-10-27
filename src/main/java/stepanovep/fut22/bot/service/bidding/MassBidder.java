@@ -115,7 +115,7 @@ public class MassBidder {
 
     private int calculateTargetPrice(int price) {
         int tax = (int) (price * 0.05);
-        int targetProfit = Math.max(tax, 500);
+        int targetProfit = Math.max(tax, 300);
         return FutPriceUtils.roundToValidFutPrice(price - tax - targetProfit);
     }
 

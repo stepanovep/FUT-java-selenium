@@ -18,9 +18,6 @@ import static stepanovep.fut22.core.locators.LoginLocators.LOGIN_BUTTON_LOCATOR;
 import static stepanovep.fut22.core.locators.MainPageLocators.COINS_ELEM_LOCATOR;
 
 
-/**
- * Сервис для входа в FUT web-app
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
