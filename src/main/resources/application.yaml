@@ -1,6 +1,6 @@
 spring.main.web-application-type: none
 
-chrome-driver-executable-path: 'C:\Selenium\chromedriver.exe'
+chrome-driver-executable-path: '/usr/local/bin/chromedriver'
 headless: false
 
 telegram-bot:

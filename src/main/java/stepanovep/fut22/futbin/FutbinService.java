@@ -29,12 +29,10 @@ public class FutbinService {
 
     private static final Duration MIN_TIME_BETWEEN_REQUESTS = Duration.ofMinutes(20);
 
-    private static final List<String> FUTBIN_TRADE_SQUADS_URLS = List.of(
-            "https://www.futbin.com/22/squad/4519955",
-            "https://www.futbin.com/22/squad/4519882",
-            "https://www.futbin.com/22/squad/4519764",
-            "https://www.futbin.com/22/squad/4519654",
-            "https://www.futbin.com/22/squad/4519450"
+    private static final List<String> FUTBIN_SQUADS_FOR_BIDDING_URLS = List.of(
+            "https://www.futbin.com/23/squad/1500254",
+            "https://www.futbin.com/23/squad/1500136",
+            "https://www.futbin.com/23/squad/1499982"
     );
 
     public void updatePrices() {
@@ -44,7 +42,7 @@ public class FutbinService {
                 return;
             }
 
-            for (String futbinSquadUrl : FUTBIN_TRADE_SQUADS_URLS) {
+            for (String futbinSquadUrl : FUTBIN_SQUADS_FOR_BIDDING_URLS) {
                 log.info("Updating players prices from futbin squad: url={}", futbinSquadUrl);
 
                 Elements playersDivs = getPlayersDivs(futbinSquadUrl);
@@ -91,11 +89,9 @@ public class FutbinService {
     private void updatePlayerPrice(Element playerDiv, String futbinId) {
         Element pricesBlock = playerDiv.selectFirst(".prices");
         int pcPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
-        int psPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-ps-price").text().replace(",", ""));
-        int xboxPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-xbox-price").text().replace(",", ""));
+        int consolePrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-ps-price").text().replace(",", ""));
         playerService.updatePriceByFutbinId(futbinId, pcPrice, Platform.PC);
-        playerService.updatePriceByFutbinId(futbinId, psPrice, Platform.PS);
-        playerService.updatePriceByFutbinId(futbinId, xboxPrice, Platform.XBOX);
+        playerService.updatePriceByFutbinId(futbinId, consolePrice, Platform.CONSOLE);
     }
 
     private void insertNewPlayer(Element playerDiv, String futbinId) {
@@ -104,18 +100,14 @@ public class FutbinService {
         String name = Junidecode.unidecode(playerDiv.attr("data-player-commom"));
         Element pricesBlock = playerDiv.selectFirst(".prices");
         int pcPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
-        int psPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-ps-price").text().replace(",", ""));
-        int xboxPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-xbox-price").text().replace(",", ""));
+        int consolePrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-ps-price").text().replace(",", ""));
         int rating = Integer.parseInt(playerDiv.attr("data-rating"));
-        int nationId = Integer.parseInt(playerDiv.attr("data-player-nation"));
-        int leagueId = Integer.parseInt(playerDiv.attr("data-player-league"));
 
         player.setFutbinId(futbinId);
         player.setResourceId(resourceId);
         player.setName(name);
         player.setPcPrice(pcPrice == 0 ? null : pcPrice);
-        player.setPsPrice(psPrice == 0 ? null: psPrice);
-        player.setXboxPrice(xboxPrice == 0 ? null : xboxPrice);
+        player.setConsolePrice(consolePrice == 0 ? null: consolePrice);
         player.setRating(rating);
         playerService.insert(player);
     }

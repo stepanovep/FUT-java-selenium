@@ -72,10 +72,8 @@ public class PlayerService {
         switch (platform) {
             case PC:
                 return "pcPrice";
-            case PS:
-                return "psPrice";
-            case XBOX:
-                return "xboxPrice";
+            case CONSOLE:
+                return "consolePrice";
             default:
                 throw new IllegalArgumentException("Unknown platform: " + platform);
         }

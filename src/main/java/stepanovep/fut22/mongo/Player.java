@@ -21,8 +21,7 @@ public class Player {
     private String league;
     private String nation;
     private Integer pcPrice;
-    private Integer xboxPrice;
-    private Integer psPrice;
+    private Integer consolePrice;
     private LocalDateTime priceUpdatedDt;
     private LocalDateTime bidDt;
 
@@ -30,10 +29,8 @@ public class Player {
         switch (platform) {
             case PC:
                 return pcPrice;
-            case PS:
-                return psPrice;
-            case XBOX:
-                return xboxPrice;
+            case CONSOLE:
+                return consolePrice;
             default:
                 throw new IllegalArgumentException("Unknown platform: " + platform);
         }
