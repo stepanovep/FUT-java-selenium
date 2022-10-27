@@ -78,6 +78,7 @@ public class FutbinService {
                     .referrer("http://www.google.com")
                     .timeout(10000)
                     .get();
+            sleep();
             return document.getElementsByClass("card-med");
 
         } catch (IOException exc) {
@@ -87,29 +88,36 @@ public class FutbinService {
     }
 
     private void updatePlayerPrice(Element playerDiv, String futbinId) {
-        Element pricesBlock = playerDiv.selectFirst(".prices");
-        int pcPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
-        int consolePrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-ps-price").text().replace(",", ""));
-        playerService.updatePriceByFutbinId(futbinId, pcPrice, Platform.PC);
-        playerService.updatePriceByFutbinId(futbinId, consolePrice, Platform.CONSOLE);
+        try {
+            int pcPrice = Integer.parseInt(playerDiv.attr("data-price-pc").replace(",", ""));
+            int consolePrice = Integer.parseInt(playerDiv.attr("data-price-ps3").replace(",", ""));
+            playerService.updatePriceByFutbinId(futbinId, pcPrice, Platform.PC);
+            playerService.updatePriceByFutbinId(futbinId, consolePrice, Platform.CONSOLE);
+        } catch (Exception e) {
+            log.error("Error during player price: {}", playerDiv, e);
+        }
     }
 
     private void insertNewPlayer(Element playerDiv, String futbinId) {
-        Player player = new Player();
-        String resourceId = playerDiv.attr("data-base-id");
-        String name = Junidecode.unidecode(playerDiv.attr("data-player-commom"));
-        Element pricesBlock = playerDiv.selectFirst(".prices");
-        int pcPrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-pc-price").text().replace(",", ""));
-        int consolePrice = Integer.parseInt(pricesBlock.selectFirst(".pcdisplay-ps-price").text().replace(",", ""));
-        int rating = Integer.parseInt(playerDiv.attr("data-rating"));
+        try {
+            Player player = new Player();
+            String resourceId = playerDiv.attr("data-base-id");
+            String name = Junidecode.unidecode(playerDiv.attr("data-player-commom"));
+            int pcPrice = Integer.parseInt(playerDiv.attr("data-price-pc").replace(",", ""));
+            int consolePrice = Integer.parseInt(playerDiv.attr("data-price-ps3").replace(",", ""));
+            int rating = Integer.parseInt(playerDiv.attr("data-rating"));
 
-        player.setFutbinId(futbinId);
-        player.setResourceId(resourceId);
-        player.setName(name);
-        player.setPcPrice(pcPrice == 0 ? null : pcPrice);
-        player.setConsolePrice(consolePrice == 0 ? null: consolePrice);
-        player.setRating(rating);
-        playerService.insert(player);
+            player.setFutbinId(futbinId);
+            player.setResourceId(resourceId);
+            player.setName(name);
+            player.setPcPrice(pcPrice == 0 ? null : pcPrice);
+            player.setConsolePrice(consolePrice == 0 ? null : consolePrice);
+            player.setRating(rating);
+            playerService.insert(player);
+
+        } catch (Exception e) {
+            log.error("Error during inserting new player: {}", playerDiv, e);
+        }
     }
 
     @SneakyThrows
