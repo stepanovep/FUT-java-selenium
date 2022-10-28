@@ -7,7 +7,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.FluentWait;
 import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.core.locators.FutElementLocators;
@@ -44,8 +43,8 @@ public class FutPlayerElement {
     public FutPlayerElement(FutWebDriver driver, WebElement webElement) {
         this.driver = driver;
         this.webElement = webElement;
-        this.entityContainer = ((RemoteWebElement) webElement).findElementByCssSelector(".entityContainer");
-        this.auctionContainer = ((RemoteWebElement) webElement).findElementByCssSelector(".auction");
+        this.entityContainer = webElement.findElement(By.cssSelector(".entityContainer"));
+        this.auctionContainer = webElement.findElement(By.cssSelector(".auction"));
     }
 
     public File screenshot() {
