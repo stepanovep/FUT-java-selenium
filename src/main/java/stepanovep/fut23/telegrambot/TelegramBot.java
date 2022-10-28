@@ -2,6 +2,7 @@ package stepanovep.fut23.telegrambot;
 
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @RequiredArgsConstructor
@@ -22,10 +23,11 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.getMessage() != null && update.getMessage().hasText()) {
-            String message = update.getMessage().getText();
-            if (message.startsWith("/")) {
-                commandHandler.handleCommand(message);
+        Message message = update.getMessage();
+        if (message != null && message.hasText() && message.getChatId().equals(properties.getChatId())) {
+            String command = message.getText();
+            if (command.startsWith("/")) {
+                commandHandler.handleCommand(command);
             }
         }
     }
