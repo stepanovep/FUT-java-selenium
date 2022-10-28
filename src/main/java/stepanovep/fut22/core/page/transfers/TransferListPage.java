@@ -1,12 +1,15 @@
 package stepanovep.fut22.core.page.transfers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import stepanovep.fut22.core.driver.FutWebDriver;
 import stepanovep.fut22.core.locators.MainPageLocators;
 import stepanovep.fut22.core.locators.TransferListLocators;
 import stepanovep.fut22.core.page.FutActiveMenu;
+
+import java.util.List;
 
 /**
  * Page Object для страницы управления текущим трансферным списком
@@ -19,14 +22,15 @@ public class TransferListPage {
     private FutWebDriver driver;
 
     public void relistAll() {
-        log.info("Relisting items...");
         navigateToPage();
-        if (driver.isElementPresent(TransferListLocators.RELIST_ALL_BUTTON)) {
+
+        List<WebElement> unsoldItems = getUnsoldItems();
+        if (unsoldItems.size() > 0) {
             driver.clickElement(TransferListLocators.RELIST_ALL_BUTTON);
             driver.acceptDialogMessage();
-            log.info("Items relisted");
         }
 
+        log.info("Unsold items relisted: count={}", unsoldItems.size());
         driver.sleep(2000);
     }
 
@@ -36,6 +40,11 @@ public class TransferListPage {
             driver.clickElement(MainPageLocators.GO_TO_TRANSFER_LIST);
         }
         driver.activeMenu = FutActiveMenu.TRANSFER_LIST;
-        driver.sleep(300);
+        driver.sleep(1000);
+    }
+
+    public List<WebElement> getUnsoldItems() {
+        WebElement unsoldItemsSection = driver.findElementWithWait(TransferListLocators.UNSOLD_ITEMS_SECTION);
+        return unsoldItemsSection.findElements(TransferListLocators.SECTION_ELEMENTS);
     }
 }

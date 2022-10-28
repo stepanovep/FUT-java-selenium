@@ -24,10 +24,8 @@ public class TransferTargetsPage {
     private FutWebDriver driver;
 
     public void navigateToPage() {
-//        if (driver.activeMenu != FutActiveMenu.TRANSFER_TARGETS) {
-            driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
-            driver.clickElement(MainPageLocators.GO_TO_TRANSFER_TARGETS);
-//        }
+        driver.clickElement(MainPageLocators.GO_TO_TRANSFERS);
+        driver.clickElement(MainPageLocators.GO_TO_TRANSFER_TARGETS);
         driver.activeMenu = FutActiveMenu.TRANSFER_TARGETS;
         driver.sleep(500);
     }

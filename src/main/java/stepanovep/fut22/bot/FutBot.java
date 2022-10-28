@@ -59,11 +59,7 @@ public class FutBot {
     @Autowired
     private TelegramNotifier telegramNotifier;
 
-    /**
-     * Login to Web-app
-     */
     public void login() {
-        futbinService.updatePrices();
         futbotExecutor.submit(() -> loginService.login());
     }
 
@@ -74,19 +70,12 @@ public class FutBot {
         // TODO Not Implemented
     }
 
-    /**
-     * Run mass bidding
-     */
     public void massBid() {
-        driver.activeMenu = FutActiveMenu.HOME;
         futbinService.updatePrices();
 
         futbotExecutor.submit(() ->  {
             loginService.login();
             transferListPage.relistAll();
-        });
-
-        futbotExecutor.submit(() ->  {
             massBidder.massBid();
             bidChecker.checkBids(10);
             massBidder.massBid();
@@ -96,9 +85,6 @@ public class FutBot {
         });
     }
 
-    /**
-     * Run bid checker
-     */
     public void checkBids() {
         driver.activeMenu = FutActiveMenu.HOME;
         futbotExecutor.submit(() ->  {
@@ -107,9 +93,6 @@ public class FutBot {
         });
     }
 
-    /**
-     * Relist all players
-     */
     public void relistAll() {
         driver.activeMenu = FutActiveMenu.HOME;
         futbotExecutor.submit(() -> transferListPage.relistAll());
