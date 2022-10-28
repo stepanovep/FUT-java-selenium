@@ -1,6 +1,7 @@
-spring.main.web-application-type: none
+spring.main:
+  web-application-type: none
+  allow-circular-references: true
 
-chrome-driver-executable-path: '/usr/local/bin/chromedriver'
 headless: false
 
 telegram-bot:

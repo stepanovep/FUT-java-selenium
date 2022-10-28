@@ -1,2 +1,3 @@
 platform: PC
+chrome-driver-executable-path: '/usr/local/bin/chromedriver'
 chrome-user-data-dir: 'C:\\Selenium\\UserData'
