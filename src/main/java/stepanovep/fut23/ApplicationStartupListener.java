@@ -1,16 +1,16 @@
 package stepanovep.fut23;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import stepanovep.fut23.mongo.AuctionService;
 
 @Component
+@RequiredArgsConstructor
 public class ApplicationStartupListener implements ApplicationListener<ApplicationReadyEvent> {
 
-    @Autowired
-    private AuctionService auctionService;
+    private final AuctionService auctionService;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {

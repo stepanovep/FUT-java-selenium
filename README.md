@@ -8,4 +8,5 @@ Installation guide. For myself :)
 <br/>
 Telegram bot screenshot examples
 <br/>
+<br/>
 <img alt="Alt text" src="src/main/resources/screenshots/telegram-bot-demo.jpg?raw=true" title="Demo" width="300"/>
