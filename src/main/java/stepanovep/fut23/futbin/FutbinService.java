@@ -32,7 +32,8 @@ public class FutbinService {
     private static final List<String> FUTBIN_SQUADS_FOR_BIDDING_URLS = List.of(
             "https://www.futbin.com/23/squad/1500254",
             "https://www.futbin.com/23/squad/1500136",
-            "https://www.futbin.com/23/squad/1499982"
+            "https://www.futbin.com/23/squad/1499982",
+            "https://www.futbin.com/23/squad/1624596"
     );
 
     public void updatePrices() {
@@ -94,7 +95,7 @@ public class FutbinService {
             playerService.updatePriceByFutbinId(futbinId, pcPrice, Platform.PC);
             playerService.updatePriceByFutbinId(futbinId, consolePrice, Platform.CONSOLE);
         } catch (Exception e) {
-            log.error("Error during player price: {}", playerDiv, e);
+            log.error("Error during updating player price: {}", playerDiv, e);
         }
     }
 
