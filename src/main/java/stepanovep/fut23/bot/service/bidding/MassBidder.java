@@ -1,7 +1,7 @@
 package stepanovep.fut23.bot.service.bidding;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import stepanovep.fut23.core.Platform;
 import stepanovep.fut23.core.driver.FutWebDriver;
@@ -11,8 +11,8 @@ import stepanovep.fut23.core.entity.BidState;
 import stepanovep.fut23.core.entity.FutPlayerAuctionData;
 import stepanovep.fut23.core.entity.FutPlayerElement;
 import stepanovep.fut23.core.entity.PlayerAuctionDataService;
-import stepanovep.fut23.core.page.transfers.TransferMarketPage;
 import stepanovep.fut23.core.page.transfers.SearchResult;
+import stepanovep.fut23.core.page.transfers.TransferMarketPage;
 import stepanovep.fut23.core.page.transfers.search.TransferMarketSearchOptions;
 import stepanovep.fut23.mongo.ActiveAuction;
 import stepanovep.fut23.mongo.AuctionService;
@@ -23,35 +23,27 @@ import stepanovep.fut23.utils.FutPriceUtils;
 
 import java.util.List;
 
-/**
- * Биддер
- */
+
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class MassBidder {
 
-    @Autowired
-    private FutWebDriver driver;
-    @Autowired
-    private TransferMarketPage transferMarket;
-    @Autowired
-    private BidChecker bidChecker;
-    @Autowired
-    private PlayerAuctionDataService playerAuctionDataService;
-    @Autowired
-    private AuctionService auctionService;
-    @Autowired
-    private PlayerService playerService;
-    @Autowired
-    private TelegramNotifier telegramNotifier;
+    private final FutWebDriver driver;
+    private final TransferMarketPage transferMarket;
+    private final BidChecker bidChecker;
+    private final PlayerAuctionDataService playerAuctionDataService;
+    private final AuctionService auctionService;
+    private final PlayerService playerService;
+    private final TelegramNotifier telegramNotifier;
 
-    private static final int MAX_COUNT_BIDS = 5;
+    private static final int MAX_COUNT_BIDS_PER_PLAYER = 5;
     private static final int MAX_BID_EXPIRATION_TIME_LEFT_IN_SECONDS = 20 * 60;
 
     public void massBid() {
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(20, 1100, 4000, driver.getPlatform());
+            List<Player> players = playerService.getPlayersForMassBid(25, 1600, 8000, driver.getPlatform());
             for (Player player: players) {
                 bidChecker.checkBids();
                 massBidPlayer(player);
@@ -83,7 +75,7 @@ public class MassBidder {
             driver.sleep(1000, 2000);
             FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
             AuctionData auction = extendedData.getAuction();
-            if (auction.getExpires() > MAX_BID_EXPIRATION_TIME_LEFT_IN_SECONDS || bidsCount >= MAX_COUNT_BIDS) {
+            if (auction.getExpires() > MAX_BID_EXPIRATION_TIME_LEFT_IN_SECONDS || bidsCount >= MAX_COUNT_BIDS_PER_PLAYER) {
                 log.info("Skipping this and next items due to the time left filter");
                 break;
             }

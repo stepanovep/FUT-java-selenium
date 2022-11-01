@@ -1,7 +1,7 @@
 package stepanovep.fut23.core.entity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.utils.JsExecuteUtilsKt;
@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class PlayerAuctionDataService {
 
-    @Autowired
-    private FutWebDriver driver;
+    private final FutWebDriver driver;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
