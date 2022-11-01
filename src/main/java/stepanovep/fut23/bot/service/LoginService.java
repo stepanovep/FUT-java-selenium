@@ -30,7 +30,7 @@ public class LoginService {
     public void login() {
         log.info("Login to FUT");
         driver.get(FUT_WEB_URL);
-
+        driver.sleep(5000);
         try {
             new WebDriverWait(driver, Duration.ofSeconds(15))
                     .until(ExpectedConditions.elementToBeClickable(By.cssSelector(LOGIN_BUTTON_LOCATOR)))
@@ -43,7 +43,7 @@ public class LoginService {
             WebElement coinsElement = new WebDriverWait(driver, Duration.ofSeconds(30))
                     .until(d -> d.findElement(COINS_ELEM_LOCATOR));
             log.info("Logged in successfully: coins={}", coinsElement.getText());
-            driver.sleep(7500);
+            driver.sleep(5000);
 
             closeLiveMessagePopup();
         }
