@@ -6,5 +6,6 @@ Installation guide. For myself :)
 - Set evn var for path to chromedriver executable (for mac it's need to in /usr/bin/local/)
 
 <br/>
-
-<img alt="Alt text" src="screenshots/telegram-bot-demo.jpg?raw=true" title="Demo" width="300"/>
+Telegram bot screenshot examples
+<br/>
+<img alt="Alt text" src="src/main/resources/screenshots/telegram-bot-demo.jpg?raw=true" title="Demo" width="300"/>
