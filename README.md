@@ -2,7 +2,9 @@ Installation guide. For myself :)
 
 - Install and run mongodb local server
 - Set env vars for telegram bot credentials
-- Set path to chromedriver executable in application.yaml (for mac it's need to in /usr/bin/local/)
+- In application.yaml
+  - Set path to chromedriver executable (for mac it's need to in /usr/bin/local/)
+  - Choose platform PC or Console
 
 <br/>
 Telegram bot screenshot examples
