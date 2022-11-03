@@ -1,0 +1,9 @@
+This chromedriver executables are as is official binaries
+but with changed signature (fingerprint). Therefore, they are less detectable
+
+Don't forget to modify signature every time when uploading chromedriver with a newer version.
+Run in vim:
+:%s/cdc_/tch_/g
+
+More info:
+https://www.php8legs.com/en/php-web-scraper/51-how-to-avoid-selenium-webdriver-from-being-detected-as-bot-or-web-spider

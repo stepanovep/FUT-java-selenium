@@ -2,9 +2,11 @@ spring.main:
   web-application-type: none
   allow-circular-references: true
 
-headless: false
+platform: PC
+chrome-driver-executable-path: '/usr/local/bin/chromedriver'
+chrome-user-data-dir: 'selenium'
 
 telegram-bot:
   token: ${TELEGRAM_BOT_TOKEN}
   username: futjitsu_bot
-  chat-it: ${TELEGRAM_BOT_CHAT_ID}
+  chat-id: ${TELEGRAM_BOT_CHAT_ID}
