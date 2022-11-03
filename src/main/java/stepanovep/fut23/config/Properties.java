@@ -17,7 +17,6 @@ public class Properties {
     private String platform;
     private String chromeDriverExecutablePath;
     private String chromeUserDataDir;
-    private boolean headless;
 
     public Platform getPlatform() {
         return Enum.valueOf(Platform.class, platform);

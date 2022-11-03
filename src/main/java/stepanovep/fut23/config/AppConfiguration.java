@@ -48,10 +48,6 @@ public class AppConfiguration {
                 "--no-sandbox",
                 "--start-maximized");
 
-        if (properties.isHeadless()) {
-            chromeOptions.addArguments("--headless");
-        }
-
         return chromeOptions;
     }
 
