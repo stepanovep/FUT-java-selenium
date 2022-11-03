@@ -9,4 +9,3 @@ chrome-user-data-dir: 'selenium'
 telegram-bot:
   token: ${TELEGRAM_BOT_TOKEN}
   username: futjitsu_bot
-  chat-id: ${TELEGRAM_BOT_CHAT_ID}
