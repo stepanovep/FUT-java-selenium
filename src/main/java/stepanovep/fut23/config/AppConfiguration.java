@@ -25,6 +25,7 @@ import stepanovep.fut23.telegrambot.TelegramBot;
 import stepanovep.fut23.telegrambot.TelegramBotCommandHandler;
 import stepanovep.fut23.telegrambot.TelegramBotProperties;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -46,7 +47,9 @@ public class AppConfiguration {
         chromeOptions.addArguments(
                 "user-data-dir=" + properties.getChromeUserDataDir(),
                 "--no-sandbox",
-                "--start-maximized");
+                "--disable-blink-features=AutomationControlled",
+                "--start-fullscreen");
+        chromeOptions.setExperimentalOption("excludeSwitches", List.of("enable-automation]"));
 
         return chromeOptions;
     }
