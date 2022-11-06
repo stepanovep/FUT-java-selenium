@@ -2,12 +2,12 @@ package stepanovep.fut23.bot.service;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut23.mongo.WonAuction;
 import stepanovep.fut23.telegrambot.TelegramNotifier;
 
+import javax.validation.constraints.NotNull;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

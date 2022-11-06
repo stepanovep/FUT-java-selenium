@@ -1,10 +1,11 @@
-package stepanovep.fut23.utils
+package stepanovep.fut23.utils;
 
-fun getFutExtendedDataScript() : String {
-    return """
+public class JsScripts {
+
+    public static String GET_FUT_EXTENDED_DATA_SCRIPT = """
             function getFutEntity() {
                 var listController = getAppMain().getRootViewController().getPresentedViewController().getCurrentViewController().getCurrentController()._listController;
-
+            
                 if (listController) {
                     current = listController.getIterator().current();
                     return {
@@ -25,10 +26,10 @@ fun getFutExtendedDataScript() : String {
                         }
                     }
                 }
-
+            
                 return -1
             }
-
+            
             return getFutEntity()
-        """.trimIndent()
+            """;
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import stepanovep.fut23.core.driver.FutWebDriver;
-import stepanovep.fut23.utils.JsExecuteUtilsKt;
+import stepanovep.fut23.utils.JsScripts;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +18,7 @@ public class PlayerAuctionDataService {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public FutPlayerAuctionData getFutPlayerAuctionData() {
-        Object executeResult = driver.executeScript(JsExecuteUtilsKt.getFutExtendedDataScript());
+        Object executeResult = driver.executeScript(JsScripts.GET_FUT_EXTENDED_DATA_SCRIPT);
         try {
             String json = objectMapper.writeValueAsString(executeResult);
             return objectMapper.readValue(json, FutPlayerAuctionData.class);
