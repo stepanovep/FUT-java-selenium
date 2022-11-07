@@ -1,10 +1,10 @@
 Installation guide. For myself :)
 
-- Install and run mongodb local server
-- Set env vars for telegram bot credentials
+- Run docker-compose to start mongodb local server
+- Set env vars for telegram bot token
 - In application.yaml
-  - Set path to chromedriver executable (for mac it's need to in /usr/bin/local/)
-  - Choose platform PC or Console
+  - Set path to chromedriver executable
+  - Choose platform: PC or CONSOLE
 
 <br/>
 Telegram bot screenshot examples
