@@ -9,3 +9,13 @@ chrome-user-data-dir: 'selenium'
 telegram-bot:
   token: ${TELEGRAM_BOT_TOKEN}
   username: futjitsu_bot
+
+futbin:
+  deduplication-map: #futbin-id --> extended name
+    26786: 'Gabriel Jesus'
+    26352: 'Luis Diaz'
+    26344: 'Reece James'
+    26777: 'Alejandro Gomez'
+    26422: 'Lucas Hernandez'
+    26339: 'Thiago Silva'
+    26304: 'Edouard Mendy'

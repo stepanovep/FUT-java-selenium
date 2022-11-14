@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import stepanovep.fut23.config.FutbinProperties;
 import stepanovep.fut23.core.Platform;
 import stepanovep.fut23.mongo.Player;
 import stepanovep.fut23.mongo.PlayerService;
@@ -26,6 +27,7 @@ public class FutbinService {
 
     private final PlayerService playerService;
     private final ExecutorService futbinExecutor;
+    private final FutbinProperties futbinProperties;
 
     private static final Duration MIN_TIME_BETWEEN_REQUESTS = Duration.ofMinutes(20);
 
@@ -109,6 +111,9 @@ public class FutbinService {
             int consolePrice = Integer.parseInt(playerDiv.attr("data-price-ps3").replace(",", ""));
             int rating = Integer.parseInt(playerDiv.attr("data-rating"));
 
+            if (futbinProperties.getDeduplicationMap().containsKey(futbinId)) {
+                name = futbinProperties.getDeduplicationMap().get(futbinId);
+            }
             player.setFutbinId(futbinId);
             player.setResourceId(resourceId);
             player.setName(name);

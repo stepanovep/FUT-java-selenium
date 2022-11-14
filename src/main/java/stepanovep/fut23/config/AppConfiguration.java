@@ -12,6 +12,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -35,10 +36,14 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Configuration
 @EnableScheduling
+@EnableConfigurationProperties({
+        WebDriverProperties.class,
+        FutbinProperties.class
+})
 public class AppConfiguration {
 
     @Autowired
-    private Properties properties;
+    private WebDriverProperties properties;
 
     @Bean
     public ChromeOptions chromeOptions() {
