@@ -33,7 +33,8 @@ public class FutbinService {
             "https://www.futbin.com/23/squad/1500254",
             "https://www.futbin.com/23/squad/1500136",
             "https://www.futbin.com/23/squad/1499982",
-            "https://www.futbin.com/23/squad/1624596"
+            "https://www.futbin.com/23/squad/1624596",
+            "https://www.futbin.com/23/squad/1932810"
     );
 
     public void updatePrices() {
