@@ -1,6 +1,5 @@
-spring.main:
-  web-application-type: none
-  allow-circular-references: true
+server:
+  port: 8081
 
 platform: PC
 chrome-driver-executable-path: '/usr/local/bin/chromedriver'
@@ -9,6 +8,25 @@ chrome-user-data-dir: 'selenium'
 telegram-bot:
   token: ${TELEGRAM_BOT_TOKEN}
   username: futjitsu_bot
+
+spring:
+  main:
+    web-application-type: none
+    allow-circular-references: true
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: "fut_selenium"
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#    topic:
+#      telegram-bot-commands:
+#        name: "telegram_bot_commands"
 
 futbin:
   deduplication-map: #futbin-id --> extended name

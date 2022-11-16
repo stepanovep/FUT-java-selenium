@@ -1,9 +1,25 @@
 version: "3"
 services:
-  db:
+  mongodb:
     image: mongo:6.0.2
     ports:
       - "27017:27017"
-    container_name: db
+    container_name: mongodb
     volumes:
       - /data/db
+
+  zookeeper-server:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    container_name: zookeeper
+
+  kafka-server:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPIC: "telegram_bot_commands:1:3"

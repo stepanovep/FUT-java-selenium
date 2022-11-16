@@ -10,6 +10,7 @@ import org.springframework.retry.annotation.EnableRetry;
 import stepanovep.fut23.bot.service.StatisticService;
 import stepanovep.fut23.config.AppConfiguration;
 import stepanovep.fut23.futbin.FutbinService;
+import stepanovep.fut23.kafka.KafkaProducer;
 
 @SpringBootApplication
 @Import(AppConfiguration.class)
@@ -21,6 +22,8 @@ public class FutSeleniumApplication implements CommandLineRunner {
     private StatisticService statisticService;
     @Autowired
     private FutbinService futbinService;
+    @Autowired
+    private KafkaProducer kafkaProducer;
 
     public static void main(String[] args) {
         log.info("STARTING THE APPLICATION");
@@ -33,6 +36,8 @@ public class FutSeleniumApplication implements CommandLineRunner {
         log.info("EXECUTING : command line runner");
         statisticService.displayOverallBuys();
         statisticService.displayWeeklyStatistic();
+
+        kafkaProducer.sendMessage("asdfasdf123");
     }
 
 }
