@@ -1,15 +1,20 @@
 package stepanovep.fut23.telegrambot;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import stepanovep.fut23.kafka.KafkaProducer;
 
 @RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
     private final TelegramBotProperties properties;
-    private final TelegramBotCommandHandler commandHandler;
+    private final KafkaProducer kafkaProducer;
+
+    @Value("${spring.kafka.topic.telegram-bot-commands.name}")
+    private String topic;
 
     @Override
     public String getBotUsername() {
@@ -30,7 +35,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (message != null && message.hasText()) {
             String command = message.getText();
             if (command.startsWith("/")) {
-                commandHandler.handleCommand(command);
+                kafkaProducer.sendMessage(topic, command);
             }
         }
     }

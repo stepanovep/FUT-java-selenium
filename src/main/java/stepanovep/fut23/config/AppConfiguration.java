@@ -19,11 +19,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import stepanovep.fut23.core.driver.FutWebDriver;
+import stepanovep.fut23.kafka.KafkaProducer;
 import stepanovep.fut23.mongo.ActiveAuction;
 import stepanovep.fut23.mongo.Player;
 import stepanovep.fut23.mongo.WonAuction;
 import stepanovep.fut23.telegrambot.TelegramBot;
-import stepanovep.fut23.telegrambot.TelegramBotCommandHandler;
 import stepanovep.fut23.telegrambot.TelegramBotProperties;
 
 import java.util.List;
@@ -104,9 +104,9 @@ public class AppConfiguration {
     @SneakyThrows
     @Bean
     public TelegramBot telegramBot(TelegramBotProperties properties,
-                                   TelegramBotCommandHandler commandHandler) {
+                                   KafkaProducer kafkaProducer) {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-        TelegramBot telegramBot = new TelegramBot(properties, commandHandler);
+        TelegramBot telegramBot = new TelegramBot(properties, kafkaProducer);
         telegramBotsApi.registerBot(telegramBot);
 
         return telegramBot;

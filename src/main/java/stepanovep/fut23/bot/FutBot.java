@@ -3,7 +3,6 @@ package stepanovep.fut23.bot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import stepanovep.fut23.bot.service.GemsSeller;
 import stepanovep.fut23.bot.service.LoginService;
 import stepanovep.fut23.bot.service.StatisticService;
 import stepanovep.fut23.bot.service.bidding.BidChecker;
@@ -15,7 +14,6 @@ import stepanovep.fut23.core.page.transfers.TransferListPage;
 import stepanovep.fut23.futbin.FutbinService;
 import stepanovep.fut23.telegrambot.TelegramNotifier;
 
-import java.io.File;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -45,9 +43,6 @@ public class FutBot {
     private ClubStocker clubStocker;
 
     @Autowired
-    private GemsSeller gemsSeller;
-
-    @Autowired
     private TransferListPage transferListPage;
 
     @Autowired
@@ -61,13 +56,6 @@ public class FutBot {
 
     public void login() {
         futbotExecutor.submit(() -> loginService.login());
-    }
-
-    /**
-     * Stop current task
-     */
-    public void stop() {
-        // TODO Not Implemented
     }
 
     public void massBid() {
@@ -138,18 +126,7 @@ public class FutBot {
         futbotExecutor.submit(() -> clubStocker.clubStock());
     }
 
-    /**
-     * Sell gems - low rated players with high current market price
-     */
-    public void sellGems() {
-        futbotExecutor.submit(() -> gemsSeller.sellGems());
-    }
-
-    public void shutdown() {
-        driver.quit();
-    }
-
-    public File screenshot() {
-        return driver.screenshot();
+    public void screenshot() {
+        telegramNotifier.sendScreenshot(driver.screenshot());
     }
 }

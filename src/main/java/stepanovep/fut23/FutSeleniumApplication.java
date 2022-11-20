@@ -36,8 +36,6 @@ public class FutSeleniumApplication implements CommandLineRunner {
         log.info("EXECUTING : command line runner");
         statisticService.displayOverallBuys();
         statisticService.displayWeeklyStatistic();
-
-        kafkaProducer.sendMessage("asdfasdf123");
     }
 
 }

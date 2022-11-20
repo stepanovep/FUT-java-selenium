@@ -24,9 +24,9 @@ spring:
       bootstrap-servers: localhost:9092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#    topic:
-#      telegram-bot-commands:
-#        name: "telegram_bot_commands"
+    topic:
+      telegram-bot-commands:
+        name: "telegram_bot_commands"
 
 futbin:
   deduplication-map: #futbin-id --> extended name
