@@ -38,7 +38,8 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @EnableScheduling
 @EnableConfigurationProperties({
         WebDriverProperties.class,
-        FutbinProperties.class
+        FutbinProperties.class,
+        BidderProperties.class
 })
 public class AppConfiguration {
 

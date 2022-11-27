@@ -10,8 +10,16 @@ telegram-bot:
   token: ${TELEGRAM_BOT_TOKEN}
   username: futjitsu_bot
 
+bidder:
+  min-player-price-for-mass-bidder: 1500
+  max-player-price-for-mass-bidder: 20000
+  max-expiration-time: 20m
+  max-active-bids-per-player: 6
+  min-expected-profit: 300
+  extra-margin-when-listing: 100
+
 futbin:
-  min-time-between-requests: PT20M
+  min-time-between-requests: 20m
   bidding-squad-urls:  https://www.futbin.com/23/squad/1500254,
                        https://www.futbin.com/23/squad/1500136,
                        https://www.futbin.com/23/squad/1499982,

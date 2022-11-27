@@ -3,6 +3,7 @@ package stepanovep.fut23.bot.service.bidding;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import stepanovep.fut23.config.BidderProperties;
 import stepanovep.fut23.core.Platform;
 import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.core.entity.AuctionData;
@@ -36,14 +37,15 @@ public class MassBidder {
     private final AuctionService auctionService;
     private final PlayerService playerService;
     private final TelegramNotifier telegramNotifier;
-
-    private static final int MAX_COUNT_BIDS_PER_PLAYER = 5;
-    private static final int MAX_BID_EXPIRATION_TIME_LEFT_IN_SECONDS = 20 * 60;
+    private final BidderProperties bidderProperties;
 
     public void massBid() {
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(25, 1600, 20000, driver.getPlatform());
+            List<Player> players = playerService.getPlayersForMassBid(25,
+                    bidderProperties.getMinPlayerPriceForMassBidder(),
+                    bidderProperties.getMaxPlayerPriceForMassBidder(),
+                    driver.getPlatform());
             for (Player player: players) {
                 bidChecker.checkBids();
                 massBidPlayer(player);
@@ -75,8 +77,8 @@ public class MassBidder {
             driver.sleep(1000, 2000);
             FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
             AuctionData auction = extendedData.getAuction();
-            if (auction.getExpires() > MAX_BID_EXPIRATION_TIME_LEFT_IN_SECONDS || bidsCount >= MAX_COUNT_BIDS_PER_PLAYER) {
-                log.info("Skipping this and next items due to the time left filter");
+            if (auction.getExpires() > bidderProperties.getMaxExpirationTime().toSeconds()
+                    || bidsCount >= bidderProperties.getMaxActiveBidsPerPlayer()) {
                 break;
             }
             if (needToBid(auction, targetPrice)) {
@@ -107,7 +109,7 @@ public class MassBidder {
 
     private int calculateTargetPrice(int price) {
         int tax = (int) (price * 0.05);
-        int targetProfit = Math.max(tax, 300);
+        int targetProfit = Math.max(tax, bidderProperties.getMinExpectedProfit());
         return FutPriceUtils.roundToValidFutPrice(price - tax - targetProfit);
     }
 

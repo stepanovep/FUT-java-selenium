@@ -8,6 +8,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import stepanovep.fut23.config.BidderProperties;
 import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.core.entity.AuctionData;
 import stepanovep.fut23.core.entity.BidResult;
@@ -30,7 +31,6 @@ import stepanovep.fut23.utils.FutPriceUtils;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -52,6 +52,8 @@ public class BidChecker {
     private AuctionService auctionService;
     @Autowired
     private TelegramNotifier telegramNotifier;
+    @Autowired
+    private BidderProperties bidderProperties;
 
     public void checkBids(int repeat) {
         for (int i = 0; i < repeat; i++) {
@@ -93,16 +95,8 @@ public class BidChecker {
             }
         }
 
-//        if (checkAnyOutbidIsExpiring()) {
-//            checkBids();
-//        }
-
         listWonItemsToTransferMarket();
         keepBalanceOfExpiredItems();
-
-//        if (checkAnyOutbidIsExpiring()) {
-//            checkBids();
-//        }
 
         driver.sleep(2000, 3000);
     }
@@ -150,7 +144,7 @@ public class BidChecker {
                     item.focus();
                     return item.isTradable();
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         while (!wonItems.isEmpty()) {
             FutPlayerElement playerElement = wonItems.get(0);
@@ -163,7 +157,7 @@ public class BidChecker {
                         item.focus();
                         return item.isTradable();
                     })
-                    .collect(Collectors.toList());;
+                    .toList();
         }
     }
 
@@ -198,7 +192,7 @@ public class BidChecker {
         }
 
         if (marketPrice != null) {
-            int extraMargin = 0; // 200
+            int extraMargin = bidderProperties.getExtraMarginWhenListing();
             int listBinPrice = Math.max(marketPrice + extraMargin, (int) (boughtPrice * 1.1));
             String message = String.format("Bid won! %s: bidPrice=%d, marketPrice=%d", extendedData.getName(), boughtPrice, marketPrice);
             log.info(message);
@@ -284,7 +278,7 @@ public class BidChecker {
         List<FutPlayerElement> players = searchResult.getPlayers()
                 .stream()
                 .limit(count)
-                .collect(Collectors.toList());
+                .toList();
 
         players.forEach(player -> {
             player.focus();
