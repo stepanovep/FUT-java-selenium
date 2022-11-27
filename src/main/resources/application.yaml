@@ -11,6 +11,12 @@ telegram-bot:
   username: futjitsu_bot
 
 futbin:
+  min-time-between-requests: PT20M
+  bidding-squad-urls:  https://www.futbin.com/23/squad/1500254,
+                       https://www.futbin.com/23/squad/1500136,
+                       https://www.futbin.com/23/squad/1499982,
+                       https://www.futbin.com/23/squad/1624596,
+                       https://www.futbin.com/23/squad/1932810
   deduplication-map: #futbin-id --> extended name
     26786: 'Gabriel Jesus'
     26352: 'Luis Diaz'

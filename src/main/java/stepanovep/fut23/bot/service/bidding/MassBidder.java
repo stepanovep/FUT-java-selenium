@@ -43,7 +43,7 @@ public class MassBidder {
     public void massBid() {
         try {
             log.info("Mass bidding");
-            List<Player> players = playerService.getPlayersForMassBid(25, 1600, 15000, driver.getPlatform());
+            List<Player> players = playerService.getPlayersForMassBid(25, 1600, 20000, driver.getPlatform());
             for (Player player: players) {
                 bidChecker.checkBids();
                 massBidPlayer(player);

@@ -14,8 +14,6 @@ import stepanovep.fut23.core.Platform;
 import stepanovep.fut23.mongo.Player;
 import stepanovep.fut23.mongo.PlayerService;
 
-import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -29,16 +27,6 @@ public class FutbinService {
     private final ExecutorService futbinExecutor;
     private final FutbinProperties futbinProperties;
 
-    private static final Duration MIN_TIME_BETWEEN_REQUESTS = Duration.ofMinutes(20);
-
-    private static final List<String> FUTBIN_SQUADS_FOR_BIDDING_URLS = List.of(
-            "https://www.futbin.com/23/squad/1500254",
-            "https://www.futbin.com/23/squad/1500136",
-            "https://www.futbin.com/23/squad/1499982",
-            "https://www.futbin.com/23/squad/1624596",
-            "https://www.futbin.com/23/squad/1932810"
-    );
-
     public void updatePrices() {
         futbinExecutor.execute(() -> {
             if (updatedRecently()) {
@@ -46,7 +34,7 @@ public class FutbinService {
                 return;
             }
 
-            for (String futbinSquadUrl : FUTBIN_SQUADS_FOR_BIDDING_URLS) {
+            for (String futbinSquadUrl : futbinProperties.getBiddingSquadUrls()) {
                 log.info("Updating players prices from futbin squad: url={}", futbinSquadUrl);
 
                 Elements playersDivs = getPlayersDivs(futbinSquadUrl);
@@ -72,23 +60,18 @@ public class FutbinService {
             return false;
         }
         Player player = players.get(0);
-        return player.getPriceUpdatedDt().plus(MIN_TIME_BETWEEN_REQUESTS).compareTo(LocalDateTime.now()) > 0;
+        return player.getPriceUpdatedDt().plus(futbinProperties.getMinTimeBetweenRequests()).compareTo(LocalDateTime.now()) > 0;
     }
 
+    @SneakyThrows
     private Elements getPlayersDivs(String futbinSquadUrl) {
-        try {
-            Document document = Jsoup.connect(futbinSquadUrl)
-                    .userAgent("Chrome")
-                    .referrer("http://www.google.com")
-                    .timeout(10000)
-                    .get();
-            sleep();
-            return document.getElementsByClass("card-med");
-
-        } catch (IOException exc) {
-            log.error("Couldn't get futbin content:");
-            throw new RuntimeException(exc);
-        }
+        Document document = Jsoup.connect(futbinSquadUrl)
+                .userAgent("Chrome")
+                .referrer("http://www.google.com")
+                .timeout(10000)
+                .get();
+        sleep();
+        return document.getElementsByClass("card-med");
     }
 
     private void updatePlayerPrice(Element playerDiv, String futbinId) {
