@@ -12,7 +12,7 @@ telegram-bot:
 
 bidder:
   min-player-price-for-mass-bidder: 1500
-  max-player-price-for-mass-bidder: 20000
+  max-player-price-for-mass-bidder: 25000
   max-expiration-time: 20m
   max-active-bids-per-player: 6
   min-expected-profit: 300
@@ -24,7 +24,8 @@ futbin:
                        https://www.futbin.com/23/squad/1500136,
                        https://www.futbin.com/23/squad/1499982,
                        https://www.futbin.com/23/squad/1624596,
-                       https://www.futbin.com/23/squad/1932810
+                       https://www.futbin.com/23/squad/1932810,
+                       https://www.futbin.com/23/squad/2253109
   deduplication-map: #futbin-id --> extended name
     26786: 'Gabriel Jesus'
     26352: 'Luis Diaz'
