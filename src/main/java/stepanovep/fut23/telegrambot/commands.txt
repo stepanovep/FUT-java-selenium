@@ -1,5 +1,4 @@
 login - login to EA web app
-stop - stop current running task
 relistall - relist all items in transfer market
 schedulerelistall - schedule relist all items every hour
 schedulemassbid - schedule massbid every 80 minutes
@@ -8,4 +7,4 @@ checkbids - check bids
 screenshot - send a screenshot of current state
 showdailystatistic - send daily purchase/profit statistic
 clubstock - start club stocking low rated gold rares players by bidding
-sellgems - sell low rated players with high current market price
+bpm - open 10 bronze packs: sell valuable items, the rest send to club

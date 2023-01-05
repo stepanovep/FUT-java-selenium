@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -100,12 +99,26 @@ public class FutWebDriver extends ChromeDriver {
                 });
     }
 
+    public void clickElement(By elementLocator, By buttonLocator) {
+        WebElement element = findElementWithWait(elementLocator);
+        new FluentWait<WebDriver>(this)
+                .withTimeout(Duration.ofSeconds(5))
+                .ignoreAll(List.of(
+                        NoSuchElementException.class,
+                        ElementClickInterceptedException.class))
+                .until(driver ->  {
+                    WebElement button = element.findElement(buttonLocator);
+                    button.click();
+                    return true;
+                });
+    }
+
     public Optional<WebElement> getDialog() {
         List<WebElement> binaryDialogs = this.findElements(By.cssSelector(".view-modal-container > .ea-dialog-view"));
         List<WebElement> unaryDialogs = this.findElements(By.cssSelector(".Dialog.ui-dialog-type-alert"));
 
         return Stream.concat(binaryDialogs.stream(), unaryDialogs.stream())
-                .collect(Collectors.toList())
+                .toList()
                 .stream()
                 .findFirst();
     }

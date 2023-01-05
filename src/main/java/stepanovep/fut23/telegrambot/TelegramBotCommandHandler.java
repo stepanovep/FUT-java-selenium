@@ -11,49 +11,16 @@ public class TelegramBotCommandHandler {
 
     public void handleCommand(String command) {
         switch (command) {
-            case "/stop":
-                telegramFutBotService.stop();
-                break;
-
-            case "/login":
-                telegramFutBotService.login();
-                break;
-
-            case "/relistall":
-                telegramFutBotService.relistAll();
-                break;
-
-            case "/screenshot":
-                telegramFutBotService.screenshot();
-                break;
-
-            case "/massbid":
-                telegramFutBotService.massBid();
-                break;
-
-            case "/checkbids":
-                telegramFutBotService.checkBids();
-                break;
-
-            case "/schedulerelistall":
-                telegramFutBotService.scheduleRelistAll();
-                break;
-
-            case "/schedulemassbid":
-                telegramFutBotService.scheduleMassBid();
-                break;
-
-            case "/sellgems":
-                telegramFutBotService.sellGems();
-                break;
-
-            case "/showdailystatistic":
-                telegramFutBotService.showDailyStatistic();
-                break;
-
-            case "/clubstock":
-                telegramFutBotService.clubStock();
-                break;
+            case "/login" -> telegramFutBotService.login();
+            case "/relistall" -> telegramFutBotService.relistAll();
+            case "/screenshot" -> telegramFutBotService.screenshot();
+            case "/massbid" -> telegramFutBotService.massBid();
+            case "/checkbids" -> telegramFutBotService.checkBids();
+            case "/schedulerelistall" -> telegramFutBotService.scheduleRelistAll();
+            case "/schedulemassbid" -> telegramFutBotService.scheduleMassBid();
+            case "/showdailystatistic" -> telegramFutBotService.showDailyStatistic();
+            case "/clubstock" -> telegramFutBotService.clubStock();
+            case "/bpm" -> telegramFutBotService.bpm();
         }
     }
 }

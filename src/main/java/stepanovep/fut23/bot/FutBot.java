@@ -11,6 +11,7 @@ import stepanovep.fut23.bot.service.bidding.MassBidder;
 import stepanovep.fut23.bot.service.clubstocking.ClubStocker;
 import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.core.page.FutActiveMenu;
+import stepanovep.fut23.core.page.store.StorePage;
 import stepanovep.fut23.core.page.transfers.TransferListPage;
 import stepanovep.fut23.futbin.FutbinService;
 import stepanovep.fut23.telegrambot.TelegramNotifier;
@@ -51,6 +52,9 @@ public class FutBot {
     private TransferListPage transferListPage;
 
     @Autowired
+    private StorePage storePage;
+
+    @Autowired
     private FutbinService futbinService;
 
     @Autowired
@@ -61,13 +65,6 @@ public class FutBot {
 
     public void login() {
         futbotExecutor.submit(() -> loginService.login());
-    }
-
-    /**
-     * Stop current task
-     */
-    public void stop() {
-        // TODO Not Implemented
     }
 
     public void massBid() {
@@ -136,6 +133,16 @@ public class FutBot {
      */
     public void clubStock() {
         futbotExecutor.submit(() -> clubStocker.clubStock());
+    }
+
+    /**
+     * Bronze pack method: one run = 10 packs
+     */
+    public void bpm() {
+        futbotExecutor.submit(() -> {
+            loginService.login();
+            storePage.bpm(10);
+        });
     }
 
     /**
