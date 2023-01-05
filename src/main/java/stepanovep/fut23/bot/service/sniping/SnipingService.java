@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import stepanovep.fut23.core.driver.FutWebDriver;
-import stepanovep.fut23.core.entity.FutPlayerElement;
-import stepanovep.fut23.core.page.transfers.TransferMarketPage;
+import stepanovep.fut23.core.entity.FutPlayer;
 import stepanovep.fut23.core.page.transfers.SearchResult;
+import stepanovep.fut23.core.page.transfers.TransferMarketPage;
 import stepanovep.fut23.core.page.transfers.search.TransferMarketSearchOptions;
 import stepanovep.fut23.telegrambot.TelegramNotifier;
 
@@ -32,8 +32,8 @@ public class SnipingService {
             updateSearchOptions(i);
             SearchResult searchResult = transferMarket.search();
             if (!searchResult.getPlayers().isEmpty()) {
-                List<FutPlayerElement> players = searchResult.getPlayers();
-                for (FutPlayerElement player: players) {
+                List<FutPlayer> players = searchResult.getPlayers();
+                for (FutPlayer player: players) {
                     log.info("Player found - trying to snipe: {}", player);
                     player.buyNow();
                     break;

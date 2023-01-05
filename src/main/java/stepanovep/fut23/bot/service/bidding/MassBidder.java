@@ -9,8 +9,8 @@ import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.core.entity.AuctionData;
 import stepanovep.fut23.core.entity.BidResult;
 import stepanovep.fut23.core.entity.BidState;
+import stepanovep.fut23.core.entity.FutPlayer;
 import stepanovep.fut23.core.entity.FutPlayerAuctionData;
-import stepanovep.fut23.core.entity.FutPlayerElement;
 import stepanovep.fut23.core.entity.PlayerAuctionDataService;
 import stepanovep.fut23.core.page.transfers.SearchResult;
 import stepanovep.fut23.core.page.transfers.TransferMarketPage;
@@ -72,7 +72,7 @@ public class MassBidder {
             log.info("Futbin price is outdated, changing targetPrice based on firstPage minimum bin price: new targetPrice={}", targetPrice);
         }
 
-        for (FutPlayerElement playerElement: searchResult.getPlayers()) {
+        for (FutPlayer playerElement: searchResult.getPlayers()) {
             playerElement.focus();
             driver.sleep(1000, 2000);
             FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
@@ -93,7 +93,7 @@ public class MassBidder {
     private int getAdjustedTargetPrice(SearchResult searchResult) {
         return searchResult.getPlayers()
                 .stream()
-                .map(FutPlayerElement::getBuyNowPrice)
+                .map(FutPlayer::getBuyNowPrice)
                 .min(Integer::compareTo)
                 .map(this::calculateTargetPrice)
                 .orElse(0);
@@ -123,7 +123,7 @@ public class MassBidder {
         return true;
     }
 
-    private BidResult makeBid(FutPlayerElement player, FutPlayerAuctionData extendedData, Integer targetPrice) {
+    private BidResult makeBid(FutPlayer player, FutPlayerAuctionData extendedData, Integer targetPrice) {
         BidResult bidResult = player.makeBid();
         AuctionData auction = extendedData.getAuction();
         Integer nextBid = FutPriceUtils.getNextBid(auction.getStartingBid(), auction.getCurrentBid());

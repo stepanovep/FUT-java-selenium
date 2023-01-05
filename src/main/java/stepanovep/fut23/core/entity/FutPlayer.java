@@ -3,56 +3,30 @@ package stepanovep.fut23.core.entity;
 import lombok.extern.slf4j.Slf4j;
 import net.gcardone.junidecode.Junidecode;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.FluentWait;
 import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.core.locators.FutElementLocators;
 import stepanovep.fut23.utils.FutPriceUtils;
 
-import java.io.File;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static stepanovep.fut23.core.locators.FutElementLocators.COMPARE_PRICE_BACK_TO_LAYOUT_BUTTON;
-import static stepanovep.fut23.core.locators.FutElementLocators.COMPARE_PRICE_BUTTON;
-import static stepanovep.fut23.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENTS;
-import static stepanovep.fut23.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENT_BUY_NOW_VALUE;
-import static stepanovep.fut23.core.locators.FutElementLocators.COMPARE_PRICE_NEXT_BUTTON;
-
 @Slf4j
-public class FutPlayerElement {
+public class FutPlayer extends FutItem {
 
     private static int BIDS_COUNT = 0;
     private static final int BID_TRIES = 4;
 
-    private final FutWebDriver driver;
-    private final WebElement webElement;
-    private final WebElement entityContainer;
     private final WebElement auctionContainer;
 
     private static final Pattern EXPIRATION_TIME_REGEX = Pattern.compile("(<?)(\\d+)(.+)");
 
-    public FutPlayerElement(FutWebDriver driver, WebElement webElement) {
-        this.driver = driver;
-        this.webElement = webElement;
-        this.entityContainer = webElement.findElement(By.cssSelector(".entityContainer"));
+    public FutPlayer(FutWebDriver driver, WebElement webElement) {
+        super(driver, webElement);
         this.auctionContainer = webElement.findElement(By.cssSelector(".auction"));
-    }
-
-    public File screenshot() {
-        return webElement.getScreenshotAs(OutputType.FILE);
-    }
-
-    public void focus() {
-        driver.clickElement(webElement);
     }
 
     public BidResult makeBid() {
@@ -90,118 +64,6 @@ public class FutPlayerElement {
         }
 
         return BidResult.IGNORED;
-    }
-
-    private Optional<BidResult> handleDialogIfPresent() {
-        Optional<WebElement> dialogOpt = driver.getDialog();
-        if (dialogOpt.isPresent()) {
-            WebElement dialog = dialogOpt.get();
-            String dialogTitle = dialog.findElement(By.cssSelector(".ea-dialog-view--title")).getText();
-            switch (dialogTitle.toUpperCase()) {
-                case "LIMIT REACHED":
-                    log.warn("Transfer targets limit reached");
-                    driver.acceptDialogMessage();
-                    return Optional.of(BidResult.LIMIT_REACHED);
-                case "ALREADY HIGHEST BIDDER":
-                    log.warn("Already highest bidder");
-                    driver.declineDialogMessage();
-                    return Optional.of(BidResult.SUCCESS);
-                case "BID TOO LOW":
-                    log.warn("Bid too low");
-                    driver.acceptDialogMessage();
-                    break;
-                case "CANNOT UNWATCH":
-                    log.warn("Cannot unwatch an item bidding on");
-                    driver.acceptDialogMessage();
-                    break;
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    public void buyNow() {
-        driver.clickElement(FutElementLocators.BUY_NOW_BUTTON);
-        driver.sleep(50, 100);
-        driver.acceptDialogMessage();
-    }
-
-    public void sendToClub() {
-
-    }
-
-    public void sendToTransferMarket() {
-        driver.sleep(500);
-        driver.clickElement(FutElementLocators.SEND_TO_TRANSFER_MARKET_BUTTON);
-    }
-
-    public void listToTransferMarket(Integer startPrice, Integer buyNowPrice) {
-        driver.clickElement(FutElementLocators.LIST_TO_TRANSFER_MARKET_OPEN_MENU);
-        new FluentWait<WebDriver>(driver)
-                .withTimeout(Duration.ofSeconds(5))
-                .ignoring(NoSuchElementException.class)
-                .until(webdriver -> {
-                    WebElement startPriceInput = driver.findElement(FutElementLocators.LIST_TO_TRANSFER_MARKET_START_PRICE);
-                    WebElement buyNowPriceInput = driver.findElement(FutElementLocators.LIST_TO_TRANSFER_MARKET_BIN_PRICE);
-
-                    driver.sendKeys(startPriceInput, String.valueOf(startPrice));
-                    driver.sendKeys(buyNowPriceInput, String.valueOf(buyNowPrice));
-
-                    return true;
-                });
-
-        driver.clickElement(FutElementLocators.LIST_TO_TRANSFER_MARKET_SUBMIT_BUTTON);
-        driver.sleep(1000, 2000);
-    }
-
-    public List<Integer> comparePrice() {
-        driver.clickElement(COMPARE_PRICE_BUTTON);
-        int pages = 0;
-        List<Integer> prices = new ArrayList<>();
-        while (pages < 3) {
-            driver.sleep(1250, 2000);
-            List<WebElement> compareElements = driver.findElementsWithWait(COMPARE_PRICE_ELEMENTS);
-            compareElements.forEach(element -> {
-                String buyNowStr = element.findElement(COMPARE_PRICE_ELEMENT_BUY_NOW_VALUE).getText();
-                prices.add(Integer.parseInt(buyNowStr.replace(",", "")));
-            });
-            try {
-                driver.clickElement(COMPARE_PRICE_NEXT_BUTTON);
-            } catch (Exception exc) {
-                break;
-            }
-            pages++;
-        }
-
-        driver.clickElement(COMPARE_PRICE_BACK_TO_LAYOUT_BUTTON);
-        return prices;
-    }
-
-    public Optional<Integer> getBinPrice() {
-        List<Integer> binPrices = comparePrice();
-        if (binPrices.isEmpty()) {
-            return Optional.empty();
-        }
-
-        if (binPrices.size() == 1) {
-            return Optional.of(binPrices.get(0));
-        }
-
-        Collections.sort(binPrices);
-        return Optional.of(binPrices.get(1));
-    }
-
-    public void toggleWatch() {
-        driver.clickElement(By.cssSelector("button.watch"));
-        handleDialogIfPresent();
-    }
-
-    public void discard() {
-
-    }
-
-    public boolean isSelected() {
-        return webElement.getAttribute("class").contains("selected");
     }
 
     public boolean isBid() {
@@ -245,7 +107,7 @@ public class FutPlayerElement {
     public int getBuyNowPrice() {
         WebElement buyNowElement = auctionContainer.findElements(By.cssSelector(".auctionValue")).get(2);
         if (!buyNowElement.findElement(By.cssSelector(".label")).getText().contains("BUY NOW")) {
-            log.error("Buy bow price element is incorrect: auctionContainer={}", auctionContainer.getText());
+            log.error("Buy now price element is incorrect: auctionContainer={}", auctionContainer.getText());
             throw new IllegalStateException("Bid price element is incorrect");
         }
 
@@ -293,19 +155,6 @@ public class FutPlayerElement {
 
         } else {
             return Duration.ofDays(1L);
-        }
-    }
-
-    public boolean isTradable() {
-        return !isUntradable();
-    }
-
-    public boolean isUntradable() {
-        try {
-            driver.findElement(FutElementLocators.UNTRADABLE_FLAG);
-            return true;
-        } catch (NoSuchElementException exc) {
-            return false;
         }
     }
 

@@ -1,11 +1,10 @@
 package stepanovep.fut23.utils;
 
+import lombok.NoArgsConstructor;
 import org.openqa.selenium.By;
 
+@NoArgsConstructor
 public final class LocatorsUtils {
-
-    private LocatorsUtils() {
-    }
 
     /**
      * Construct a locator by text value
