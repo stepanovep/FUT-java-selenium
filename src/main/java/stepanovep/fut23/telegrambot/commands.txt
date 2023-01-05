@@ -7,4 +7,4 @@ checkbids - check bids
 screenshot - send a screenshot of current state
 showdailystatistic - send daily purchase/profit statistic
 clubstock - start club stocking low rated gold rares players by bidding
-bpm - open 10 bronze packs: sell valuable items, the rest send to club
+bpm - open 15 bronze packs: sell valuable items, the rest send to club
