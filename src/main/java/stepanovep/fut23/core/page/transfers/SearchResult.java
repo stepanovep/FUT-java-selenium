@@ -4,7 +4,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import stepanovep.fut23.core.driver.FutWebDriver;
-import stepanovep.fut23.core.entity.FutPlayerElement;
+import stepanovep.fut23.core.entity.FutPlayer;
 import stepanovep.fut23.core.locators.TransferMarketLocators;
 import stepanovep.fut23.core.page.FutActiveMenu;
 
@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 public class SearchResult {
 
-    private final List<FutPlayerElement> players;
+    private final List<FutPlayer> players;
 
-    private SearchResult(List<FutPlayerElement> players) {
+    private SearchResult(List<FutPlayer> players) {
         this.players = players;
     }
 
@@ -37,9 +37,9 @@ public class SearchResult {
                     }
                 });
 
-        List<FutPlayerElement> items = driver.findElements(TransferMarketLocators.SEARCH_RESULT_ITEMS)
+        List<FutPlayer> items = driver.findElements(TransferMarketLocators.SEARCH_RESULT_ITEMS)
                 .stream()
-                .map(webElem -> new FutPlayerElement(driver, webElem))
+                .map(webElem -> new FutPlayer(driver, webElem))
                 .collect(Collectors.toList());
 
         driver.activeMenu = FutActiveMenu.TRANSFER_SEARCH_RESULT;
@@ -47,7 +47,7 @@ public class SearchResult {
     }
 
     @Nonnull
-    public List<FutPlayerElement> getPlayers() {
+    public List<FutPlayer> getPlayers() {
         return players == null ? Collections.emptyList() : players;
     }
 

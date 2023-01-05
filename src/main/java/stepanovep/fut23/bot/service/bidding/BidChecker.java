@@ -12,8 +12,8 @@ import stepanovep.fut23.config.BidderProperties;
 import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.core.entity.AuctionData;
 import stepanovep.fut23.core.entity.BidResult;
+import stepanovep.fut23.core.entity.FutPlayer;
 import stepanovep.fut23.core.entity.FutPlayerAuctionData;
-import stepanovep.fut23.core.entity.FutPlayerElement;
 import stepanovep.fut23.core.entity.PlayerAuctionDataService;
 import stepanovep.fut23.core.page.FutActiveMenu;
 import stepanovep.fut23.core.page.transfers.SearchResult;
@@ -76,13 +76,13 @@ public class BidChecker {
     public void checkBids() {
         transferTargetsPage.navigateToPage();
         driver.sleep(1000);
-        List<FutPlayerElement> activeBids = transferTargetsPage.getActiveBids();
+        List<FutPlayer> activeBids = transferTargetsPage.getActiveBids();
         if (activeBids.isEmpty()) {
             return;
         }
         log.info("Checking bids: activeBids count = {}", activeBids.size());
 
-        for (FutPlayerElement player : activeBids) {
+        for (FutPlayer player : activeBids) {
             if (player.isOutbid()) {
                 driver.sleep(700, 1200);
                 player.focus();
@@ -102,10 +102,10 @@ public class BidChecker {
     }
 
     private boolean checkAnyOutbidIsExpiring() {
-        List<FutPlayerElement> activeBids;
+        List<FutPlayer> activeBids;
         driver.sleep(1000);
         activeBids = transferTargetsPage.getActiveBids();
-        for (FutPlayerElement player: activeBids) {
+        for (FutPlayer player: activeBids) {
             if (player.isOutbid()) {
                 driver.sleep(600, 900);
                 player.focus();
@@ -129,7 +129,7 @@ public class BidChecker {
 
     @Retryable(include = {StaleElementReferenceException.class, TimeoutException.class}, backoff = @Backoff(delay = 3000))
     public void listWonItemsToTransferMarket() {
-        List<FutPlayerElement> activeBids = transferTargetsPage.getActiveBids();
+        List<FutPlayer> activeBids = transferTargetsPage.getActiveBids();
         Duration earliestExpirationTime = Duration.ofHours(1L);
         if (!activeBids.isEmpty()) {
             earliestExpirationTime = activeBids.get(0).getExpirationTime();
@@ -138,7 +138,7 @@ public class BidChecker {
             return;
         }
 
-        List<FutPlayerElement> wonItems = transferTargetsPage.getWonItems()
+        List<FutPlayer> wonItems = transferTargetsPage.getWonItems()
                 .stream()
                 .filter(item -> {
                     item.focus();
@@ -147,7 +147,7 @@ public class BidChecker {
                 .toList();
 
         while (!wonItems.isEmpty()) {
-            FutPlayerElement playerElement = wonItems.get(0);
+            FutPlayer playerElement = wonItems.get(0);
             listPlayerToTransferMarket(playerElement);
 
             driver.sleep(1000, 2000);
@@ -161,7 +161,7 @@ public class BidChecker {
         }
     }
 
-    private void listPlayerToTransferMarket(FutPlayerElement playerElement) {
+    private void listPlayerToTransferMarket(FutPlayer playerElement) {
         playerElement.focus();
         if (playerElement.isUntradable()) {
             log.error("Player is untradable. Skipping item");
@@ -208,7 +208,7 @@ public class BidChecker {
         }
     }
 
-    private void handleOutbidPlayer(FutPlayerElement player, FutPlayerAuctionData extendedData) {
+    private void handleOutbidPlayer(FutPlayer player, FutPlayerAuctionData extendedData) {
         // TODO: снизить количество ставок. Большинство ставок все равно проигрывается в итоге - тратится количество ставок
         //    - Делать ставку только если осталось <15 секунд.
         //    - Повышать ставку на 2 шага
@@ -230,7 +230,7 @@ public class BidChecker {
         }
     }
 
-    private void rebid(FutPlayerElement player) {
+    private void rebid(FutPlayer player) {
         BidResult bidResult = player.makeBid();
         if (bidResult != BidResult.SUCCESS) {
             bidResult = player.makeBid();
@@ -245,14 +245,14 @@ public class BidChecker {
     }
 
     private void keepBalanceOfExpiredItems() {
-        List<FutPlayerElement> expiredItems = transferTargetsPage.getExpiredItems();
-        List<FutPlayerElement> watchedItems = transferTargetsPage.getWatchedItems();
+        List<FutPlayer> expiredItems = transferTargetsPage.getExpiredItems();
+        List<FutPlayer> watchedItems = transferTargetsPage.getWatchedItems();
 
         if (expiredItems.size() >= 20) {
             transferTargetsPage.clearAllExpiredItems();
 
         } else if (expiredItems.size() >= 10) {
-            FutPlayerElement expiredItem = expiredItems.get(0);
+            FutPlayer expiredItem = expiredItems.get(0);
             expiredItem.focus();
             expiredItem.toggleWatch();
             driver.sleep(1000);
@@ -265,7 +265,7 @@ public class BidChecker {
     }
 
     private void removeOneExpiredItem() {
-        List<FutPlayerElement> expiredItems = transferTargetsPage.getExpiredItems();
+        List<FutPlayer> expiredItems = transferTargetsPage.getExpiredItems();
         if (!expiredItems.isEmpty()) {
             expiredItems.get(0).toggleWatch();
         }
@@ -275,7 +275,7 @@ public class BidChecker {
     private void addWatchItems(int count) {
         TransferMarketSearchOptions emptyOptions = TransferMarketSearchOptions.builder().build();
         SearchResult searchResult = transferMarketPage.applySearchOptionsAndSearch(emptyOptions);
-        List<FutPlayerElement> players = searchResult.getPlayers()
+        List<FutPlayer> players = searchResult.getPlayers()
                 .stream()
                 .limit(count)
                 .toList();

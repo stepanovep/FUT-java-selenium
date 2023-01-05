@@ -1,12 +1,11 @@
 package stepanovep.fut23.core.locators;
 
 
+import lombok.NoArgsConstructor;
 import org.openqa.selenium.By;
 
+@NoArgsConstructor
 public final class TransferMarketLocators {
-
-    private TransferMarketLocators() {
-    }
 
     public static By SEARCH_BUTTON = By.cssSelector(".button-container > .btn-standard.call-to-action");
     public static By RESET_SEARCH_OPTIONS_BUTTON = By.cssSelector(".button-container > .btn-standard");

@@ -5,7 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import stepanovep.fut23.core.driver.FutWebDriver;
-import stepanovep.fut23.core.entity.FutPlayerElement;
+import stepanovep.fut23.core.entity.FutPlayer;
 import stepanovep.fut23.core.locators.MainPageLocators;
 import stepanovep.fut23.core.locators.TransferTargetsLocators;
 import stepanovep.fut23.core.page.FutActiveMenu;
@@ -30,26 +30,26 @@ public class TransferTargetsPage {
         driver.sleep(500);
     }
 
-    public List<FutPlayerElement> getActiveBids() {
+    public List<FutPlayer> getActiveBids() {
         WebElement activeBidsSection = driver.findElementWithWait(TransferTargetsLocators.ACTIVE_BIDS_SECTION);
         List<WebElement> activeBids = activeBidsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         log.info("Active bids elements: count={}", activeBids.size());
         return mapToPlayers(activeBids);
     }
 
-    public List<FutPlayerElement> getWonItems() {
+    public List<FutPlayer> getWonItems() {
         WebElement wonItemsSection = driver.findElementWithWait(TransferTargetsLocators.WON_BIDS_SECTION);
         List<WebElement> wonItems = wonItemsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         return mapToPlayers(wonItems);
     }
 
-    public List<FutPlayerElement> getWatchedItems() {
+    public List<FutPlayer> getWatchedItems() {
         WebElement watchedSection = driver.findElementWithWait(TransferTargetsLocators.WATCHED_BIDS_SECTION);
         List<WebElement> watchedItems = watchedSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         return mapToPlayers(watchedItems);
     }
 
-    public List<FutPlayerElement> getExpiredItems() {
+    public List<FutPlayer> getExpiredItems() {
         WebElement expiredItemsSection = driver.findElementWithWait(TransferTargetsLocators.EXPIRED_BIDS_SECTION);
         List<WebElement> expiredItems = expiredItemsSection.findElements(TransferTargetsLocators.SECTION_ELEMENTS);
         return mapToPlayers(expiredItems);
@@ -79,9 +79,9 @@ public class TransferTargetsPage {
         driver.sleep(2000, 3000);
     }
 
-    private List<FutPlayerElement> mapToPlayers(List<WebElement> webElements) {
+    private List<FutPlayer> mapToPlayers(List<WebElement> webElements) {
         return webElements.stream()
-                .map(webElement -> new FutPlayerElement(driver, webElement))
+                .map(webElement -> new FutPlayer(driver, webElement))
                 .collect(Collectors.toList());
     }
 }

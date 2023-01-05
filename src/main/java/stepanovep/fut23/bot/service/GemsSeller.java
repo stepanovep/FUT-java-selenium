@@ -3,7 +3,7 @@ package stepanovep.fut23.bot.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import stepanovep.fut23.core.entity.FutPlayerElement;
+import stepanovep.fut23.core.entity.FutPlayer;
 import stepanovep.fut23.core.page.club.ClubPlayersPage;
 import stepanovep.fut23.core.page.club.ClubPlayersSearchOptions;
 import stepanovep.fut23.core.page.transfers.SearchResult;
@@ -20,8 +20,8 @@ public class GemsSeller {
     public void sellGems() {
         ClubPlayersSearchOptions searchOptions = ClubPlayersSearchOptions.builder().build();
         SearchResult searchResult = clubPlayersPage.searchPlayers(searchOptions);
-        List<FutPlayerElement> players = searchResult.getPlayers();
-        for (FutPlayerElement player: players) {
+        List<FutPlayer> players = searchResult.getPlayers();
+        for (FutPlayer player: players) {
             List<Integer> prices = player.comparePrice();
         }
         players.size();

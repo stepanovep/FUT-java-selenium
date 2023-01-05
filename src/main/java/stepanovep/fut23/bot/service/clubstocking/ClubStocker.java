@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import stepanovep.fut23.bot.service.LoginService;
 import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.core.entity.BidResult;
-import stepanovep.fut23.core.entity.FutPlayerElement;
-import stepanovep.fut23.core.page.transfers.TransferMarketPage;
+import stepanovep.fut23.core.entity.FutPlayer;
 import stepanovep.fut23.core.page.transfers.SearchResult;
+import stepanovep.fut23.core.page.transfers.TransferMarketPage;
 import stepanovep.fut23.core.page.transfers.TransferTargetsPage;
 import stepanovep.fut23.core.page.transfers.search.League;
 import stepanovep.fut23.core.page.transfers.search.Quality;
@@ -106,7 +106,7 @@ public class ClubStocker {
 //        waitUntil30SecondsLeft(searchResult);
 
         int bidCount = 0;
-        for (FutPlayerElement playerElement : searchResult.getPlayers()) {
+        for (FutPlayer playerElement : searchResult.getPlayers()) {
             playerElement.focus();
 
             if (playerElement.getExpirationTime().compareTo(Duration.ofMinutes(2)) <= 0 && bidCount < 8) {
@@ -140,7 +140,7 @@ public class ClubStocker {
         return MassBidResult.CONTINUE;
     }
 
-    private boolean needToSkip(FutPlayerElement playerElement, TransferMarketSearchOptions searchOptions) {
+    private boolean needToSkip(FutPlayer playerElement, TransferMarketSearchOptions searchOptions) {
         if (playerElement.getNextBid().isEmpty()) {
             return true;
         }
@@ -149,7 +149,7 @@ public class ClubStocker {
     }
 
     private void waitUntil30SecondsLeft(SearchResult searchResult) {
-        FutPlayerElement firstPlayer = searchResult.getPlayers().get(0);
+        FutPlayer firstPlayer = searchResult.getPlayers().get(0);
 
         if (firstPlayer.getExpirationTime().compareTo(Duration.ofMinutes(2)) > 0) {
             log.info("Need to wait too long - abort waiting");
@@ -177,7 +177,7 @@ public class ClubStocker {
         transferTargetsPage.sendAllToClub();
         transferTargetsPage.clearAllExpiredItems();
 
-        List<FutPlayerElement> wonPlayers = transferTargetsPage.getWonItems();
+        List<FutPlayer> wonPlayers = transferTargetsPage.getWonItems();
         return wonPlayers.size();
     }
 }

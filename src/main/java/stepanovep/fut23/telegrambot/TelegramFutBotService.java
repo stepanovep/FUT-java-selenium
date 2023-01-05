@@ -15,10 +15,6 @@ public class TelegramFutBotService {
          futBot.login();
     }
 
-    public void stop() {
-        futBot.stop();
-    }
-
     public void screenshot() {
         telegramNotifier.sendScreenshot(futBot.screenshot());
     }
@@ -43,15 +39,15 @@ public class TelegramFutBotService {
         futBot.scheduleMassBid();
     }
 
-    public void sellGems() {
-        futBot.sellGems();
-    }
-
     public void showDailyStatistic() {
         futBot.showDailyStatistic();
     }
 
     public void clubStock() {
         futBot.clubStock();
+    }
+
+    public void bpm() {
+        futBot.bpm();
     }
 }

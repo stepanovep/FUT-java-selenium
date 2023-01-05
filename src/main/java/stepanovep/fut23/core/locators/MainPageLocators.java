@@ -1,11 +1,10 @@
 package stepanovep.fut23.core.locators;
 
+import lombok.NoArgsConstructor;
 import org.openqa.selenium.By;
 
+@NoArgsConstructor
 public final class MainPageLocators {
-
-    private MainPageLocators() {
-    }
 
     public static By GO_TO_TRANSFERS = By.cssSelector("button.icon-transfer");
     public static By GO_TO_TRANSFER_TARGETS = By.cssSelector(".ut-tile-transfer-targets");
@@ -20,5 +19,7 @@ public final class MainPageLocators {
     public static final By DIALOG_SUBMIT_BUTTON = By.cssSelector(".dialog-body button");
     public static final By LIVE_MESSAGE_POPUP = By.cssSelector(".ut-livemessage");
     public static final By LIVE_MESSAGE_CLOSE_BUTTON = By.cssSelector(".ut-livemessage > div > button");
+
+    public static final By GO_TO_STORE = By.cssSelector("button.icon-store");
 
 }
