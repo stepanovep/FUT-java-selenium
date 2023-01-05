@@ -136,13 +136,11 @@ public class FutBot {
     }
 
     /**
-     * Bronze pack method: one run = 10 packs
+     * Bronze pack method: one run = 15 packs
      */
     public void bpm() {
-        futbotExecutor.submit(() -> {
-            loginService.login();
-            storePage.bpm(10);
-        });
+        loginService.login();
+        storePage.bpm(15);
     }
 
     /**

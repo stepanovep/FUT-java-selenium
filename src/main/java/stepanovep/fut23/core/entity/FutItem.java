@@ -32,7 +32,6 @@ import static stepanovep.fut23.core.locators.FutElementLocators.COMPARE_PRICE_BU
 import static stepanovep.fut23.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENTS;
 import static stepanovep.fut23.core.locators.FutElementLocators.COMPARE_PRICE_ELEMENT_BUY_NOW_VALUE;
 import static stepanovep.fut23.core.locators.FutElementLocators.COMPARE_PRICE_NEXT_BUTTON;
-import static stepanovep.fut23.core.locators.FutElementLocators.ITEM_RIGHT_LAYOUT_CONTAINER;
 import static stepanovep.fut23.core.locators.FutElementLocators.LIST_TO_TRANSFER_MARKET_BIN_PRICE;
 import static stepanovep.fut23.core.locators.FutElementLocators.LIST_TO_TRANSFER_MARKET_OPEN_MENU;
 import static stepanovep.fut23.core.locators.FutElementLocators.LIST_TO_TRANSFER_MARKET_START_PRICE;
@@ -77,8 +76,10 @@ public class FutItem {
 
     public void sendToTransferMarket() {
         driver.sleep(500);
-        driver.clickElement(ITEM_RIGHT_LAYOUT_CONTAINER, SEND_TO_TRANSFER_MARKET_BUTTON);
-        driver.acceptDialogMessage();
+        List<WebElement> buttons = driver.findElements(SEND_TO_TRANSFER_MARKET_BUTTON);
+        WebElement buttonInPlayerRightLayout = buttons.get(buttons.size() - 1);
+        buttonInPlayerRightLayout.click();
+        driver.sleep(500);
     }
 
     public void listToTransferMarket(Integer startPrice, Integer buyNowPrice) {
@@ -172,7 +173,6 @@ public class FutItem {
 
         return Optional.empty();
     }
-
 
     public void quickSell() {
         driver.clickElement(QUICK_SELL_BUTTON);
