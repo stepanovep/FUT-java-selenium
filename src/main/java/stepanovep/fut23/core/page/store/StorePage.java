@@ -1,8 +1,12 @@
 package stepanovep.fut23.core.page.store;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebElement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import stepanovep.fut23.core.driver.FutWebDriver;
 import stepanovep.fut23.core.entity.FutItem;
@@ -25,16 +29,20 @@ public class StorePage {
 
     private final FutWebDriver driver;
 
+    @Setter(onMethod_ = {@Autowired, @Lazy})
+    private StorePage self;
+
     public void bpm(int count) {
         for (int i = 0; i < count; i++) {
-            openBronzePack();
-            handleItems();
+            self.openBronzePack();
+            self.handleItems();
         }
 
         log.info("BPM finished");
     }
 
-    private void openBronzePack() {
+    @Retryable
+    public void openBronzePack() {
         log.info("Opening bronze pack");
         driver.clickElement(GO_TO_STORE, 2000);
         driver.clickElement(GO_TO_PACKS, 1000);
@@ -45,13 +53,15 @@ public class StorePage {
         driver.sleep(7500);
     }
 
-    private void handleItems() {
+    @Retryable
+    public void handleItems() {
         List<WebElement> items;
         do {
             items = driver.findElements(FUT_ITEMS);
             if (items.isEmpty()) {
                 break;
             }
+
             FutItem item = new FutItem(driver, items.get(0));
             item.focus();
 
@@ -63,7 +73,7 @@ public class StorePage {
                         item.sendToTransferMarket();
                     } else if (prices.get(0) > 250) {
                         Integer price = prices.get(0);
-                        item.listToTransferMarket((int) (price * 0.725), (int) (price * 0.925));
+                        item.listToTransferMarket((int) (price * 0.725), (int) (price * 0.915));
                     } else if (itemType == PLAYER && item.isDuplicate()) {
                         item.sendToTransferMarket();
                     } else if (itemType == STAFF && item.isDuplicate()) {
