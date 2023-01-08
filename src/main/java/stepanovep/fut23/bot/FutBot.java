@@ -2,6 +2,7 @@ package stepanovep.fut23.bot;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import stepanovep.fut23.bot.service.GemsSeller;
 import stepanovep.fut23.bot.service.LoginService;
@@ -70,7 +71,7 @@ public class FutBot {
     public void massBid() {
         futbinService.updatePrices();
 
-        futbotExecutor.submit(() ->  {
+        futbotExecutor.execute(() ->  {
             loginService.login();
             transferListPage.relistAll();
             massBidder.massBid();
@@ -124,6 +125,7 @@ public class FutBot {
     /**
      * Show daily statistics: amount of players bought and potential profit
      */
+    @Async
     public void showDailyStatistic() {
         statisticService.sendDailyStatistic();
     }
@@ -139,21 +141,17 @@ public class FutBot {
      * Bronze pack method: one run = 15 packs
      */
     public void bpm() {
-        loginService.login();
-        storePage.bpm(15);
-    }
-
-    /**
-     * Sell gems - low rated players with high current market price
-     */
-    public void sellGems() {
-        futbotExecutor.submit(() -> gemsSeller.sellGems());
+        futbotExecutor.execute(() -> {
+            loginService.login();
+            storePage.bpm(15);
+        });
     }
 
     public void shutdown() {
         driver.quit();
     }
 
+    @Async
     public File screenshot() {
         return driver.screenshot();
     }

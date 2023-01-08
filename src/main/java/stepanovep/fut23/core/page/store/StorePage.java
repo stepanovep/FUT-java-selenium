@@ -58,12 +58,8 @@ public class StorePage {
         List<WebElement> items;
         do {
             items = driver.findElements(FUT_ITEMS);
-            if (items.isEmpty()) {
-                break;
-            }
-
             FutItem item = new FutItem(driver, items.get(0));
-            item.focus();
+            driver.sleep(250);
 
             FutItemType itemType = item.getType();
             switch (itemType) {
