@@ -16,7 +16,7 @@ public class TelegramFutBotService {
     }
 
     public void screenshot() {
-        telegramNotifier.sendScreenshot(futBot.screenshot());
+        futBot.sendScreenshot();
     }
 
     public void massBid() {

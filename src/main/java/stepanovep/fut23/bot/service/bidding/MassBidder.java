@@ -145,7 +145,7 @@ public class MassBidder {
             log.warn("Couldn't bid player: name={}, rating={}, bidPrice={}, bidResult={}",
                     extendedData.getName(), extendedData.getRating(), nextBid, bidResult);
         }
-        driver.sleep(1000, 2000);
+        driver.sleep(750, 1500);
         return bidResult;
     }
 }

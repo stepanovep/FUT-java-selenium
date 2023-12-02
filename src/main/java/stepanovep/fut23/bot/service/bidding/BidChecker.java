@@ -81,10 +81,10 @@ public class BidChecker {
             return;
         }
         log.info("Checking bids: activeBids count = {}", activeBids.size());
-
+        // TODO: skip `processing` status
         for (FutPlayer player : activeBids) {
             if (player.isOutbid()) {
-                driver.sleep(700, 1200);
+                driver.sleep(500, 1000);
                 player.focus();
                 FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
                 if (extendedData.getAuction().getExpires() > MAX_EXPIRATION_TIME_SECONDS_TO_CHECK) {
@@ -93,6 +93,10 @@ public class BidChecker {
                 }
                 handleOutbidPlayer(player, extendedData);
             }
+        }
+
+        if (checkAnyOutbidIsExpiring()) {
+            checkBids();
         }
 
         listWonItemsToTransferMarket();
@@ -251,7 +255,7 @@ public class BidChecker {
         if (expiredItems.size() >= 20) {
             transferTargetsPage.clearAllExpiredItems();
 
-        } else if (expiredItems.size() >= 10) {
+        } else if (expiredItems.size() >= 5) {
             FutPlayer expiredItem = expiredItems.get(0);
             expiredItem.focus();
             expiredItem.toggleWatch();
@@ -267,7 +271,9 @@ public class BidChecker {
     private void removeOneExpiredItem() {
         List<FutPlayer> expiredItems = transferTargetsPage.getExpiredItems();
         if (!expiredItems.isEmpty()) {
-            expiredItems.get(0).toggleWatch();
+            FutPlayer player = expiredItems.get(0);
+            player.focus();
+            player.toggleWatch();
         }
         driver.sleep(1000);
     }

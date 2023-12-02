@@ -17,7 +17,6 @@ import stepanovep.fut23.core.page.transfers.TransferListPage;
 import stepanovep.fut23.futbin.FutbinService;
 import stepanovep.fut23.telegrambot.TelegramNotifier;
 
-import java.io.File;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -112,7 +111,7 @@ public class FutBot {
     public void scheduleMassBid() {
         log.info("scheduleMassBid");
         for (int i = 0; i <= 6; i++) {
-            futbotExecutor.schedule(this::massBid, i*90, TimeUnit.MINUTES);
+            futbotExecutor.schedule(this::massBid, i*100, TimeUnit.MINUTES);
         }
         for (int i = 0; i <= 9; i++) {
             futbotExecutor.schedule(() -> {
@@ -152,7 +151,7 @@ public class FutBot {
     }
 
     @Async
-    public File screenshot() {
-        return driver.screenshot();
+    public void sendScreenshot() {
+        telegramNotifier.sendScreenshot(driver.screenshot());
     }
 }
