@@ -58,6 +58,7 @@ public class AppConfiguration {
                 "user-data-dir=" + properties.getChromeUserDataDir(),
                 "--no-sandbox",
                 "--disable-blink-features=AutomationControlled",
+                "--remote-allow-origins=*",
                 "--start-maximized",
                 "--start-fullscreen");
         chromeOptions.setExperimentalOption("excludeSwitches", List.of("enable-automation]"));
