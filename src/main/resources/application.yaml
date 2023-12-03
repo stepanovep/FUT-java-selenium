@@ -13,24 +13,20 @@ telegram-bot:
 bidder:
   min-player-price-for-mass-bidder: 1500
   max-player-price-for-mass-bidder: 25000
-  max-expiration-time: 20m
-  max-active-bids-per-player: 6
+  max-expiration-time: 15m
+  max-active-bids-per-player: 5
   min-expected-profit: 300
   extra-margin-when-listing: 100
 
 futbin:
   min-time-between-requests: 20m
-  bidding-squad-urls:  https://www.futbin.com/23/squad/1500254,
-                       https://www.futbin.com/23/squad/1500136,
-                       https://www.futbin.com/23/squad/1499982,
-                       https://www.futbin.com/23/squad/1624596,
-                       https://www.futbin.com/23/squad/1932810,
-                       https://www.futbin.com/23/squad/2253109
+  bidding-squad-urls: https://www.futbin.com/24/squad/1455593,
+                      https://www.futbin.com/24/squad/1455544,
+                      https://www.futbin.com/24/squad/1455447,
+                      https://www.futbin.com/24/squad/1455486
   deduplication-map: #futbin-id --> extended name
-    26786: 'Gabriel Jesus'
-    26352: 'Luis Diaz'
-    26344: 'Reece James'
-    26777: 'Alejandro Gomez'
-    26422: 'Lucas Hernandez'
-    26339: 'Thiago Silva'
-    26304: 'Edouard Mendy'
+    2522: 'Gabriel Jesus'
+    2520: 'Luis Diaz'
+    83: 'Reece James'
+    107: 'Chloe Kelly'
+    150: 'Cristiano Ronaldo'

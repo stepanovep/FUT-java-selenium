@@ -1,11 +1,11 @@
 package stepanovep.fut23.bot.service.bidding;
 
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import stepanovep.fut23.config.BidderProperties;
@@ -72,8 +72,21 @@ public class BidChecker {
         }
     }
 
-    @Retryable(include = {StaleElementReferenceException.class}, backoff = @Backoff(delay = 3000))
     public void checkBids() {
+        checkBidsInternal();
+
+        if (isAnyOutbidItemExpiring()) {
+            checkBidsInternal();
+        }
+
+        listWonItemsToTransferMarket();
+        keepBalanceOfExpiredItems();
+
+        driver.sleep(1500, 2000);
+    }
+
+    @Retryable(include = {StaleElementReferenceException.class, NoSuchElementException.class}, backoff = @Backoff(delay = 3000))
+    public void checkBidsInternal() {
         transferTargetsPage.navigateToPage();
         driver.sleep(1000);
         List<FutPlayer> activeBids = transferTargetsPage.getActiveBids();
@@ -84,7 +97,7 @@ public class BidChecker {
         // TODO: skip `processing` status
         for (FutPlayer player : activeBids) {
             if (player.isOutbid()) {
-                driver.sleep(500, 1000);
+                driver.sleep(400, 800);
                 player.focus();
                 FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
                 if (extendedData.getAuction().getExpires() > MAX_EXPIRATION_TIME_SECONDS_TO_CHECK) {
@@ -94,24 +107,15 @@ public class BidChecker {
                 handleOutbidPlayer(player, extendedData);
             }
         }
-
-        if (checkAnyOutbidIsExpiring()) {
-            checkBids();
-        }
-
-        listWonItemsToTransferMarket();
-        keepBalanceOfExpiredItems();
-
-        driver.sleep(2000, 3000);
     }
 
-    private boolean checkAnyOutbidIsExpiring() {
+    private boolean isAnyOutbidItemExpiring() {
         List<FutPlayer> activeBids;
-        driver.sleep(1000);
+        driver.sleep(500);
         activeBids = transferTargetsPage.getActiveBids();
         for (FutPlayer player: activeBids) {
             if (player.isOutbid()) {
-                driver.sleep(600, 900);
+                driver.sleep(400, 800);
                 player.focus();
                 FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
                 if (extendedData.getAuction().getExpires() <= 30) {
@@ -124,11 +128,6 @@ public class BidChecker {
         }
 
         return false;
-    }
-
-    @Recover
-    public void recover(StaleElementReferenceException exc) {
-        log.error("Checking bids failed consecutive times");
     }
 
     @Retryable(include = {StaleElementReferenceException.class, TimeoutException.class}, backoff = @Backoff(delay = 3000))
@@ -230,6 +229,8 @@ public class BidChecker {
             } else {
                 log.info("Player bid is too high: name={}, nextBid={}, targetPrice={}", extendedData.getName(), nextBid, targetPrice);
                 player.toggleWatch();
+                driver.sleep(500);
+                checkBidsInternal();
             }
         }
     }
@@ -243,7 +244,6 @@ public class BidChecker {
                 checkBids();
             }
         }
-        // TODO log to the console and file as well
         log.info("Player has been rebid");
         driver.sleep(400, 600);
     }

@@ -67,10 +67,12 @@ public class FutPlayer extends FutItem {
     }
 
     public boolean isBid() {
+        driver.sleep(100);
         return webElement.getAttribute("class").contains("highest-bid");
     }
 
     public boolean isOutbid() {
+        driver.sleep(100);
         return webElement.getAttribute("class").contains("outbid");
     }
 
@@ -106,7 +108,7 @@ public class FutPlayer extends FutItem {
 
     public int getBuyNowPrice() {
         WebElement buyNowElement = auctionContainer.findElements(By.cssSelector(".auctionValue")).get(2);
-        if (!buyNowElement.findElement(By.cssSelector(".label")).getText().contains("BUY NOW")) {
+        if (!buyNowElement.findElement(By.cssSelector(".label")).getText().toUpperCase().contains("BUY NOW")) {
             log.error("Buy now price element is incorrect: auctionContainer={}", auctionContainer.getText());
             throw new IllegalStateException("Bid price element is incorrect");
         }
@@ -156,9 +158,5 @@ public class FutPlayer extends FutItem {
         } else {
             return Duration.ofDays(1L);
         }
-    }
-
-    public String getPlayerAsString() {
-        return String.join("#", getName(), String.valueOf(getRating()), getPosition());
     }
 }

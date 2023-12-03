@@ -31,6 +31,6 @@ public final class FutElementLocators {
     public static final By BID_BUTTON = By.cssSelector(".bidButton");
     public static final By BUY_NOW_BUTTON = By.cssSelector(".buyButton");
 
-    public static final By BOUGHT_PRICE = By.cssSelector(".auctionInfo .currency-coins");
+    public static final By BOUGHT_PRICE = By.cssSelector(".auctionInfo .subContent");
 }
 

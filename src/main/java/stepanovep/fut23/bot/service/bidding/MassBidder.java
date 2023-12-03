@@ -49,10 +49,10 @@ public class MassBidder {
             for (Player player: players) {
                 bidChecker.checkBids();
                 massBidPlayer(player);
-                driver.sleep(2000);
+                driver.sleep(1500);
             }
 
-            driver.sleep(2000, 3000);
+            driver.sleep(1500, 2000);
 
         } catch (Exception exc) {
             log.error("Mass bid failed: ", exc);
@@ -74,7 +74,7 @@ public class MassBidder {
 
         for (FutPlayer playerElement: searchResult.getPlayers()) {
             playerElement.focus();
-            driver.sleep(1000, 2000);
+            driver.sleep(1000, 1500);
             FutPlayerAuctionData extendedData = playerAuctionDataService.getFutPlayerAuctionData();
             AuctionData auction = extendedData.getAuction();
             if (auction.getExpires() > bidderProperties.getMaxExpirationTime().toSeconds()
@@ -145,7 +145,7 @@ public class MassBidder {
             log.warn("Couldn't bid player: name={}, rating={}, bidPrice={}, bidResult={}",
                     extendedData.getName(), extendedData.getRating(), nextBid, bidResult);
         }
-        driver.sleep(750, 1500);
+        driver.sleep(500, 1000);
         return bidResult;
     }
 }
